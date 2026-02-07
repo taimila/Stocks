@@ -1,0 +1,165 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ApplicationWindow mainWindow {
+	default-width: 1050;
+	default-height: 655;
+	width-request: 355;
+	height-request: 500;
+
+	title: _("Stocks");
+
+	Adw.Breakpoint {
+		condition ("max-width: 600sp")
+
+		setters {
+			splitView.collapsed: true;
+		}
+	}
+
+	content: Gtk.Stack mainContentStack {
+		hexpand: true;
+		vexpand: true;
+		hhomogeneous: false;
+		vhomogeneous: false;
+
+		// Main content of the app
+		Adw.NavigationSplitView splitView {
+			name: "content";
+			min-sidebar-width: 300;
+			max-sidebar-width: 300;
+			show-content: true;
+
+			// Sidebar
+			sidebar: Adw.NavigationPage {
+				title: _("Symbols");
+				child: Adw.ToastOverlay toastOverlay {
+					Adw.ToolbarView {
+						[top]
+						Adw.HeaderBar sidebarHeader {
+							show-title: false;
+
+							[start]
+							Button {
+								action-name: "app.refresh";
+								tooltip-text: _("Refresh all");
+								icon-name: "view-refresh-symbolic";
+							}
+
+							[end]
+							Button addButton {
+								tooltip-text: _("Add symbol");
+								icon-name: "list-add-symbolic";
+							}
+						}
+
+						content: ScrolledWindow sidebarContainer {
+							hscrollbar-policy: never;
+						};
+					}
+				}; 
+			};
+
+			// Content
+			content: Adw.NavigationPage detailsContent {
+				title: _("Details");
+				tag: "details";
+
+				child: Adw.ToolbarView {
+					[top]
+					Adw.HeaderBar detailsHeader {
+						show-title: false;
+
+						[end]
+						MenuButton menuButton {
+							tooltip-text: _("Main Menu");
+							icon-name: "open-menu-symbolic";
+							menu-model: primaryMenu;
+							primary: true;
+						}
+					}
+
+					content: Box {
+						orientation: vertical;
+						Adw.Banner errorBanner {
+							title: _("Refresh failed - Data can be stale");
+					  		revealed: false;
+						}
+						Adw.Bin detailsContainer {
+							// Details is injected here.     
+						}
+					};
+				};
+			};
+		}
+
+		// When there are no tickers, we show empty state UI instead of sidebar and details
+		Adw.ToolbarView emptyView {
+
+			[top]
+			Adw.HeaderBar {
+				show-title: false;
+
+				[start]
+				Button emptyHeaderAddButton {
+					tooltip-text: _("Add symbol");
+					icon-name: "list-add-symbolic";
+				}
+
+				[end]
+				MenuButton emptyMenuButton {
+					tooltip-text: _("Main Menu");
+					icon-name: "open-menu-symbolic";
+					menu-model: primaryMenu;
+					primary: true;
+				}
+			}
+
+			content: Adw.StatusPage {
+				icon-name: "emblem-important-symbolic";
+				title: _("No symbols");
+				description: _("Add symbol to your watchlist.");
+				hexpand: true;
+				vexpand: true;
+				halign: center;
+				valign: center;
+				width-request: 350
+				;
+				child: Box {
+					orientation: vertical;
+					spacing: 12;
+					halign: center;
+
+					Button addSymbolButton {
+						css-classes: ["suggested-action", "pill"];
+
+						child: Adw.ButtonContent {
+							icon-name: "list-add-symbolic";
+							label: _("Add symbol");
+						};
+					}
+				};
+			};
+		}
+	};
+}
+
+menu primaryMenu {
+	section {
+		item {
+			custom: "themeswitcher";
+		}
+	}
+
+	section {
+		item (_("Keyboard Shortcuts"), "app.shortcuts")
+		item (_("About Stocks"), "app.about")
+	}
+
+	section {
+		item (_("Quit"), "app.quit")
+	}
+}

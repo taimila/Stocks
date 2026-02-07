@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Stocks (Launch)",
+      "type": "coreclr",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/Debug/net9.0/linux-x64/Stocks.dll",
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "prepare-debug",
+      "env": {
+        "GSETTINGS_SCHEMA_DIR": "${workspaceFolder}/data"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Stocks (Attach to running dotnet)",
+      "type": "coreclr",
+      "request": "attach",
+      "processId": "${command:pickProcess}"
+    }
+  ]
+}

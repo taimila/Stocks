@@ -1,0 +1,279 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Stocks package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Stocks 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-02 22:17+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/ui/MainWindow.blp:10
+msgid "Stocks"
+msgstr ""
+
+#: data/ui/MainWindow.blp:27
+msgid "Symbols"
+msgstr ""
+
+#: data/ui/MainWindow.blp:37 data/ui/ShortcutsDialog.blp:7
+msgid "Refresh all"
+msgstr ""
+
+#: data/ui/MainWindow.blp:43
+msgid "Add symbol"
+msgstr ""
+
+#: data/ui/MainWindow.blp:57
+msgid "Details"
+msgstr ""
+
+#: data/ui/MainWindow.blp:67
+msgid "Main Menu"
+msgstr ""
+
+#: data/ui/MainWindow.blp:77
+msgid "Refresh failed - Data can be stale"
+msgstr ""
+
+#: data/ui/MainWindow.blp:97
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: data/ui/MainWindow.blp:98
+msgid "Help"
+msgstr ""
+
+#: data/ui/MainWindow.blp:99
+msgid "About Stocks"
+msgstr ""
+
+#: data/ui/MainWindow.blp:103 data/ui/ShortcutsDialog.blp:12
+msgid "Quit"
+msgstr ""
+
+#: data/ui/ThemeSwitcher.blp:26
+msgid "Follow system style"
+msgstr ""
+
+#: data/ui/ThemeSwitcher.blp:39
+msgid "Light style"
+msgstr ""
+
+#: data/ui/ThemeSwitcher.blp:52
+msgid "Dark style"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:19
+msgid "No tickers"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:20
+msgid "Add tickers to your watchlist."
+msgstr ""
+
+#: data/ui/TickerDetails.blp:131
+msgid "Save alias for symbol"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:159 Stocks/Model/TickerRange.cs:43
+msgid "1d"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:160 Stocks/Model/TickerRange.cs:27
+msgid "1 day"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:164 Stocks/Model/TickerRange.cs:44
+msgid "5d"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:165 Stocks/Model/TickerRange.cs:28
+msgid "5 days"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:169 Stocks/Model/TickerRange.cs:45
+msgid "1m"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:170 Stocks/Model/TickerRange.cs:29
+msgid "1 month"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:174 Stocks/Model/TickerRange.cs:46
+msgid "3m"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:175 Stocks/Model/TickerRange.cs:30
+msgid "3 months"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:179 Stocks/Model/TickerRange.cs:47
+msgid "6m"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:180 Stocks/Model/TickerRange.cs:31
+msgid "6 months"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:184 Stocks/Model/TickerRange.cs:53
+msgid "Ytd"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:185 Stocks/Model/TickerRange.cs:37
+msgid "Year to date"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:189 Stocks/Model/TickerRange.cs:48
+msgid "1y"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:190 Stocks/Model/TickerRange.cs:32
+msgid "1 year"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:194 Stocks/Model/TickerRange.cs:49
+msgid "2y"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:195 Stocks/Model/TickerRange.cs:33
+msgid "2 years"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:199 Stocks/Model/TickerRange.cs:50
+msgid "5y"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:200 Stocks/Model/TickerRange.cs:34
+msgid "5 years"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:204 Stocks/Model/TickerRange.cs:51
+msgid "10y"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:205 Stocks/Model/TickerRange.cs:35
+msgid "10 years"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:209 data/ui/TickerDetails.blp:210
+#: Stocks/Model/TickerRange.cs:36 Stocks/Model/TickerRange.cs:52
+msgid "All"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:228 data/ui/TickerDetails.blp:293
+msgid "Open"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:242 data/ui/TickerDetails.blp:307
+msgid "High"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:256 data/ui/TickerDetails.blp:321
+msgid "Low"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:270 data/ui/TickerDetails.blp:335
+msgid "Market"
+msgstr ""
+
+#: data/ui/TickerDetails.blp:362
+msgid "Updated just now."
+msgstr ""
+
+#: Stocks/Ui/MainWindow.cs:64
+#, csharp-format
+msgid "{0} removed"
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:58 Stocks/Ui/AddTickerPopover.cs:128
+msgid "Search symbols"
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:129
+msgid "Start typing to see search results."
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:135
+msgid "No results"
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:136
+msgid "No results found for current search term."
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:157
+msgid "Add to watchlist"
+msgstr ""
+
+#: Stocks/Ui/AddTickerPopover.cs:157
+msgid "Already on watchlist"
+msgstr ""
+
+#: Stocks/Ui/SidebarItem.cs:26
+msgid "Remove"
+msgstr ""
+
+#: Stocks/Ui/SidebarItem.cs:30
+msgid "Refresh"
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:193
+msgid "Chart not available"
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:408
+#, csharp-format
+msgid "Read more on <a href=\"{0}\">Yahoo Finance</a>."
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:436
+msgctxt "market-status"
+msgid "Open"
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:437
+msgid "Closed"
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:438
+msgid "Unknown"
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:456
+msgid "Updated less than minute ago."
+msgstr ""
+
+#: Stocks/Ui/TickerDetails.cs:458
+#, csharp-format
+msgid "Updated {0} minutes ago."
+msgstr ""
+
+#: Stocks/Ui/TickerChartPopover.cs:30 Stocks/Ui/TickerChartPopover.cs:81
+msgid "Date"
+msgstr ""
+
+#: Stocks/Ui/TickerChartPopover.cs:41
+msgid "Price"
+msgstr ""
+
+#: Stocks/Ui/TickerChartPopover.cs:52
+msgid "Change"
+msgstr ""
+
+#: Stocks/Ui/TickerChartPopover.cs:81
+msgid "Time"
+msgstr ""
+
+#: Stocks/Ui/TickerChartPopover.cs:94
+msgid "Range"
+msgstr ""

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Stocks
+Exec=Stocks
+Icon=fi.taimila.Stocks
+Terminal=false
+Categories=Office;Finance;
+StartupNotify=true

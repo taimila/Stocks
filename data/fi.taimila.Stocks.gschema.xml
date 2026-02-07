@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="Stocks">
+    <enum id="fi.taimila.Stocks.Theme">
+        <value nick="system" value="0"/>
+        <value nick="light" value="1"/>
+        <value nick="dark" value="2"/>
+    </enum>
+
+    <schema id="fi.taimila.Stocks" path="/fi/taimila/Stocks/">
+        <key name="theme" enum="fi.taimila.Stocks.Theme">
+            <default>'system'</default>
+        </key>
+        <key name="update-interval" type="i">
+            <default>5</default>
+        </key>
+        <key name="user-agent" type="s">
+            <default>'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)'</default>
+        </key>
+        <key name="symbols" type="as">
+            <default>['^GSPC']</default>
+        </key>
+    </schema>
+</schemalist>

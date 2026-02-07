@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+	<id>fi.taimila.Stocks.desktop</id>
+	<metadata_license>GPL-3.0-or-later</metadata_license>
+	<project_license>GPL-3.0-or-later</project_license>
+	<description>
+	  <p>Simple app for following the stock market at a glance. Meant for casual usage, not for trading.</p>
+	</description>
+</component>

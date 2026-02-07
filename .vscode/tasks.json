@@ -1,0 +1,12 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "prepare-debug",
+      "type": "shell",
+      "command": "glib-compile-schemas data/ && dotnet build Stocks.csproj",
+      "problemMatcher": "$msCompile",
+      "group": "build"
+    }
+  ]
+}

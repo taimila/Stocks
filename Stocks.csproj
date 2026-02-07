@@ -1,0 +1,62 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- [Gtk.Connect] variables in UI files causes these warnings. -->
+  <PropertyGroup>
+    <NoWarn>$(NoWarn);0649</NoWarn>
+    <NoWarn>$(NoWarn);8618</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="GirCore.Adw-1" Version="0.7.0" />
+    <PackageReference Include="GirCore.Gtk-4.0" Version="0.7.0" />
+    <PackageReference Include="GirCore.GObject-2.0.Integration" Version="0.7.0" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <PackageReference Include="NGettext" Version="0.6.7" />
+  </ItemGroup>
+  
+  <Target Name="BlueprintBuild" BeforeTargets="PrepareForBuild;Restore">
+    <Exec Command="blueprint-compiler batch-compile $(MSBuildProjectDirectory)/build/ $(MSBuildProjectDirectory)/data/ui $(MSBuildProjectDirectory)/data/ui/*.blp" />
+  </Target>
+  
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="glib-compile-resources --sourcedir $(MSBuildProjectDirectory)/data $(MSBuildProjectDirectory)/data/fi.taimila.Stocks.gresource.xml --target=$(MSBuildProjectDirectory)/fi.taimila.Stocks.gresource" />
+  </Target>
+  
+  <Target Name="ExtraCleanup" AfterTargets="Clean">
+    <!-- Remove obj folder -->
+    <RemoveDir Directories="$(BaseIntermediateOutputPath)" />
+    <!-- Remove bin folder -->
+    <RemoveDir Directories="$(BaseOutputPath)" />
+    <!-- Remove compiled blueprints -->
+    <RemoveDir Directories="$(MSBuildProjectDirectory)/build" />
+  </Target>
+
+  <!-- Add the blueprints as a resource -->
+  <ItemGroup>
+    <None Remove="build\*.ui" />
+    <EmbeddedResource Include="build\*.ui">
+      <LogicalName>%(Filename)%(Extension)</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <!-- Add global CSS as an embedded resource -->
+  <ItemGroup>
+    <EmbeddedResource Include="data/styles.css">
+      <LogicalName>styles.css</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Stocks.Tests/**/*.cs" />
+    <None Remove="Stocks.Tests/**" />
+  </ItemGroup>
+</Project>

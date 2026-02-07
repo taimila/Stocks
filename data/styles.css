@@ -1,0 +1,159 @@
+
+/* SidebarItem */
+/* ************************************************************************* */
+.positive-label {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 6px;
+    color: #FFFFFF;
+    background-color: #33D17A;
+}
+
+.negative-label {
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    border-radius: 6px;
+    color: #FFFFFF;
+    background-color: #E01B24;
+}
+
+/* Sidebar */
+/* ************************************************************************* */
+.drag-row {
+    background-color: var(--sidebar-bg-color);
+}
+
+/* TickerDetails */
+/* ************************************************************************* */
+.primary-label,
+.primary-value {
+    color: var(--view-fg-color);
+}
+
+.primary-label {
+    font-size: 100%;
+}
+
+.primary-value-positive {
+    color: #57E389;
+    font-weight: 800;
+    font-size: 181%;
+    margin-top: 6px;
+    margin-left: -2px; /* Offset the label to account for large-font alignment illusion. */
+}
+
+.primary-value-negative {
+    color: #ED333B;
+    font-weight: 800;
+    font-size: 181%;
+    margin-top: 6px;
+    margin-left: -2px; /* Offset the label to account for large-font alignment illusion. */
+}
+
+.primary-value {
+    font-weight: 800;
+    font-size: 181%;
+    margin-top: 6px;
+    margin-left: -2px; /* Offset the label to account for large-font alignment illusion. */
+}
+
+.symbol-row {
+    min-height: 42px;
+}
+
+.symbol-display {
+    border-radius: 6px;
+    margin-top: 6px;
+    padding: 0 8px;
+    margin-left: -8px;
+}
+
+.symbol-display:hover {
+    background-color: color-mix(in srgb, var(--view-fg-color) 10%, transparent);
+}
+
+.symbol-display .primary-value {
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.symbol-entry {
+    color: var(--view-fg-color);
+    font-weight: 800;
+    font-size: 181%;
+    margin-top: 6px;
+    margin-left: -8px;
+    padding: 0 8px;
+    border-radius: 6px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.secondary-label {
+    margin-top: 6px;
+    margin-bottom: 2px;
+    font-size: 82%;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--view-fg-color) var(--dim-opacity), transparent);
+}
+
+.secondary-value {
+    color: var(--view-fg-color);
+}
+
+/* ThemeSwitcher */
+/* From https://gitlab.gnome.org/tijder/blueprintgtk/-/blob/master/src/theme-switcher.css */
+/* ************************************************************************* */
+.themeswitcher {
+    margin: 9px;
+}
+
+.themeswitcher checkbutton {
+    padding: 0;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 1px;
+    background-clip: content-box;
+    border-radius: 9999px;
+    box-shadow: inset 0 0 0 1px @borders;
+}
+
+.themeswitcher checkbutton.system:checked,
+.themeswitcher checkbutton.light:checked,
+.themeswitcher checkbutton.dark:checked {
+    box-shadow: inset 0 0 0 2px @theme_selected_bg_color;
+}
+
+.themeswitcher checkbutton.system {
+    background-image: linear-gradient(to bottom right, #fff 49.99%, #202020 50.01%);
+}
+
+.themeswitcher checkbutton.light {
+    background-color: #fff;
+}
+
+.themeswitcher checkbutton.dark {
+    background-color: #202020;
+}
+
+.themeswitcher checkbutton radio {
+    -gtk-icon-source: none;
+    border: none;
+    background: none;
+    box-shadow: none;
+    min-width: 12px;
+    min-height: 12px;
+    transform: translate(27px, 14px);
+    padding: 2px;
+}
+
+.themeswitcher checkbutton.theme-selector radio:checked {
+    -gtk-icon-source: -gtk-icontheme("object-select-symbolic");
+    background-color: @theme_selected_bg_color;
+    color: @theme_selected_fg_color;
+}

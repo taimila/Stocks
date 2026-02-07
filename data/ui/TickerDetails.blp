@@ -1,0 +1,380 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+Box tickerDetails { 
+    margin-top: 8;
+    margin-start: 20;
+    margin-end: 20;
+    margin-bottom: 20;
+    orientation: vertical;
+
+    Gtk.Box noDetails {
+        visible: false;
+        vexpand: true;
+        hexpand: true;
+        valign: center;
+        halign: center;
+        Adw.StatusPage {
+          icon-name: "emblem-important";
+          title: _("No tickers");
+          description: _("Add tickers to your watchlist.");
+        }
+    }
+
+    // Remove this Adw.Clamp to allow card to fill full width on any resolution.
+    Adw.Clamp detailsCard {
+        maximum-size: 1100;
+        tightening-threshold: 700; 
+        hexpand: true;
+
+        Box {
+            css-classes: ["card"];
+            hexpand: true;
+        
+            Box cardContent {                    
+                orientation: vertical;
+                margin-top: 20;
+                margin-start: 20;
+                margin-end: 20;
+                margin-bottom: 20;
+
+                Grid narrowHeader {
+                    visible: false;
+                    column-homogeneous: true;
+                    column-spacing: 8;
+                    row-spacing: 8;
+                    margin-top: 8;
+                    margin-bottom: 8;
+
+                    Label name {
+                        halign: start;
+                        ellipsize: end;
+                        layout { column: 0; row: 0; }
+                        styles [ "primary-label" ]
+                    }
+
+                    Adw.Bin rangeGroupDropdown {
+                        layout { column: 0; row: 1; }
+                    }
+
+                    Label currentValue {
+                        halign: end;
+                        ellipsize: end;
+                        layout { column: 1; row: 0; }
+                        styles [ "primary-label" ]
+                    }
+
+                    Label changePercentage {
+                        halign: end;
+                        layout { column: 1; row: 1; }
+                    }
+                }
+
+                Grid wideHeader {
+                    visible: true;
+                    column-homogeneous: true;
+                    column-spacing: 10;
+                    row-spacing: 0;
+
+                    Label name2 {
+                        halign: start;
+                        layout { column: 0; row: 0; }
+                        styles [ "primary-label" ]
+                    }
+
+                    Box symbolRow {
+                        layout { column: 0; row: 1; }
+                        orientation: horizontal;
+                        spacing: 6;
+                        css-classes: ["symbol-row"];
+                        halign: fill;
+                        hexpand: true;
+                        valign: center;
+
+                        // UI for showing the symbol or alias if available
+                        Box symbolDisplayBox {
+                            orientation: horizontal;
+                            spacing: 6;
+                            halign: start;
+                            valign: center;
+                            css-classes: ["symbol-display"];
+
+                            Label symbol {
+                                halign: start;
+                                styles [ "primary-value" ]
+                                max-width-chars: 20;
+                                ellipsize: end;
+                            }
+                        }
+
+                        // UI for symbol alias input
+                        Box symbolEditBox {
+                            visible: false;
+                            orientation: horizontal;
+                            spacing: 6;
+                            halign: fill;
+                            valign: center;
+                            hexpand: true;
+
+                            Entry aliasEntry {
+                                valign: center;
+                                css-classes: ["symbol-entry"];
+                                hexpand: true;
+                                halign: fill;
+                            }
+
+                            Button aliasSaveButton {
+                                margin-top: 6;
+                                icon-name: "object-select-symbolic";
+                                valign: center;
+                                css-classes: ["suggested-action", "circular"];
+                                tooltip-text: _("Save alias for symbol");
+                            }
+                        }
+                    }
+
+                    Label currentValue2 {
+                        halign: end;
+                        ellipsize: end;
+                        layout { column: 1; row: 0; }
+                        styles [ "primary-label" ]
+                    }
+
+                    Label changePercentage2 {
+                        halign: end;
+                        layout { column: 1; row: 1; }
+                    }
+                }
+
+                Adw.ToggleGroup rangeToggles {
+                    visible: true;
+                    margin-top: 20;
+                    margin-bottom: 20;
+                    styles [ "round" ]
+                    can-shrink: true;
+                    homogeneous: true;
+
+                    Adw.Toggle {
+                        name: "Day";
+                        label: _("1d");
+                        tooltip: _("1 day");
+                    }
+                    Adw.Toggle {
+                        name: "FiveDays";
+                        label: _("5d");
+                        tooltip: _("5 days");
+                    }
+                    Adw.Toggle {
+                        name: "Month";
+                        label: _("1m");
+                        tooltip: _("1 month");
+                    }
+                    Adw.Toggle {
+                        name: "ThreeMonths";
+                        label: _("3m");
+                        tooltip: _("3 months");
+                    }
+                    Adw.Toggle {
+                        name: "SixMonths";
+                        label: _("6m");
+                        tooltip: _("6 months");
+                    }
+                    Adw.Toggle {
+                        name: "Ytd";
+                        label: _("Ytd");
+                        tooltip: _("Year to date");
+                    }
+                    Adw.Toggle {
+                        name: "Year";
+                        label: _("1y");
+                        tooltip: _("1 year");
+                    }
+                    Adw.Toggle {
+                        name: "TwoYears";
+                        label: _("2y");
+                        tooltip: _("2 years");
+                    }
+                    Adw.Toggle {
+                        name: "FiveYears";
+                        label: _("5y");
+                        tooltip: _("5 years");
+                    }
+                    Adw.Toggle {
+                        name: "TenYears";
+                        label: _("10y");
+                        tooltip: _("10 years");
+                    }
+                    Adw.Toggle {
+                        name: "All";
+                        label: _("All");
+                        tooltip: _("All");
+                    }
+                }
+
+                Adw.Bin chartContainer {
+                    // Chart is injected here from code.
+                }
+
+                Grid narrowFooter {
+                    visible: false;
+                    margin-top: 10;
+                    column-homogeneous: true;
+                    column-spacing: 4;
+                    row-spacing: 0;
+                    hexpand: true;
+
+                    Label {
+                        halign: start;
+                        label: _("Open");
+                        layout { column: 0; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label open {
+                        halign: start;
+                        label: "-";
+                        layout { column: 0; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("High");
+                        layout { column: 0; row: 2; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label high {
+                        halign: start;
+                        label: "-";
+                        layout { column: 0; row: 3; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("Low");
+                        layout { column: 1; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label low {
+                        halign: start;
+                        label: "-";
+                        layout { column: 1; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("Market");
+                        layout { column: 1; row: 2; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label marketStatus {
+                        halign: start;
+                        label: "-";
+                        layout { column: 1; row: 3; }
+                        styles [ "secondary-value" ]
+                    }
+                }
+
+                Grid wideFooter {
+                    visible: true;
+                    margin-top: 20;
+                    column-homogeneous: true;
+                    column-spacing: 4;
+                    row-spacing: 0;
+                    hexpand: true;
+
+                    Label {
+                        halign: start;
+                        label: _("Open");
+                        layout { column: 0; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label open2 {
+                        halign: start;
+                        label: "-";
+                        layout { column: 0; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("High");
+                        layout { column: 1; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label high2 {
+                        halign: start;
+                        label: "-";
+                        layout { column: 1; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("Low");
+                        layout { column: 2; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label low2 {
+                        halign: start;
+                        label: "-";
+                        layout { column: 2; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+
+                    Label {
+                        halign: start;
+                        label: _("Market");
+                        layout { column: 3; row: 0; }
+                        styles [ "secondary-label" ]
+                    }
+
+                    Label marketStatus2 {
+                        halign: start;
+                        label: "-";
+                        layout { column: 3; row: 1; }
+                        styles [ "secondary-value" ]
+                    }
+                }
+            }
+        }
+    }
+
+    Adw.Clamp detailsFooter {
+        maximum-size: 1100;
+        tightening-threshold: 700; 
+        hexpand: true;
+
+        Gtk.Box {
+            orientation: vertical;
+
+            Gtk.Label updatedLabel {
+                margin-top: 20;
+                margin-bottom: 6;
+                label: _("Updated just now.");
+                css-classes: ["caption"];
+                hexpand: true;
+                halign: start;
+            }
+
+            Gtk.Label readMore {
+                use-markup: true;
+                css-classes: ["caption"];
+                hexpand: true;
+                halign: start;
+                opacity: 0.6;
+            }
+        }        
+    }
+}

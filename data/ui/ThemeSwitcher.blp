@@ -1,0 +1,58 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+// Based on https://gitlab.gnome.org/tijder/blueprintgtk/-/tree/master/src
+
+using Gtk 4.0;
+
+Box themeSwitcher {
+    styles [
+        "themeswitcher",
+    ]
+
+    hexpand: true;
+
+    Box box {
+        hexpand: true;
+        orientation: horizontal;
+        spacing: 24;
+
+        CheckButton system {
+            styles [
+                "theme-selector",
+                "system",
+            ]
+
+            hexpand: true;
+            halign: center;
+            focus-on-click: false;
+            tooltip-text: _("Follow system style");
+        }
+
+        CheckButton light {
+            styles [
+                "theme-selector",
+                "light",
+            ]
+
+            hexpand: true;
+            halign: center;
+            group: system;
+            focus-on-click: false;
+            tooltip-text: _("Light style");
+        }
+
+        CheckButton dark {
+            styles [
+                "theme-selector",
+                "dark",
+            ]
+
+            hexpand: true;
+            halign: center;
+            group: system;
+            focus-on-click: false;
+            tooltip-text: _("Dark style");
+        }
+    }
+}

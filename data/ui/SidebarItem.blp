@@ -1,0 +1,56 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+Grid sidebar-item {
+    margin-top: 8;
+    margin-bottom: 8;
+    margin-start: 0;
+    margin-end: 0;
+    column-spacing: 8;
+    row-spacing: 4;
+    hexpand: true;
+
+    Label symbol { 
+        layout { column: 0; row: 0; }
+        css-classes: ["title-4"];
+        halign: fill;
+        hexpand: true;
+        ellipsize: end;
+        xalign: 0.0;
+    }
+
+    Label name { 
+        layout { column: 0; row: 1; }
+        css-classes: ["caption", "subtitle"];
+        halign: fill;
+        hexpand: true;
+        ellipsize: end;
+        xalign: 0.0;
+    }
+
+    Adw.Bin chartBin {
+        layout { column: 1; row: 0; row-span: 2; }
+        width-request: 40;
+        height-request: 30;
+        margin-start: 8;
+        margin-end: 8;
+        halign: center;
+    }
+
+    Label value { 
+        layout { column: 2; row: 0; }
+        css-classes: ["title-4"];
+        halign: end;
+        xalign: 1;
+    }
+
+    Label change { 
+        layout { column: 2; row: 1; }
+        css-classes: ["caption-heading"];
+        halign: end;
+        xalign: 1;
+    }  
+}

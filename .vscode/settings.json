@@ -1,0 +1,29 @@
+{
+    "search.exclude": {
+        "**/.flatpak": true,
+        "**/_build": true,
+        "**/build": true,
+        "**/builddir": true,
+        "**/build-flatpak": true,
+        "**/bin": true,
+        "**/obj": true,
+        "**/.git": true
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/.hg/store/**": true,
+        "**/.flatpak/**": true,
+        "**/_build/**": true,
+        "**/build/**": true,
+        "**/builddir/**": true,
+        "**/build-flatpak/**": true,
+        "**/bin/**": true,
+        "**/obj/**": true,
+        ".flatpak/**": true,
+        "_build/**": true
+    },
+    "mesonbuild.configureOnOpen": false,
+    "mesonbuild.buildFolder": "_build",
+    "mesonbuild.mesonPath": "${workspaceFolder}/.flatpak/meson.sh"
+}
