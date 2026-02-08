@@ -18,6 +18,12 @@ All data is fetched from _Yahoo Finance_, but this is completely independent pro
 - Hover and select a range on top of the graph to see more details
 - Support for mobile
 
+## Installation
+Download the latest Flatpak file from [releases](https://github.com/taimila/Stocks/releases) and install it from command line.
+```
+flatpak install fi.taimila.Stocks.flatpak
+```
+
 ## Build and run
 
 Requirements:
