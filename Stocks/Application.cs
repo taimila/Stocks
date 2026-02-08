@@ -96,6 +96,7 @@ public class Application
         about.Version = "0.1.0";
         about.Developers = ["Lauri Taimila"];
         about.Copyright = "© 2026 Lauri Taimila";
+        about.LicenseType = Gtk.License.Lgpl30;
         about.Present();
     }
 
