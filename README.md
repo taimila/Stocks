@@ -1,6 +1,6 @@
 # Stocks
 
-A simple Gnome app for following the stock market at a glance. Meant for casual usage, not for trading.
+Gnome app for following the stock market at a glance. Designed for casual usage, not for trading.
 
 ![Screenshot of Stocks Gnome app.](docs/stocks.png)
 ![Screenshot of Stocks Gnome app.](docs/stocks2.png)
