@@ -16,6 +16,7 @@ public class KeyValueDropDown: Gtk.DropDown
     public event Action<string> OnValueSelected;
 
     private IDictionary<string, string> items;
+    private bool suppressSelectionNotifications = false;
 
     public KeyValueDropDown(IDictionary<string, string> items)
     {
@@ -45,30 +46,40 @@ public class KeyValueDropDown: Gtk.DropDown
 
     public void SetItems(IDictionary<string, string> newItems)
     {
-        this.OnNotify -= OnDropDownChanged;
-        
-        // Preserve the currently selected key before updating items
-        string? selectedKey = (SelectedItem as DropdownItem)?.Key;
-        
-        this.items = newItems;
-        var store = Model as Gio.ListStore;
-        store!.RemoveAll();
-        foreach (var item in items)
-        {
-            store.Append(new DropdownItem(item.Key, item.Value));
-        }
+        // Skip if dropdown already has exactly the same ticker ranges.
+        if (newItems.Count == items.Count && newItems.All(pair => items.TryGetValue(pair.Key, out var value) && value == pair.Value))
+            return;
 
-        // Restore the previous selection if it still exists, otherwise select first item
-        if (selectedKey != null && items.ContainsKey(selectedKey))
+        // Do not notify selection changes while model is updated programatically.
+        suppressSelectionNotifications = true;
+
+        try
         {
-            SetSelectedItem(selectedKey);
+            // Preserve the currently selected key before updating items
+            string? selectedKey = (SelectedItem as DropdownItem)?.Key;
+
+            this.items = newItems;
+            var store = Model as Gio.ListStore;
+            store!.RemoveAll();
+            foreach (var item in items)
+            {
+                store.Append(new DropdownItem(item.Key, item.Value));
+            }
+
+            // Restore the previous selection if it still exists, otherwise select first item
+            if (selectedKey != null && items.ContainsKey(selectedKey))
+            {
+                SetSelectedItem(selectedKey);
+            }
+            else if (items.Count > 0)
+            {
+                this.SetSelected(0);
+            }
         }
-        else
+        finally
         {
-            this.SetSelected(0);
+            suppressSelectionNotifications = false;
         }
-        
-        this.OnNotify += OnDropDownChanged;
     }
 
     public void SetSelectedItem(string key)
@@ -83,6 +94,9 @@ public class KeyValueDropDown: Gtk.DropDown
 
     private void OnDropDownChanged(GObject.Object sender, NotifySignalArgs args)
     {
+        if (suppressSelectionNotifications)
+            return;
+
         var name = args.Pspec.GetName();
         if (name != "selected" && name != "selected-item") 
             return;
