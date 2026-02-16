@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Stocks 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-14 19:08+0200\n"
-"PO-Revision-Date: 2026-02-14 18:09+0200\n"
+"POT-Creation-Date: 2026-02-16 18:11+0200\n"
+"PO-Revision-Date: 2026-02-16 18:17+0200\n"
 "Last-Translator: Lauri Taimila <lauri.taimila@me.com>\n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
@@ -26,37 +26,29 @@ msgstr "Pörssi"
 msgid "Symbols"
 msgstr "Symbolit"
 
-#: data/ui/SplitView.blp:28 data/ui/GridView.blp:25
-msgid "List view"
-msgstr "Lista"
-
-#: data/ui/SplitView.blp:34 data/ui/GridView.blp:31
-msgid "Grid view"
-msgstr "Ruudukko"
-
-#: data/ui/SplitView.blp:50 data/ui/GridView.blp:53
+#: data/ui/SplitView.blp:31 data/ui/GridView.blp:34
 msgid "Details"
 msgstr "Tiedot"
 
-#: data/ui/SplitView.blp:60 data/ui/GridView.blp:39 data/ui/GridView.blp:63
+#: data/ui/SplitView.blp:41 data/ui/GridView.blp:20 data/ui/GridView.blp:44
 #: data/ui/EmptyView.blp:16
 msgid "Main Menu"
 msgstr "Päävalikko"
 
-#: data/ui/SplitView.blp:71 data/ui/GridView.blp:74
+#: data/ui/SplitView.blp:52 data/ui/GridView.blp:55
 msgid "Refresh failed - Data can be stale"
 msgstr "Päivitys epäonnistui - Mahdollisesti vanhentunutta tietoa"
 
-#: data/ui/SplitView.blp:91 data/ui/GridView.blp:94 data/ui/EmptyView.blp:58
+#: data/ui/SplitView.blp:72 data/ui/GridView.blp:75 data/ui/EmptyView.blp:58
 msgid "Keyboard Shortcuts"
 msgstr "Pikanäppäimet"
 
-#: data/ui/SplitView.blp:92 data/ui/GridView.blp:95 data/ui/EmptyView.blp:59
+#: data/ui/SplitView.blp:73 data/ui/GridView.blp:76 data/ui/EmptyView.blp:59
 msgid "About Stocks"
 msgstr "Tietoja - Pörssi"
 
-#: data/ui/SplitView.blp:96 data/ui/GridView.blp:99 data/ui/EmptyView.blp:63
-#: data/ui/ShortcutsDialog.blp:15
+#: data/ui/SplitView.blp:77 data/ui/GridView.blp:80 data/ui/EmptyView.blp:63
+#: data/ui/ShortcutsDialog.blp:20
 msgid "Quit"
 msgstr "Lopeta"
 
@@ -73,6 +65,10 @@ msgid "Add symbol"
 msgstr "Lisää symboli"
 
 #: data/ui/ShortcutsDialog.blp:10
+msgid "Toggle between list and grid view"
+msgstr "Vaihda lista- ja ruudukkonäkymän välillä"
+
+#: data/ui/ShortcutsDialog.blp:15
 msgid "Refresh all"
 msgstr "Päivitä kaikki"
 
@@ -279,6 +275,12 @@ msgstr "Aika"
 #: Stocks/Ui/TickerChartPopover.cs:97
 msgid "Range"
 msgstr "Väli"
+
+#~ msgid "List view"
+#~ msgstr "Lista"
+
+#~ msgid "Grid view"
+#~ msgstr "Ruudukko"
 
 #~ msgid "Help"
 #~ msgstr "Ohje"
