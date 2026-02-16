@@ -7,7 +7,7 @@ set -e
 # instead in po directory. Replace 'fi' with locale you want to add.
 
 DOMAIN="Stocks"
-VERSION="0.1.0"
+VERSION="0.2.0"
 PO_DIR="po"
 POTFILES="$PO_DIR/POTFILES"
 POT_FILE="$PO_DIR/$DOMAIN.pot"

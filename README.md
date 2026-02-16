@@ -3,6 +3,7 @@
 A simple Gnome app for following the stock market at a glance. Meant for casual usage, not for trading.
 
 ![Screenshot of Stocks Gnome app.](docs/stocks.png)
+![Screenshot of Stocks Gnome app.](docs/stocks2.png)
 
 > [!CAUTION]
 > Do not make investment decision only based on this application. Always double check the data from some other source.
