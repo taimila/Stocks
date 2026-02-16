@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Stocks 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-02 22:17+0200\n"
-"PO-Revision-Date: 2026-02-02 22:18+0200\n"
+"POT-Creation-Date: 2026-02-14 19:08+0200\n"
+"PO-Revision-Date: 2026-02-14 18:09+0200\n"
 "Last-Translator: Lauri Taimila <lauri.taimila@me.com>\n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
@@ -18,263 +18,277 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 49.0\n"
 
-#: data/ui/MainWindow.blp:10
+#: data/ui/MainWindow.blp:13
 msgid "Stocks"
 msgstr "Pörssi"
 
-#: data/ui/MainWindow.blp:27
+#: data/ui/SplitView.blp:13 data/ui/GridView.blp:9
 msgid "Symbols"
 msgstr "Symbolit"
 
-#: data/ui/MainWindow.blp:37 data/ui/ShortcutsDialog.blp:7
-msgid "Refresh all"
-msgstr "Päivitä kaikki"
+#: data/ui/SplitView.blp:28 data/ui/GridView.blp:25
+msgid "List view"
+msgstr "Lista"
 
-#: data/ui/MainWindow.blp:43
-msgid "Add symbol"
-msgstr "Lisää symboli"
+#: data/ui/SplitView.blp:34 data/ui/GridView.blp:31
+msgid "Grid view"
+msgstr "Ruudukko"
 
-#: data/ui/MainWindow.blp:57
+#: data/ui/SplitView.blp:50 data/ui/GridView.blp:53
 msgid "Details"
 msgstr "Tiedot"
 
-#: data/ui/MainWindow.blp:67
+#: data/ui/SplitView.blp:60 data/ui/GridView.blp:39 data/ui/GridView.blp:63
+#: data/ui/EmptyView.blp:16
 msgid "Main Menu"
 msgstr "Päävalikko"
 
-#: data/ui/MainWindow.blp:77
+#: data/ui/SplitView.blp:71 data/ui/GridView.blp:74
 msgid "Refresh failed - Data can be stale"
 msgstr "Päivitys epäonnistui - Mahdollisesti vanhentunutta tietoa"
 
-#: data/ui/MainWindow.blp:97
+#: data/ui/SplitView.blp:91 data/ui/GridView.blp:94 data/ui/EmptyView.blp:58
 msgid "Keyboard Shortcuts"
 msgstr "Pikanäppäimet"
 
-#: data/ui/MainWindow.blp:98
-msgid "Help"
-msgstr "Ohje"
-
-#: data/ui/MainWindow.blp:99
+#: data/ui/SplitView.blp:92 data/ui/GridView.blp:95 data/ui/EmptyView.blp:59
 msgid "About Stocks"
 msgstr "Tietoja - Pörssi"
 
-#: data/ui/MainWindow.blp:103 data/ui/ShortcutsDialog.blp:12
+#: data/ui/SplitView.blp:96 data/ui/GridView.blp:99 data/ui/EmptyView.blp:63
+#: data/ui/ShortcutsDialog.blp:15
 msgid "Quit"
 msgstr "Lopeta"
 
-#: data/ui/ThemeSwitcher.blp:26
+#: data/ui/EmptyView.blp:25
+msgid "No symbols"
+msgstr "Ei symboleita"
+
+#: data/ui/EmptyView.blp:26
+msgid "Add symbol to your watchlist."
+msgstr "Lisää seurantalistalle."
+
+#: data/ui/EmptyView.blp:43 Stocks/Ui/AddButton.cs:17
+msgid "Add symbol"
+msgstr "Lisää symboli"
+
+#: data/ui/ShortcutsDialog.blp:10
+msgid "Refresh all"
+msgstr "Päivitä kaikki"
+
+#: data/ui/ThemeSwitcher.blp:29
 msgid "Follow system style"
 msgstr "Seuraa järjestelmän tyyliä"
 
-#: data/ui/ThemeSwitcher.blp:39
+#: data/ui/ThemeSwitcher.blp:42
 msgid "Light style"
 msgstr "Vaalea tyyli"
 
-#: data/ui/ThemeSwitcher.blp:52
+#: data/ui/ThemeSwitcher.blp:55
 msgid "Dark style"
 msgstr "Tumma tyyli"
 
-#: data/ui/TickerDetails.blp:19
+#: data/ui/TickerDetails.blp:22
 msgid "No tickers"
 msgstr "Ei symboleita"
 
-#: data/ui/TickerDetails.blp:20
+#: data/ui/TickerDetails.blp:23
 msgid "Add tickers to your watchlist."
 msgstr "Lisää seurantalistalle."
 
-#: data/ui/TickerDetails.blp:131
+#: data/ui/TickerDetails.blp:134
 msgid "Save alias for symbol"
 msgstr "Tallenna näyttönimi"
 
-#: data/ui/TickerDetails.blp:159 Stocks/Model/TickerRange.cs:43
+#: data/ui/TickerDetails.blp:162 Stocks/Model/TickerRange.cs:46
 msgid "1d"
 msgstr "1pv"
 
-#: data/ui/TickerDetails.blp:160 Stocks/Model/TickerRange.cs:27
+#: data/ui/TickerDetails.blp:163 Stocks/Model/TickerRange.cs:30
 msgid "1 day"
 msgstr "1 päivä"
 
-#: data/ui/TickerDetails.blp:164 Stocks/Model/TickerRange.cs:44
+#: data/ui/TickerDetails.blp:167 Stocks/Model/TickerRange.cs:47
 msgid "5d"
 msgstr "5pv"
 
-#: data/ui/TickerDetails.blp:165 Stocks/Model/TickerRange.cs:28
+#: data/ui/TickerDetails.blp:168 Stocks/Model/TickerRange.cs:31
 msgid "5 days"
 msgstr "5 päivää"
 
-#: data/ui/TickerDetails.blp:169 Stocks/Model/TickerRange.cs:45
+#: data/ui/TickerDetails.blp:172 Stocks/Model/TickerRange.cs:48
 msgid "1m"
 msgstr "1kk"
 
-#: data/ui/TickerDetails.blp:170 Stocks/Model/TickerRange.cs:29
+#: data/ui/TickerDetails.blp:173 Stocks/Model/TickerRange.cs:32
 msgid "1 month"
 msgstr "1 kuukausi"
 
-#: data/ui/TickerDetails.blp:174 Stocks/Model/TickerRange.cs:46
+#: data/ui/TickerDetails.blp:177 Stocks/Model/TickerRange.cs:49
 msgid "3m"
 msgstr "3kk"
 
-#: data/ui/TickerDetails.blp:175 Stocks/Model/TickerRange.cs:30
+#: data/ui/TickerDetails.blp:178 Stocks/Model/TickerRange.cs:33
 msgid "3 months"
 msgstr "3 kuukautta"
 
-#: data/ui/TickerDetails.blp:179 Stocks/Model/TickerRange.cs:47
+#: data/ui/TickerDetails.blp:182 Stocks/Model/TickerRange.cs:50
 msgid "6m"
 msgstr "6kk"
 
-#: data/ui/TickerDetails.blp:180 Stocks/Model/TickerRange.cs:31
+#: data/ui/TickerDetails.blp:183 Stocks/Model/TickerRange.cs:34
 msgid "6 months"
 msgstr "6 kuukautta"
 
-#: data/ui/TickerDetails.blp:184 Stocks/Model/TickerRange.cs:53
+#: data/ui/TickerDetails.blp:187 Stocks/Model/TickerRange.cs:56
 msgid "Ytd"
 msgstr "ytd"
 
-#: data/ui/TickerDetails.blp:185 Stocks/Model/TickerRange.cs:37
+#: data/ui/TickerDetails.blp:188 Stocks/Model/TickerRange.cs:40
 msgid "Year to date"
 msgstr "Vuoden alusta"
 
-#: data/ui/TickerDetails.blp:189 Stocks/Model/TickerRange.cs:48
+#: data/ui/TickerDetails.blp:192 Stocks/Model/TickerRange.cs:51
 msgid "1y"
 msgstr "1v"
 
-#: data/ui/TickerDetails.blp:190 Stocks/Model/TickerRange.cs:32
+#: data/ui/TickerDetails.blp:193 Stocks/Model/TickerRange.cs:35
 msgid "1 year"
 msgstr "1 vuosi"
 
-#: data/ui/TickerDetails.blp:194 Stocks/Model/TickerRange.cs:49
+#: data/ui/TickerDetails.blp:197 Stocks/Model/TickerRange.cs:52
 msgid "2y"
 msgstr "2v"
 
-#: data/ui/TickerDetails.blp:195 Stocks/Model/TickerRange.cs:33
+#: data/ui/TickerDetails.blp:198 Stocks/Model/TickerRange.cs:36
 msgid "2 years"
 msgstr "2 vuotta"
 
-#: data/ui/TickerDetails.blp:199 Stocks/Model/TickerRange.cs:50
+#: data/ui/TickerDetails.blp:202 Stocks/Model/TickerRange.cs:53
 msgid "5y"
 msgstr "5v"
 
-#: data/ui/TickerDetails.blp:200 Stocks/Model/TickerRange.cs:34
+#: data/ui/TickerDetails.blp:203 Stocks/Model/TickerRange.cs:37
 msgid "5 years"
 msgstr "5 vuotta"
 
-#: data/ui/TickerDetails.blp:204 Stocks/Model/TickerRange.cs:51
+#: data/ui/TickerDetails.blp:207 Stocks/Model/TickerRange.cs:54
 msgid "10y"
 msgstr "10v"
 
-#: data/ui/TickerDetails.blp:205 Stocks/Model/TickerRange.cs:35
+#: data/ui/TickerDetails.blp:208 Stocks/Model/TickerRange.cs:38
 msgid "10 years"
 msgstr "10 vuotta"
 
-#: data/ui/TickerDetails.blp:209 data/ui/TickerDetails.blp:210
-#: Stocks/Model/TickerRange.cs:36 Stocks/Model/TickerRange.cs:52
+#: data/ui/TickerDetails.blp:212 data/ui/TickerDetails.blp:213
+#: Stocks/Model/TickerRange.cs:39 Stocks/Model/TickerRange.cs:55
 msgid "All"
 msgstr "kaikki"
 
-#: data/ui/TickerDetails.blp:228 data/ui/TickerDetails.blp:293
+#: data/ui/TickerDetails.blp:231 data/ui/TickerDetails.blp:296
 msgid "Open"
 msgstr "Avaus"
 
-#: data/ui/TickerDetails.blp:242 data/ui/TickerDetails.blp:307
+#: data/ui/TickerDetails.blp:245 data/ui/TickerDetails.blp:310
 msgid "High"
 msgstr "Ylin"
 
-#: data/ui/TickerDetails.blp:256 data/ui/TickerDetails.blp:321
+#: data/ui/TickerDetails.blp:259 data/ui/TickerDetails.blp:324
 msgid "Low"
 msgstr "Alin"
 
-#: data/ui/TickerDetails.blp:270 data/ui/TickerDetails.blp:335
+#: data/ui/TickerDetails.blp:273 data/ui/TickerDetails.blp:338
 msgid "Market"
 msgstr "Markkina"
 
-#: data/ui/TickerDetails.blp:362
+#: data/ui/TickerDetails.blp:365
 msgid "Updated just now."
 msgstr "Päivitetty juuri nyt."
 
-#: Stocks/Ui/MainWindow.cs:64
-#, csharp-format
-msgid "{0} removed"
-msgstr "{0} poistettu"
-
-#: Stocks/Ui/AddTickerPopover.cs:58 Stocks/Ui/AddTickerPopover.cs:128
+#: Stocks/Ui/AddTickerPopover.cs:79 Stocks/Ui/AddTickerPopover.cs:154
 msgid "Search symbols"
 msgstr "Etsi symboleita"
 
-#: Stocks/Ui/AddTickerPopover.cs:129
+#: Stocks/Ui/AddTickerPopover.cs:155
 msgid "Start typing to see search results."
 msgstr "Kirjoita nähdäksesi hakutuloksia"
 
-#: Stocks/Ui/AddTickerPopover.cs:135
+#: Stocks/Ui/AddTickerPopover.cs:161
 msgid "No results"
 msgstr "Ei tuloksia"
 
-#: Stocks/Ui/AddTickerPopover.cs:136
+#: Stocks/Ui/AddTickerPopover.cs:162
 msgid "No results found for current search term."
 msgstr "Ei osumia annetulle hakusanalle."
 
-#: Stocks/Ui/AddTickerPopover.cs:157
+#: Stocks/Ui/AddTickerPopover.cs:182
 msgid "Add to watchlist"
 msgstr "Lisää seurantalistalle"
 
-#: Stocks/Ui/AddTickerPopover.cs:157
+#: Stocks/Ui/AddTickerPopover.cs:182
 msgid "Already on watchlist"
 msgstr "Seurantalistalla"
 
-#: Stocks/Ui/SidebarItem.cs:26
-msgid "Remove"
-msgstr "Poista"
-
-#: Stocks/Ui/SidebarItem.cs:30
-msgid "Refresh"
-msgstr "Päivitä"
-
-#: Stocks/Ui/TickerDetails.cs:193
+#: Stocks/Ui/TickerDetails.cs:195
 msgid "Chart not available"
 msgstr "Kaavio ei ole saatavilla"
 
-#: Stocks/Ui/TickerDetails.cs:408
+#: Stocks/Ui/TickerDetails.cs:410
 #, csharp-format
 msgid "Read more on <a href=\"{0}\">Yahoo Finance</a>."
 msgstr "Lisätietoja <a href=\"{0}\">Yahoo Finance</a> sivuilta."
 
-#: Stocks/Ui/TickerDetails.cs:436
+#: Stocks/Ui/TickerDetails.cs:438
 msgctxt "market-status"
 msgid "Open"
 msgstr "Auki"
 
-#: Stocks/Ui/TickerDetails.cs:437
+#: Stocks/Ui/TickerDetails.cs:439
 msgid "Closed"
 msgstr "Suljettu"
 
-#: Stocks/Ui/TickerDetails.cs:438
+#: Stocks/Ui/TickerDetails.cs:440
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: Stocks/Ui/TickerDetails.cs:456
+#: Stocks/Ui/TickerDetails.cs:458
 msgid "Updated less than minute ago."
 msgstr "Päivitetty alle minuutti sitten."
 
-#: Stocks/Ui/TickerDetails.cs:458
+#: Stocks/Ui/TickerDetails.cs:460
 #, csharp-format
 msgid "Updated {0} minutes ago."
 msgstr "Päivitetty {0} minuuttia sitten."
 
-#: Stocks/Ui/TickerChartPopover.cs:30 Stocks/Ui/TickerChartPopover.cs:81
+#: Stocks/Ui/TickerChartPopover.cs:33 Stocks/Ui/TickerChartPopover.cs:84
 msgid "Date"
 msgstr "Päivä"
 
-#: Stocks/Ui/TickerChartPopover.cs:41
+#: Stocks/Ui/TickerChartPopover.cs:44
 msgid "Price"
 msgstr "Hinta"
 
-#: Stocks/Ui/TickerChartPopover.cs:52
+#: Stocks/Ui/TickerChartPopover.cs:55
 msgid "Change"
 msgstr "Muutos"
 
-#: Stocks/Ui/TickerChartPopover.cs:81
+#: Stocks/Ui/TickerChartPopover.cs:84
 msgid "Time"
 msgstr "Aika"
 
-#: Stocks/Ui/TickerChartPopover.cs:94
+#: Stocks/Ui/TickerChartPopover.cs:97
 msgid "Range"
 msgstr "Väli"
+
+#~ msgid "Help"
+#~ msgstr "Ohje"
+
+#, csharp-format
+#~ msgid "{0} removed"
+#~ msgstr "{0} poistettu"
+
+#~ msgid "Remove"
+#~ msgstr "Poista"
+
+#~ msgid "Refresh"
+#~ msgstr "Päivitä"

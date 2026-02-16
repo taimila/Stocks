@@ -12,13 +12,13 @@ public class AppSettings
         this.settings = settings;
     }
 
-    public int UpdateIntervalInSeconds
+    public virtual int UpdateIntervalInSeconds
     {
         get => settings.GetInt("update-interval");
         set => settings.SetInt("update-interval", value);
     }
 
-    public string UserAgent
+    public virtual string UserAgent
     {
         get => settings.GetString("user-agent");
         set => settings.SetString("user-agent", value);

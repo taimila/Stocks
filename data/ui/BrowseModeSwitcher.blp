@@ -1,0 +1,73 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+
+Box browseModeSwitcher {
+    styles [ "browsemode-switcher" ]
+    hexpand: true;
+    halign: fill;
+
+    Box {
+        orientation: horizontal;
+        spacing: 6;
+        homogeneous: true;
+        hexpand: true;
+        halign: fill;
+
+        ToggleButton listButton {
+            styles [ "mode-selector" ]
+            hexpand: true;
+            halign: fill;
+            focus-on-click: false;
+
+            child: Box {
+                styles [ "mode-card" ]
+                orientation: vertical;
+                spacing: 6;
+                valign: center;
+                halign: fill;
+                hexpand: true;
+
+                Image {
+                    styles [ "mode-icon" ]
+                    icon-name: "view-list-symbolic";
+                    halign: center;
+                }
+
+                Label {
+                    label: _("List view");
+                    halign: center;
+                }
+            };
+        }
+
+        ToggleButton gridButton {
+            styles [ "mode-selector" ]
+            group: listButton;
+            hexpand: true;
+            halign: fill;
+            focus-on-click: false;
+
+            child: Box {
+                styles [ "mode-card" ]
+                orientation: vertical;
+                spacing: 6;
+                valign: center;
+                halign: fill;
+                hexpand: true;
+
+                Image {
+                    styles [ "mode-icon" ]
+                    icon-name: "view-grid-symbolic";
+                    halign: center;
+                }
+
+                Label {
+                    label: _("Grid view");
+                    halign: center;
+                }
+            };
+        }
+    }
+}

@@ -21,10 +21,24 @@
     background-color: #E01B24;
 }
 
-/* Sidebar */
+/* Sidebar and TickerGrid drag and drop */
 /* ************************************************************************* */
-.drag-row {
+.sidebar-drag-preview {
     background-color: var(--sidebar-bg-color);
+    border-radius: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.sidebar-drag-preview label.subtitle {
+    font-size: smaller;
+    opacity: var(--dim-opacity);
+}
+
+.drag-placeholder {
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: inset 0 0 0 2px @accent_bg_color;
 }
 
 /* TickerDetails */
@@ -156,4 +170,49 @@
     -gtk-icon-source: -gtk-icontheme("object-select-symbolic");
     background-color: @theme_selected_bg_color;
     color: @theme_selected_fg_color;
+}
+
+/* BrowseModeSwitcher */
+/* ************************************************************************* */
+
+.browsemode-switcher .mode-selector,
+.browsemode-switcher .mode-selector:hover,
+.browsemode-switcher .mode-selector:active,
+.browsemode-switcher .mode-selector:checked,
+.browsemode-switcher .mode-selector:checked:hover,
+.browsemode-switcher .mode-selector:backdrop {
+    padding: 0;
+    min-height: 0;
+    min-width: 0;
+    background: none;
+    background-color: transparent;
+    background-image: none;
+    box-shadow: none;
+    border: none;
+    font-weight: 400;
+}
+
+.browsemode-switcher .mode-selector .mode-card {
+    min-height: 0;
+    padding: 10px 8px;
+    margin: 0;
+    border-radius: 12px;
+    background-color: transparent;
+    transition: 160ms ease;
+}
+
+.browsemode-switcher .mode-selector label {
+    font-weight: 400;
+}
+
+.browsemode-switcher .mode-selector:hover .mode-card {
+    background-color: color-mix(in srgb, var(--view-fg-color) 10%, transparent);
+}
+
+.browsemode-switcher .mode-selector:checked .mode-card {
+    background-color: color-mix(in srgb, var(--view-fg-color) 10%, transparent);
+}
+
+.browsemode-switcher .mode-icon {
+    -gtk-icon-size: 24px;
 }

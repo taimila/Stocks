@@ -7,136 +7,183 @@ namespace Stocks.UI;
 
 public class MainWindow : Adw.ApplicationWindow
 {
-    [Gtk.Connect] private readonly Adw.NavigationSplitView splitView;
-    [Gtk.Connect] private readonly Gtk.Stack mainContentStack;
-    [Gtk.Connect] private readonly Adw.ToolbarView emptyView;
-    [Gtk.Connect] private readonly Gtk.ScrolledWindow sidebarContainer;
-    [Gtk.Connect] private readonly Adw.Bin detailsContainer;
-    [Gtk.Connect] private readonly Adw.Banner errorBanner;
-    [Gtk.Connect] private readonly Gtk.Button addButton;
-    [Gtk.Connect] private readonly Gtk.Button emptyHeaderAddButton;
-    [Gtk.Connect] private readonly Gtk.Button addSymbolButton;
-    [Gtk.Connect] private readonly Adw.ToastOverlay toastOverlay;
-    [Gtk.Connect] private readonly Gtk.MenuButton menuButton;
-    [Gtk.Connect] private readonly Gtk.MenuButton emptyMenuButton;
-    [Gtk.Connect] private readonly Adw.NavigationPage detailsContent;
-    [Gtk.Connect] private readonly Adw.HeaderBar detailsHeader;
+    [Gtk.Connect] private readonly Gtk.Stack stack;
 
     private readonly AppModel model;
-    private readonly Gio.Settings settings;
-    private Sidebar sidebar;
+    private readonly AppTheme theme;
+    private readonly AppMode mode;
+    private readonly SplitView splitView;
+    private readonly GridView gridView;
+    private readonly EmptyView emptyView;
+
     private bool isNarrow = false;
 
-    private MainWindow(Gtk.Builder builder, string name) 
+    private MainWindow(Gtk.Builder builder, string name)
         : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
-        addButton!.OnClicked += (_, _) => { OnAdd(); };
-        addSymbolButton!.OnClicked += (_, _) => { ShowAddDialog(); };
-        emptyHeaderAddButton!.OnClicked += (_, _) => { OnAdd(); };
-        splitView!.OnNotify += (_, args) =>
-        {
-            if (args.Pspec.GetName() == "collapsed")
-                sidebar!.IsCollapsed = splitView.Collapsed;
-        };
     }
 
-    public MainWindow(Adw.Application application, AppModel model, Gio.Settings settings) : this(Builder.FromFile("MainWindow.ui"), "mainWindow")
+    public MainWindow(Adw.Application application, AppModel model, Gio.Settings settings)
+        : this(Builder.FromFile("MainWindow.ui"), "mainWindow")
     {
         this.model = model;
-        this.settings = settings;
         Application = application;
-        
-        #if DEBUG
-        AddCssClass("devel");
-        #endif
 
-        SetupThemeSwitcher();
-        SetupUIUpdateWhenNarrow();
-        SetupDetailsAndSidebar();
-        SetupModelObserving();
+        theme = new AppTheme(settings);
+        mode = new AppMode(settings);
+        splitView = new SplitView(model);
+        gridView = new GridView(model);
+        emptyView = new EmptyView(model);
 
-        UpdateEmptyState();
-    }
+        stack.AddNamed(splitView, "split");
+        stack.AddNamed(gridView, "grid");
+        stack.AddNamed(emptyView, "empty");
 
-    private void SetupModelObserving()
-    {
-        foreach (var t in model.Tickers)
-            t.OnUpdated += OnTickerUpdate;
-     
-        model.OnTickerAdded += (ticker) => {
-            ticker.OnUpdated += OnTickerUpdate;
-            UpdateEmptyState();
-            GLib.Functions.IdleAdd(100, () =>
-            {
-                sidebarContainer.ScrollToBottom();
-                return false;
-            });
+        mode.OnChanged += mode =>
+        {
+            // MenuButton is different in modes, so we need to reopen the menu
+            // after mode changes. This causes flashy UI and should be fixed.
+            var previouslyOpenMenu = GetOpenPrimaryMenuButton();
+            SetBrowseMode(mode);
+            ReopenPrimaryMenu(previouslyOpenMenu);
         };
 
-        model.OnTickerRemoved += (ticker) => {
-            ticker.OnUpdated -= OnTickerUpdate;
-            ShowToast(string.Format(_("{0} removed"), ticker.Symbol));
-            UpdateEmptyState();
-        };
+        model.OnTickerAdded += _ => UpdateVisibleWidgetOfStack();
+        model.OnTickerRemoved += _ => UpdateVisibleWidgetOfStack();
 
-        model.OnActiveTickerChanged += (_, ticker) =>
-        {
-            detailsContent.Title = ticker.DisplayName;
-            splitView.ShowContent = true;
-        };
+        SetupPrimaryMenu();
+        SetupUpdatesOnWindowResize();
+        UpdateVisibleWidgetOfStack();
     }
 
-    private void OnTickerUpdate(Ticker ticker)
+    private void SetBrowseMode(BrowseMode mode)
     {
-        GLib.Functions.IdleAdd(100, () =>
-        {
-            detailsContent.Title = model.SelectedTicker?.DisplayName ?? "";
-            UpdateErrorBannerState();
-            return false;
-        });
+        splitView.BrowseModeChangedTo(mode);
+        gridView.BrowseModeChangedTo(mode);
+
+        if (mode == BrowseMode.List)
+            splitView.SetCollapsed(ShouldBeCollapsedInListMode());
+
+        this.mode.SetBrowseMode(mode);
+        UpdateVisibleWidgetOfStack();
     }
 
-    private void SetupDetailsAndSidebar()
-    {
-        var details = new TickerDetails(model);
-        detailsContainer.SetChild(details);
-       
-        sidebar = new Sidebar(model);
-        sidebarContainer.SetChild(sidebar);
-    }
+    private bool ShouldBeCollapsedInListMode() => GetWindowWidth() <= 600;
 
-    private void SetupThemeSwitcher()
+    private void SetupPrimaryMenu()
     {
-        void InjectThemeSwitcher(Gtk.MenuButton? target)
+        void InjectPrimaryMenuTopControls(Gtk.MenuButton target)
         {
-            var themeSwitcher = new ThemeSwitcher(settings);
+            var controls = Gtk.Box.New(Gtk.Orientation.Vertical, 0);
+            controls.Hexpand = true;
+            controls.Halign = Gtk.Align.Fill;
 
-            // Inject theme switcher into primary menu as a first item.
+            var themeSwitcher = new ThemeSwitcher(theme);
+            var modeSwitcher = new BrowseModeSwitcher(mode);
+            var separator = Gtk.Separator.New(Gtk.Orientation.Horizontal);
+
+            themeSwitcher.Hexpand = true;
+            themeSwitcher.Halign = Gtk.Align.Fill;
+            modeSwitcher.Hexpand = true;
+            modeSwitcher.Halign = Gtk.Align.Fill;
+
+            controls.Append(themeSwitcher);
+            controls.Append(separator);
+            controls.Append(modeSwitcher);
+
+            // Inject custom controls into primary menu as first items.
             ((((target.Popover
                 ?.GetChild() as Gtk.ScrolledWindow)
                 ?.GetChild() as Gtk.Viewport)
                 ?.GetChild() as Gtk.Stack)
                 ?.VisibleChild as Gtk.Box)
-                ?.Prepend(themeSwitcher);
+                ?.Prepend(controls);
         }
 
-        InjectThemeSwitcher(menuButton);
-        InjectThemeSwitcher(emptyMenuButton);
+        InjectPrimaryMenuTopControls(splitView.MenuButton);
+        InjectPrimaryMenuTopControls(gridView.MenuButton);
+        InjectPrimaryMenuTopControls(gridView.DetailsMenuButton);
+        InjectPrimaryMenuTopControls(emptyView.MenuButton);
     }
 
-    private void SetupUIUpdateWhenNarrow()
+    private Gtk.MenuButton? GetOpenPrimaryMenuButton()
     {
-        Application!.ActiveWindow!.OnNotify += (_,x) =>
+        if (splitView.MenuButton.Active)
+            return splitView.MenuButton;
+
+        if (gridView.MenuButton.Active)
+            return gridView.MenuButton;
+
+        if (gridView.DetailsMenuButton.Active)
+            return gridView.DetailsMenuButton;
+
+        if (emptyView.MenuButton.Active)
+            return emptyView.MenuButton;
+
+        return null;
+    }
+
+    private Gtk.MenuButton GetPrimaryMenuButtonForCurrentState()
+    {
+        if (!model.HasTickers)
+            return emptyView.MenuButton;
+
+        return mode.Current == BrowseMode.Grid
+            ? gridView.MenuButton
+            : splitView.MenuButton;
+    }
+
+    private void ReopenPrimaryMenu(Gtk.MenuButton? triggerButton)
+    {
+        if (triggerButton is null)
+            return;
+
+        GLib.Functions.IdleAdd(100, () =>
         {
-            if (x.Pspec.GetName() == "default-width")
-                SetNarrow(Application.ActiveWindow.GetWidth() <= 1050);
-        };
+            var target = GetPrimaryMenuButtonForCurrentState();
+            target.Active = true;
+            return false;
+        });
     }
 
-    private void UpdateEmptyState()
+    private void SetupUpdatesOnWindowResize()
     {
-        mainContentStack.VisibleChild = model.HasTickers ? splitView : emptyView;
+        Application!.ActiveWindow!.OnNotify += (_, args) =>
+        {
+            var propertyName = args.Pspec.GetName();
+            if (propertyName != "default-width" && propertyName != "width")
+                return;
+
+            UpdateResponsiveState();
+        };
+
+        GLib.Functions.IdleAdd(100, () =>
+        {
+            UpdateResponsiveState();
+            return false;
+        });
+    }
+
+    private void UpdateResponsiveState()
+    {
+        var width = GetWindowWidth();
+
+        if (mode.Current == BrowseMode.List)
+        {
+            SetNarrow(width <= 1000);
+            splitView.SetCollapsed(ShouldBeCollapsedInListMode());
+        }
+        else
+        {
+            SetNarrow(width <= 700);
+        }
+    }
+
+    private int GetWindowWidth()
+    {
+        var width = Application?.ActiveWindow?.GetWidth() ?? GetWidth();
+        return width > 0 ? width : 1100;
     }
 
     private void SetNarrow(bool enable)
@@ -145,39 +192,15 @@ public class MainWindow : Adw.ApplicationWindow
             return;
 
         isNarrow = enable;
-        (detailsContainer.Child as TickerDetails)?.SetIsNarrow(enable);
-
-        detailsHeader.ShowTitle = enable;
+        splitView.SetIsNarrow(enable);
+        gridView.SetIsNarrow(enable);
     }
 
-    private void ShowToast(string text)
+    private void UpdateVisibleWidgetOfStack()
     {
-        toastOverlay.AddToast(Adw.Toast.New(text));
-    }
-
-    private void UpdateErrorBannerState()
-    {
-        errorBanner.Revealed = model.Tickers.Any(x => x.DataFetchFailed);
-    }
-
-    private void OnAdd()
-    {
-        if (splitView.Collapsed)
-            ShowAddDialog();
+        if (model.HasTickers)
+            stack.VisibleChild = mode.Current == BrowseMode.Grid ? gridView : splitView;
         else
-            ShowAddPopover();
-    }
-
-    private void ShowAddPopover()
-    {
-        var popover = new AddTickerPopover(model);
-        popover.SetParent(model.HasTickers ? addButton : emptyHeaderAddButton);
-        popover.Show();
-    }
-
-    private void ShowAddDialog()
-    {
-        var dialog = new AddTickerDialog(model);
-        dialog.Present(this);
+            stack.VisibleChild = emptyView;
     }
 }

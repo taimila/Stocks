@@ -6,9 +6,17 @@
         <value nick="dark" value="2"/>
     </enum>
 
+    <enum id="fi.taimila.Stocks.BrowseMode">
+        <value nick="list" value="0"/>
+        <value nick="grid" value="1"/>
+    </enum>
+
     <schema id="fi.taimila.Stocks" path="/fi/taimila/Stocks/">
         <key name="theme" enum="fi.taimila.Stocks.Theme">
             <default>'system'</default>
+        </key>
+        <key name="browse-mode" enum="fi.taimila.Stocks.BrowseMode">
+            <default>'list'</default>
         </key>
         <key name="update-interval" type="i">
             <default>5</default>

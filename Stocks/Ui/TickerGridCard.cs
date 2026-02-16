@@ -5,9 +5,9 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class SidebarItem : Gtk.Grid
+public class TickerGridCard : Gtk.Box
 {
-    [Gtk.Connect] private readonly Gtk.Label symbol;
+    [Gtk.Connect] private readonly Gtk.Label displayName;
     [Gtk.Connect] private readonly Gtk.Label name;
     [Gtk.Connect] private readonly Gtk.Label value;
     [Gtk.Connect] private readonly Gtk.Label change;
@@ -15,20 +15,19 @@ public class SidebarItem : Gtk.Grid
 
     private readonly TickerChart chart;
 
-    public Ticker Ticker { get; private set; }
-  
-    private SidebarItem(Gtk.Builder builder, string name) : base(new Gtk.Internal.GridHandle(builder.GetPointer(name), false))
+    public Ticker Ticker { get; }
+
+    private TickerGridCard(Gtk.Builder builder, string name)
+        : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
     {
         builder.Connect(this);
     }
 
-    public SidebarItem(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, Ticker ticker) : this(Builder.FromFile("SidebarItem.ui"), "sidebar-item")
+    public TickerGridCard(Ticker ticker)
+        : this(Builder.FromFile("TickerGridCard.ui"), "ticker-grid-card")
     {
-        // Add widgets to groups so that GTK can align these over all sidebar items.
-        g1.AddWidget(symbol);
-        g1.AddWidget(name);
-        g2.AddWidget(chartBin);
-        g3.AddWidget(value);
+        Ticker = ticker;
+        TickerContextMenu.Attach(this, () => Ticker);
 
         chart = new TickerChart
         {
@@ -38,22 +37,18 @@ public class SidebarItem : Gtk.Grid
             ShowGradient = true,
             ShowXScale = false,
             ShowYScale = false,
-            LineWidth = 1,
-            CloseMarkerWidth = 1,
-            Padding = 1,
-            MarginTop = 10,
-            MarginBottom = 10
+            LineWidth = 1.5,
+            Hexpand = true,
+            Vexpand = true
         };
+
         chartBin.SetChild(chart);
 
-        Ticker = ticker;
-        TickerContextMenu.Attach(this, () => Ticker);
-
-        ticker.OnUpdated += ticker =>
+        ticker.OnUpdated += t =>
         {
             GLib.Functions.IdleAdd(100, () =>
             {
-                UpdateUI(ticker);
+                UpdateUI(t);
                 return false;
             });
         };
@@ -63,18 +58,17 @@ public class SidebarItem : Gtk.Grid
 
     private void UpdateUI(Ticker ticker)
     {
-        // Skip UI update if there is no data availabe.
         if (!ticker.TryGetData(TickerRange.Day, out var data))
             return;
-    
-        symbol.SetLabel(ticker.DisplayName);
-        symbol.TooltipText = ticker.Symbol; 
+
+        displayName.SetLabel(ticker.DisplayName);
+        displayName.TooltipText = ticker.Symbol;
 
         name.SetLabel(ticker.Name);
         name.TooltipText = ticker.Name;
-        
+
         value.SetLabel(data.MarketPrice.ToStringWithoutCurrency());
-        
+
         change.SetLabel(data.PercentageChange.ToString() ?? "");
         change.RemoveCssClass("positive-label");
         change.RemoveCssClass("negative-label");

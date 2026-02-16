@@ -1,0 +1,82 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+Adw.NavigationView gridView {
+	Adw.NavigationPage {
+		title: _("Symbols");
+		tag: "grid";
+
+		child: Adw.ToolbarView {
+			[top]
+			Adw.HeaderBar gridHeader {
+				show-title: false;
+				// Add button is injected here [start]
+
+				[end]
+				MenuButton menuButton {
+					tooltip-text: _("Main Menu");
+					icon-name: "open-menu-symbolic";
+					menu-model: primaryMenu;
+					primary: true;
+				}
+			}
+
+			content: ScrolledWindow scrollContainer {
+				hscrollbar-policy: never;
+			};
+		};
+	}
+
+	Adw.NavigationPage detailsContent {
+		title: _("Details");
+		tag: "details";
+
+		child: Adw.ToolbarView {
+			[top]
+			Adw.HeaderBar detailsHeader {
+				show-title: false;
+
+				[end]
+				MenuButton detailsMenuButton {
+					tooltip-text: _("Main Menu");
+					icon-name: "open-menu-symbolic";
+					menu-model: primaryMenu;
+					primary: true;
+				}
+			}
+
+			content: Box {
+				orientation: vertical;
+
+				Adw.Banner errorBanner {
+					title: _("Refresh failed - Data can be stale");
+			  		revealed: false;
+				}
+
+				Adw.Bin detailsContainer {
+					// Details is injected here.
+				}
+			};
+		};
+	}
+}
+
+menu primaryMenu {
+	section {
+		item {
+			custom: "themeswitcher";
+		}
+	}
+
+	section {
+		item (_("Keyboard Shortcuts"), "app.shortcuts")
+		item (_("About Stocks"), "app.about")
+	}
+
+	section {
+		item (_("Quit"), "app.quit")
+	}
+}
