@@ -29,8 +29,10 @@ public class AppModel
     public bool HasTickers => Tickers.Count > 0;
     public Ticker? SelectedTicker { get; private set; } = null;
 
+    // Events that allow UI to update itself as application state changes
     public event Action<Ticker>? OnTickerAdded;
     public event Action<Ticker>? OnTickerRemoved;
+    public event Action<Ticker, int>? OnTickerMoved;
     public event Action<Ticker?, Ticker>? OnActiveTickerChanged;
     public event Action<TickerRange>? OnActiveTickerRangeChanged;
 
@@ -74,9 +76,16 @@ public class AppModel
 
     public void MoveTicker(Ticker ticker, int index)
     {
-        Tickers.Remove(ticker);
-        Tickers.Insert(index, ticker);
-        storage.Move(ticker.Symbol, index);
+        var oldIndex = Tickers.IndexOf(ticker);
+        var newIndex = Math.Clamp(index, 0, Tickers.Count - 1);
+        
+        if (newIndex == oldIndex)
+            return;
+
+        Tickers.RemoveAt(oldIndex);
+        Tickers.Insert(newIndex, ticker);
+        storage.Move(ticker.Symbol, newIndex);
+        OnTickerMoved?.Invoke(ticker, newIndex);
     }
 
     public async Task AddTicker(string symbol)

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using NSubstitute;
 using NUnit.Framework;
 using Stocks.Model;
@@ -15,10 +16,20 @@ public class TickerTests
         return market;
     }
 
+    private static TestTickerFetcher CreateFetcher(Result? result = null, Exception? exception = null)
+    {
+        if (exception is not null)
+        {
+            return TestTickerFetcher.Create((_, _) => Task.FromException<Result>(exception));
+        }
+
+        return TestTickerFetcher.Create((_, _) => Task.FromResult(result ?? CreateResult()));
+    }
+
     [Test]
     public void SymbolReturnsConstructorValue()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var symbol = sut.Symbol;
@@ -29,7 +40,7 @@ public class TickerTests
     [Test]
     public void NameDefaultsToEmpty()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var name = sut.Name;
@@ -40,7 +51,7 @@ public class TickerTests
     [Test]
     public void ExchangeNameDefaultsToEmpty()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var exchangeName = sut.ExchangeName;
@@ -51,7 +62,7 @@ public class TickerTests
     [Test]
     public void DataFetchFailedDefaultsToFalse()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var failed = sut.DataFetchFailed;
@@ -62,7 +73,7 @@ public class TickerTests
     [Test]
     public void AvailableRangesDefaultsToEmpty()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var ranges = sut.AvailableRanges;
@@ -73,8 +84,7 @@ public class TickerTests
     [Test]
     public async Task RefreshStoresDayDataRange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -89,8 +99,7 @@ public class TickerTests
     [Test]
     public async Task RefreshStoresRequestedDataRange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Month);
@@ -104,7 +113,7 @@ public class TickerTests
     [Test]
     public void LastUpdatedDefaultsToMinValue()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
+        var fetcher = CreateFetcher();
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         var lastUpdated = sut.LastUpdated;
@@ -115,20 +124,19 @@ public class TickerTests
     [Test]
     public async Task RefreshCallsFetcherWithDayRange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
 
-        await fetcher.Received(1).Fetch(Symbol, TickerRange.Day);
+        Assert.That(fetcher.FetchCalls.Count, Is.EqualTo(1));
+        Assert.That(fetcher.FetchCalls[0], Is.EqualTo((Symbol, TickerRange.Day)));
     }
 
     [Test]
     public async Task RefreshSetsNameFromMeta()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult(longName: "Acme Corp")));
+        var fetcher = CreateFetcher(CreateResult(longName: "Acme Corp"));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -139,8 +147,7 @@ public class TickerTests
     [Test]
     public async Task RefreshSetsExchangeNameFromMeta()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult(fullExchangeName: "NASDAQ")));
+        var fetcher = CreateFetcher(CreateResult(fullExchangeName: "NASDAQ"));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -151,8 +158,7 @@ public class TickerTests
     [Test]
     public async Task RefreshSetsAvailableRangesFromMeta()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult(validRanges: new[] { "1d", "5d", "1mo" })));
+        var fetcher = CreateFetcher(CreateResult(validRanges: new[] { "1d", "5d", "1mo" }));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -163,8 +169,7 @@ public class TickerTests
     [Test]
     public async Task RefreshSetsDayDataRangeToDay()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -179,8 +184,7 @@ public class TickerTests
     [Test]
     public async Task RefreshUpdatesLastUpdated()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -191,8 +195,7 @@ public class TickerTests
     [Test]
     public async Task RefreshRaisesOnUpdatedEventOnSuccess()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         var wasRaised = false;
         sut.OnUpdated += _ => wasRaised = true;
@@ -205,9 +208,7 @@ public class TickerTests
     [Test]
     public async Task RefreshSetsDataFetchFailedOnException()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>())
-            .Returns(Task.FromException<Result>(new TickerFetchFailedException("nope", new Exception("boom"))));
+        var fetcher = CreateFetcher(exception: new TickerFetchFailedException("nope", new Exception("boom")));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Day);
@@ -218,9 +219,7 @@ public class TickerTests
     [Test]
     public async Task RefreshRaisesOnUpdatedEventOnFailure()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>())
-            .Returns(Task.FromException<Result>(new TickerFetchFailedException("nope", new Exception("boom"))));
+        var fetcher = CreateFetcher(exception: new TickerFetchFailedException("nope", new Exception("boom")));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         var wasRaised = false;
         sut.OnUpdated += _ => wasRaised = true;
@@ -233,20 +232,19 @@ public class TickerTests
     [Test]
     public async Task RefreshCallsFetcherWithRequestedRange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Month);
 
-        await fetcher.Received(1).Fetch(Symbol, TickerRange.Month);
+        Assert.That(fetcher.FetchCalls.Count, Is.EqualTo(1));
+        Assert.That(fetcher.FetchCalls[0], Is.EqualTo((Symbol, TickerRange.Month)));
     }
 
     [Test]
     public async Task RefreshSetsDataRangeToRequestedRange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
 
         await sut.Refresh(TickerRange.Month);
@@ -260,8 +258,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithRangeReturnsNullAmount()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Day);
         var dp1 = new DataPoint(new DateTime(2024, 1, 2), 1, 1, 1, 10, 1);
@@ -275,8 +272,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithReverseRangeUsesLaterCloseAsEnd()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Day);
         var dp1 = new DataPoint(new DateTime(2024, 1, 3), 1, 1, 1, 20, 1);
@@ -290,8 +286,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithSingleDayPointReturnsAmountForClose()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult(priceHint: 3)));
+        var fetcher = CreateFetcher(CreateResult(priceHint: 3));
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Day);
         var dp = new DataPoint(new DateTime(2024, 1, 2), 1, 1, 1, 12.345, 1);
@@ -304,8 +299,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithSingleDayPointReturnsShortTermChange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Day);
         var dp = new DataPoint(new DateTime(2024, 1, 2), 1, 1, 1, 12, 1);
@@ -318,8 +312,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithSingleLongRangePointReturnsLongTermChange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Month);
         var dp = new DataPoint(new DateTime(2024, 1, 2), 1, 1, 1, 12, 1);
@@ -332,8 +325,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithoutPointsReturnsDataPercentageChange()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Month);
 
@@ -346,8 +338,7 @@ public class TickerTests
     [Test]
     public async Task GetAmountAndChangeForWithoutPointsReturnsDataMarketPrice()
     {
-        var fetcher = Substitute.For<TickerFetcher>(new HttpClient());
-        fetcher.Fetch(Arg.Any<string>(), Arg.Any<TickerRange>()).Returns(Task.FromResult(CreateResult()));
+        var fetcher = CreateFetcher(CreateResult());
         var sut = new Ticker(Symbol, fetcher, CreateMarket());
         await sut.Refresh(TickerRange.Month);
 
@@ -407,5 +398,29 @@ public class TickerTests
         var indicators = new Indicators([quote], []);
 
         return new Result(meta, timestamps, indicators);
+    }
+
+    private sealed class TestTickerFetcher : TickerFetcher
+    {
+        private Func<string, TickerRange, Task<Result>> onFetch = default!;
+        public List<(string Symbol, TickerRange Range)> FetchCalls { get; private set; } = default!;
+
+        private TestTickerFetcher() : base(null!, new HttpClient())
+        {
+        }
+
+        public static TestTickerFetcher Create(Func<string, TickerRange, Task<Result>> onFetch)
+        {
+            var fetcher = (TestTickerFetcher)RuntimeHelpers.GetUninitializedObject(typeof(TestTickerFetcher));
+            fetcher.onFetch = onFetch;
+            fetcher.FetchCalls = [];
+            return fetcher;
+        }
+
+        public override Task<Result> Fetch(string symbol, TickerRange range)
+        {
+            FetchCalls.Add((symbol, range));
+            return onFetch(symbol, range);
+        }
     }
 }

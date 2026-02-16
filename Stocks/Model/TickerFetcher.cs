@@ -35,7 +35,7 @@ public class TickerFetcher
         }
     }
 
-    public async Task<List<SearchResult>> SearchTickers(string searchTerm)
+    public virtual async Task<List<SearchResult>> SearchTickers(string searchTerm)
     {
         var url = "https://query2.finance.yahoo.com/v1/finance/search?q=" + Uri.EscapeDataString(searchTerm);
 
