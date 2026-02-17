@@ -9,6 +9,9 @@ public class Sidebar: Gtk.ListBox
 {
     private readonly AppModel model;
     private readonly Dictionary<string, SidebarItem> items = [];
+
+    // Container for all on-going animations during drag operation
+    private readonly Dictionary<Gtk.ListBoxRow, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeRowAnimations = [];
     
     // Contains information during drag operation for reordering sidebar items.
     private DragState? dragState;
@@ -94,6 +97,8 @@ public class Sidebar: Gtk.ListBox
             if (row.Child is not SidebarItem item)
                 return;
 
+            StopAllRowAnimations();
+
             var previewWidth = 290; //TODO: Does not work correctly when large fonts accessibility feature is enabled.
             var previewHeight = row.GetHeight();
             var preview = CreatePreviewFor(item.Ticker, previewWidth, previewHeight);
@@ -102,7 +107,7 @@ public class Sidebar: Gtk.ListBox
                 .GetForDrag(args.Drag)
                 .SetChild(preview);
 
-            dragState = new DragState(row, item);            
+            dragState = new DragState(row, item, previewHeight);            
             
             row.HeightRequest = previewHeight;
             row.SetChild(null);
@@ -111,8 +116,8 @@ public class Sidebar: Gtk.ListBox
 
         dragSource.OnDragEnd += (_, _) =>
         {
+            StopAllRowAnimations();
             CleanupDragState();
-            UpdateUItoMatchTickerOrderInModel();
         };
 
         row.AddController(dragSource);
@@ -124,21 +129,24 @@ public class Sidebar: Gtk.ListBox
                 return false;
 
             if (row != dragState.Row)
-                MoveDraggedTickerTo(row.GetIndex());
+                MoveDraggedRowTo(row.GetIndex());
 
             int targetIndex = dragState.Row.GetIndex();
-            CleanupDragState();
             model.MoveTicker(ticker, targetIndex);
             return true;
         };
 
-        dropTarget.OnMotion += (_, _) =>
+        dropTarget.OnEnter += (_, _) =>
         {
             if (dragState == null)
                 return Gdk.DragAction.Move;
 
+            // Flying row must not act as drop target, it can mask rows below.
+            if (activeRowAnimations.ContainsKey(row))
+                return Gdk.DragAction.Move;
+
             if (row != dragState.Row)
-                MoveDraggedTickerTo(row.GetIndex());
+                MoveDraggedRowTo(row.GetIndex());
 
             return Gdk.DragAction.Move;
         };
@@ -191,6 +199,7 @@ public class Sidebar: Gtk.ListBox
             if (IsCollapsed)
                 SelectRow(null);
 
+            StopRowAnimation(row);
             this.Remove(row);
         }
     }
@@ -226,13 +235,43 @@ public class Sidebar: Gtk.ListBox
         return row;
     }
 
-    private void MoveDraggedTickerTo(int dropIndex)
+    private void MoveDraggedRowTo(int targetIndex)
     {
-        if (dragState == null || dragState.Row.GetIndex() == dropIndex)
+        if (dragState == null)
             return;
 
+        int fromIndex = dragState.Row.GetIndex();
+        if (fromIndex == targetIndex)
+            return;
+
+        var affectedRows = new List<Gtk.ListBoxRow>();
+
+        if (targetIndex < fromIndex)
+        {
+            for (int i = targetIndex; i < fromIndex; i++)
+            {
+                if (GetRowAtIndex(i) is Gtk.ListBoxRow row)
+                    affectedRows.Add(row);
+            }
+        }
+        else
+        {
+            for (int i = fromIndex + 1; i <= targetIndex; i++)
+            {
+                if (GetRowAtIndex(i) is Gtk.ListBoxRow row)
+                    affectedRows.Add(row);
+            }
+        }
+
         Remove(dragState.Row);
-        Insert(dragState.Row, dropIndex);
+        Insert(dragState.Row, targetIndex);
+
+        var startOffset = targetIndex < fromIndex
+            ? -dragState.PlaceholderHeight
+            : dragState.PlaceholderHeight;
+
+        foreach (var row in affectedRows)
+            AnimateRowToTargetPosition(row, startOffset);
     }
 
     private void CleanupDragState()
@@ -249,8 +288,55 @@ public class Sidebar: Gtk.ListBox
         dragState = null;
     }
 
+    private void AnimateRowToTargetPosition(Gtk.ListBoxRow row, double startOffset)
+    {
+        StopRowAnimation(row, resetOffset: false);
+        row.CanTarget = false; // Without this moving sidebar item can block OnEnter of antoher sidebar item breaking the animation.
+        SetRowVerticalOffset(row, startOffset);
 
-    private record DragState(Gtk.ListBoxRow Row, SidebarItem SidebarItem)
+        var target = Adw.CallbackAnimationTarget.New(value => SetRowVerticalOffset(row, value));
+        var animation = Adw.TimedAnimation.New(row, startOffset, 0, 300, target);
+        animation.Easing = Adw.Easing.EaseOutCubic;
+        animation.FollowEnableAnimationsSetting = true;
+        animation.OnDone += (_, _) =>
+        {
+            if (!activeRowAnimations.TryGetValue(row, out var state) || state.Animation != animation)
+                return;
+
+            SetRowVerticalOffset(row, 0);
+            row.CanTarget = true;
+            activeRowAnimations.Remove(row);
+        };
+
+        activeRowAnimations[row] = (animation, target);
+        animation.Play();
+    }
+
+    private void StopRowAnimation(Gtk.ListBoxRow row, bool resetOffset = true)
+    {
+        if (activeRowAnimations.Remove(row, out var animationState))
+            animationState.Animation.Skip();
+
+        row.CanTarget = true;
+
+        if (resetOffset)
+            SetRowVerticalOffset(row, 0);
+    }
+
+    private void StopAllRowAnimations()
+    {
+        foreach (var row in activeRowAnimations.Keys.ToList())
+            StopRowAnimation(row);
+    }
+
+    private static void SetRowVerticalOffset(Gtk.ListBoxRow row, double offset)
+    {
+        int roundedOffset = (int)Math.Round(offset);
+        row.MarginTop = roundedOffset;
+        row.MarginBottom = -roundedOffset;
+    }
+
+    private record DragState(Gtk.ListBoxRow Row, SidebarItem SidebarItem, int PlaceholderHeight)
     {
         public Ticker Ticker { get; } = SidebarItem.Ticker;
         public Gtk.Widget? DragIcon { get; set; }
