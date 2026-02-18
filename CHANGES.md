@@ -12,3 +12,7 @@
 - Improved sidebar's drag and drop reordering UX
 - Added new grid UI with drag and drop support to reorder tickers
 - Setting in primary menu allows user to switch between grid and list mode
+
+## 0.3.0 
+- Implemented animation when reordering tickers with drag and drop
+- Added keyboard shortcut CTRL-M to switch between list and grid mode
