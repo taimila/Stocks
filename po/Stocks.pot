@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Stocks 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-16 18:11+0200\n"
+"POT-Creation-Date: 2026-02-18 14:48+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -200,6 +200,19 @@ msgstr ""
 msgid "Updated just now."
 msgstr ""
 
+#: data/ui/BrowseModeSwitcher.blp:39
+msgid "List view"
+msgstr ""
+
+#: data/ui/BrowseModeSwitcher.blp:67
+msgid "Grid view"
+msgstr ""
+
+#: Stocks/Ui/SplitView.cs:121
+#, csharp-format
+msgid "{0} removed"
+msgstr ""
+
 #: Stocks/Ui/AddTickerPopover.cs:79 Stocks/Ui/AddTickerPopover.cs:154
 msgid "Search symbols"
 msgstr ""
@@ -273,4 +286,12 @@ msgstr ""
 
 #: Stocks/Ui/TickerChartPopover.cs:97
 msgid "Range"
+msgstr ""
+
+#: Stocks/Ui/TickerContextMenu.cs:21
+msgid "Remove"
+msgstr ""
+
+#: Stocks/Ui/TickerContextMenu.cs:25
+msgid "Refresh"
 msgstr ""

@@ -6,10 +6,13 @@ data/ui/ShortcutsDialog.blp
 data/ui/SidebarItem.blp
 data/ui/ThemeSwitcher.blp
 data/ui/TickerDetails.blp
+data/ui/BrowseModeSwitcher.blp
+Stocks/Ui/SplitView.cs
 Stocks/Ui/MainWindow.cs
 Stocks/Ui/AddButton.cs
 Stocks/Ui/AddTickerPopover.cs
 Stocks/Ui/SidebarItem.cs
 Stocks/Ui/TickerDetails.cs
 Stocks/Ui/TickerChartPopover.cs
+Stocks/Ui/TickerContextMenu.cs
 Stocks/Model/TickerRange.cs
