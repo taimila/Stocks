@@ -10,6 +10,9 @@ public class TickerGrid : Gtk.FlowBox
     private readonly AppModel model;
     private readonly Dictionary<string, Gtk.AspectFrame> cards = [];
 
+    // Container for all on-going animations during drag operation
+    private readonly Dictionary<Gtk.FlowBoxChild, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeCardAnimations = [];
+
     private DragState? dragState;
 
     public TickerGrid(AppModel model)
@@ -71,7 +74,10 @@ public class TickerGrid : Gtk.FlowBox
         if (cards.Remove(ticker.Symbol, out var card))
         {
             if (card.Parent is Gtk.FlowBoxChild child)
+            {
+                StopCardAnimation(child);
                 Remove(child);
+            }
         }
     }
 
@@ -85,6 +91,7 @@ public class TickerGrid : Gtk.FlowBox
             if (card.Parent is not Gtk.FlowBoxChild child)
                 return;
 
+            StopAllCardAnimations();
             dragState = new DragState(child, card);
 
             if (dragState.Ticker != null)
@@ -107,8 +114,8 @@ public class TickerGrid : Gtk.FlowBox
 
         dragSource.OnDragEnd += (_, _) =>
         {
+            StopAllCardAnimations();
             CleanupDragState();
-            UpdateUItoMatchTickerOrderInModel();
         };
         
         card.AddController(dragSource);
@@ -123,15 +130,14 @@ public class TickerGrid : Gtk.FlowBox
                 return false;
 
             if (targetChild != dragState.FlowBoxChild)
-                MoveDraggedTickerTo(targetChild.GetIndex());
+                MoveDraggedCardTo(targetChild.GetIndex());
 
             var targetIndex = dragState.FlowBoxChild.GetIndex();
-            CleanupDragState();
             model.MoveTicker(ticker, targetIndex);
             return true;
         };
 
-        dropTarget.OnMotion += (_, _) =>
+        dropTarget.OnEnter += (_, args) =>
         {
             if (dragState == null)
                 return Gdk.DragAction.Move;
@@ -139,8 +145,12 @@ public class TickerGrid : Gtk.FlowBox
             if (card.Parent is not Gtk.FlowBoxChild targetChild)
                 return Gdk.DragAction.Move;
 
+            // Flying card must not act as drop target, it messes up animations
+            if (activeCardAnimations.ContainsKey(targetChild))
+                return Gdk.DragAction.Move;
+
             if (targetChild != dragState.FlowBoxChild)
-                MoveDraggedTickerTo(targetChild.GetIndex());
+                MoveDraggedCardTo(targetChild.GetIndex());
 
             return Gdk.DragAction.Move;
         };
@@ -176,13 +186,75 @@ public class TickerGrid : Gtk.FlowBox
         return child;
     }
 
-    private void MoveDraggedTickerTo(int dropIndex)
+    private void MoveDraggedCardTo(int targetIndex)
     {
-        if (dragState == null || dragState.FlowBoxChild.GetIndex() == dropIndex)
+        if (dragState == null)
             return;
 
+        int fromIndex = dragState.FlowBoxChild.GetIndex();
+        if (fromIndex == targetIndex)
+            return;
+
+        var affectedChildren = new List<(Gtk.FlowBoxChild Child, int OldIndex)>();
+
+        if (targetIndex < fromIndex)
+        {
+            for (int i = targetIndex; i < fromIndex; i++)
+            {
+                if (GetChildAtIndex(i) is Gtk.FlowBoxChild child)
+                    affectedChildren.Add((child, i));
+            }
+        }
+        else
+        {
+            for (int i = fromIndex + 1; i <= targetIndex; i++)
+            {
+                if (GetChildAtIndex(i) is Gtk.FlowBoxChild child)
+                    affectedChildren.Add((child, i));
+            }
+        }
+
+        // Capture current slot positions before cards are reordered
+        var slotPositions = new Dictionary<int, (double X, double Y)>();
+        int minIndex = Math.Min(targetIndex, fromIndex);
+        int maxIndex = Math.Max(targetIndex, fromIndex);
+        for (int i = minIndex; i <= maxIndex; i++)
+        {
+            if (GetChildAtIndex(i) is not Gtk.FlowBoxChild child)
+                continue;
+
+            if (!child.ComputeBounds(this, out Graphene.Rect bounds))
+                continue;
+
+            slotPositions[i] = (
+                bounds.GetX() - child.MarginStart,
+                bounds.GetY() - child.MarginTop);
+        }
+
         Remove(dragState.FlowBoxChild);
-        Insert(dragState.FlowBoxChild, dropIndex);
+        Insert(dragState.FlowBoxChild, targetIndex);
+
+        // Go through all affected cards and start animations for them.
+        foreach (var (child, oldIndex) in affectedChildren)
+        {
+            int targetSlotIndex = targetIndex < fromIndex
+                ? oldIndex + 1
+                : oldIndex - 1;
+
+            if (!slotPositions.TryGetValue(oldIndex, out var oldPosition))
+                continue;
+
+            if (!slotPositions.TryGetValue(targetSlotIndex, out var targetPosition))
+                continue;
+
+            var startOffsetX = oldPosition.X - targetPosition.X;
+            var startOffsetY = oldPosition.Y - targetPosition.Y;
+
+            if (Math.Abs(startOffsetX) < 0.01 && Math.Abs(startOffsetY) < 0.01)
+                continue;
+
+            AnimateCardToTargetPosition(child, startOffsetX, startOffsetY);
+        }
     }
 
     private void CleanupDragState()
@@ -190,12 +262,66 @@ public class TickerGrid : Gtk.FlowBox
         if (dragState == null)
             return;
 
+        SetCardOffset(dragState.FlowBoxChild, 0, 0);
         dragState.Card.RemoveCssClass("drag-placeholder");
 
         if (dragState.Card.Child == null && dragState.CardContent != null)
             dragState.Card.SetChild(dragState.CardContent);
 
         dragState = null;
+    }
+
+    private void AnimateCardToTargetPosition(Gtk.FlowBoxChild child, double startOffsetX, double startOffsetY)
+    {
+        StopCardAnimation(child, resetOffset: false);
+        child.CanTarget = false;  // Without this moving card can block OnEnter of another sidebar item breaking the animation.
+        SetCardOffset(child, startOffsetX, startOffsetY);
+
+        var target = Adw.CallbackAnimationTarget.New(value => SetCardOffset(child, startOffsetX * value, startOffsetY * value));
+
+        var animation = Adw.TimedAnimation.New(child, 1, 0, 300, target);
+        animation.Easing = Adw.Easing.EaseOutCubic;
+        animation.FollowEnableAnimationsSetting = true;
+        animation.OnDone += (_, _) =>
+        {
+            if (!activeCardAnimations.TryGetValue(child, out var state) || state.Animation != animation)
+                return;
+
+            SetCardOffset(child, 0, 0);
+            child.CanTarget = true;
+            activeCardAnimations.Remove(child);
+        };
+
+        activeCardAnimations[child] = (animation, target);
+        animation.Play();
+    }
+
+    private void StopCardAnimation(Gtk.FlowBoxChild child, bool resetOffset = true)
+    {
+        if (activeCardAnimations.Remove(child, out var animationState))
+            animationState.Animation.Skip();
+
+        child.CanTarget = true;
+
+        if (resetOffset)
+            SetCardOffset(child, 0, 0);
+    }
+
+    private void StopAllCardAnimations()
+    {
+        foreach (var child in activeCardAnimations.Keys.ToList())
+            StopCardAnimation(child);
+    }
+
+    private static void SetCardOffset(Gtk.FlowBoxChild child, double x, double y)
+    {
+        int roundedX = (int)Math.Round(x);
+        int roundedY = (int)Math.Round(y);
+
+        child.MarginStart = roundedX;
+        child.MarginEnd = -roundedX;
+        child.MarginTop = roundedY;
+        child.MarginBottom = -roundedY;
     }
 }
 
