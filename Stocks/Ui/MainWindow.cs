@@ -69,6 +69,17 @@ public class MainWindow : Adw.ApplicationWindow
         UpdateVisibleWidgetOfStack();
     }
 
+    // If there are no tickers, there is no visible change in UI, but mode still changes.
+    // After user adds the first ticker, then current mode becomes visible.
+    public void ToggleBrowseMode()
+    {
+        var nextMode = mode.Current == BrowseMode.Grid
+            ? BrowseMode.List
+            : BrowseMode.Grid;
+
+        SetBrowseMode(nextMode);
+    }
+
     private bool ShouldBeCollapsedInListMode() => GetWindowWidth() <= 600;
 
     private void SetupPrimaryMenu()

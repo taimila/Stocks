@@ -7,6 +7,11 @@ using Adw 1;
 Adw.ShortcutsDialog shortcutsDialog {
   Adw.ShortcutsSection {
     Adw.ShortcutsItem {
+      title: _("Toggle between list and grid view");
+      action-name: "app.togglebrowsemode";
+    }
+
+    Adw.ShortcutsItem {
       title: _("Refresh all");
       action-name: "app.refresh";
     }

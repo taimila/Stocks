@@ -38,6 +38,7 @@ public class Application
         SetupRefreshAction();
 
         CreateAction("Refresh", async (_, _) => { await model.UpdateAll(true); }, ["<Ctrl>R"]);
+        CreateAction("ToggleBrowseMode", (_, _) => { mainWindow?.ToggleBrowseMode(); }, ["<Ctrl>M"]);
         CreateAction("Shortcuts", (_, _) => { OnShortcuts(); });
         CreateAction("Quit", (_, _) => { app.Quit(); }, ["<Ctrl>Q"]);
         CreateAction("About", (_, _) => { OnAboutAction(); });
