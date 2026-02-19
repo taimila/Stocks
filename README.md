@@ -1,6 +1,11 @@
-# Stocks
+<div align="center">
+  <img src="data/icons/hicolor/scalable/apps/fi.taimila.Stocks.svg" width="128" height="128">
 
-Gnome app for following the stock market at a glance. Designed for casual usage, not for trading.
+  # Stocks
+
+  A GTK4 + Libadwaita stocks app. Designed for casual usage, not for trading.
+
+</div>
 
 ![Screenshot of Stocks Gnome app.](docs/stocks.png)
 ![Screenshot of Stocks Gnome app.](docs/stocks2.png)
