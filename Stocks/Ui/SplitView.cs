@@ -49,7 +49,7 @@ public class SplitView : Gtk.Box
             if (args.Pspec.GetName() != "collapsed")
                 return;
 
-            sidebar.IsCollapsed = splitView.Collapsed;
+            sidebar.SetLayoutState(splitView.Collapsed);
             UpdateDetailsHeaderTitle();
         };
 
@@ -63,7 +63,7 @@ public class SplitView : Gtk.Box
         // Default to details page; in collapsed mode this keeps content visible
         // instead of forcing the sidebar.
         splitView.ShowContent = true;
-        sidebar.IsCollapsed = splitView.Collapsed;
+        sidebar.SetLayoutState(splitView.Collapsed);
         UpdateDetailsHeaderTitle();
         UpdateErrorBannerState();
     }
@@ -84,13 +84,13 @@ public class SplitView : Gtk.Box
         var wasCollapsed = splitView.Collapsed;
 
         splitView.Collapsed = collapsed;
-        sidebar.IsCollapsed = collapsed;
 
         // When entering collapsed mode from wide layout, keep details visible.
         // If already collapsed, don't override user navigation back to sidebar.
         if (!collapsed || !wasCollapsed)
             splitView.ShowContent = true;
 
+        sidebar.SetLayoutState(splitView.Collapsed);
         UpdateDetailsHeaderTitle();
     }
 
