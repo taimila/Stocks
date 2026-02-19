@@ -19,8 +19,7 @@ public class Sidebar: Gtk.ListBox
     // Suppress row selection when it's not done by the user.
     private bool suppressRowSelection = false;
 
-    // MainWindow keeps this up-to-date so that Sidebar can behave correctly.
-    public bool IsCollapsed{ get; set; } = false;
+    private bool isCollapsed = false;
 
     // Size groups to align sidebar item layouts.
     private readonly Gtk.SizeGroup g1 = Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal);
@@ -34,7 +33,7 @@ public class Sidebar: Gtk.ListBox
         // When in collapsed mode, we want to navigate on activation
         OnRowActivated += (_, args) =>
         {
-            if (IsCollapsed && args.Row?.Child is SidebarItem item)
+            if (isCollapsed && args.Row?.Child is SidebarItem item)
             {
                 model.SetActive(item.Ticker);
             }
@@ -46,7 +45,7 @@ public class Sidebar: Gtk.ListBox
             if (suppressRowSelection)
                 return;
 
-            if (!IsCollapsed && args.Row?.Child is SidebarItem item)
+            if (!isCollapsed && args.Row?.Child is SidebarItem item)
             {
                 model.SetActive(item.Ticker);
             }
@@ -65,12 +64,22 @@ public class Sidebar: Gtk.ListBox
         }
     }
 
+    // Hosting SplitView uses this to communicate it's state to the sidebar.
+    public void SetLayoutState(bool collapsed)
+    {
+        if (isCollapsed == collapsed)
+            return;
+
+        isCollapsed = collapsed;
+        UpdateSelectionState();
+    }
+
     private void AddTicker(Ticker ticker)
     {
         Add(ticker);
 
-        // If details is visible we will show newly added ticker immediately
-        if (!IsCollapsed && GetRowAtIndex(model.Tickers.Count - 1) is Gtk.ListBoxRow row)
+        // In wide layout we show newly added ticker immediately.
+        if (!isCollapsed && GetRowAtIndex(model.Tickers.Count - 1) is Gtk.ListBoxRow row)
         {
             SelectRow(row);
         }
@@ -78,11 +87,40 @@ public class Sidebar: Gtk.ListBox
 
     private void SetSelectedRowTo(Ticker ticker)
     {
+        if (isCollapsed)
+            return;
+
         if (GetListBoxRowOf(ticker) is not Gtk.ListBoxRow row)
             return;
 
         suppressRowSelection = true;
         SelectRow(row);
+        suppressRowSelection = false;
+    }
+
+    private void UpdateSelectionState()
+    {
+        suppressRowSelection = true;
+
+        if (isCollapsed)
+        {
+            SelectionMode = Gtk.SelectionMode.None;
+            SelectRow(null);
+        }
+        else
+        {
+            SelectionMode = Gtk.SelectionMode.Single;
+
+            if (model.SelectedTicker is Ticker selectedTicker && GetListBoxRowOf(selectedTicker) is Gtk.ListBoxRow selectedRow)
+            {
+                SelectRow(selectedRow);
+            }
+            else if (GetRowAtIndex(0) is Gtk.ListBoxRow firstRow)
+            {
+                SelectRow(firstRow);
+            }
+        }
+
         suppressRowSelection = false;
     }
 
@@ -196,7 +234,7 @@ public class Sidebar: Gtk.ListBox
     {
         if (GetListBoxRowOf(ticker) is Gtk.ListBoxRow row)
         {
-            if (IsCollapsed)
+            if (isCollapsed)
                 SelectRow(null);
 
             StopRowAnimation(row);
