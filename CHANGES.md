@@ -16,3 +16,7 @@
 ## 0.3.0 
 - Implemented animation when reordering tickers with drag and drop
 - Added keyboard shortcut CTRL-M to switch between list and grid mode
+
+## 0.4.0 
+- New app icon!
+- Fixes an issue with sidebar selection state when in collapse mode. 
