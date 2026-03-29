@@ -32,7 +32,7 @@ public class MainWindow : Adw.ApplicationWindow
 
         theme = new AppTheme(settings);
         mode = new AppMode(settings);
-        splitView = new SplitView(model);
+        splitView = new SplitView(model, this);
         gridView = new GridView(model);
         emptyView = new EmptyView(model);
 
@@ -55,6 +55,7 @@ public class MainWindow : Adw.ApplicationWindow
         SetupPrimaryMenu();
         SetupUpdatesOnWindowResize();
         UpdateVisibleWidgetOfStack();
+        SetMinumumWidth(mode.Current);
     }
 
     private void SetBrowseMode(BrowseMode mode)
@@ -62,11 +63,15 @@ public class MainWindow : Adw.ApplicationWindow
         splitView.BrowseModeChangedTo(mode);
         gridView.BrowseModeChangedTo(mode);
 
-        if (mode == BrowseMode.List)
-            splitView.SetCollapsed(ShouldBeCollapsedInListMode());
-
         this.mode.SetBrowseMode(mode);
         UpdateVisibleWidgetOfStack();
+        UpdateResponsiveState();
+        SetMinumumWidth(mode);
+    }
+
+    private void SetMinumumWidth(BrowseMode mode)
+    {
+        WidthRequest = mode == BrowseMode.Grid ? 404 : 355;
     }
 
     // If there are no tickers, there is no visible change in UI, but mode still changes.
@@ -79,8 +84,6 @@ public class MainWindow : Adw.ApplicationWindow
 
         SetBrowseMode(nextMode);
     }
-
-    private bool ShouldBeCollapsedInListMode() => GetWindowWidth() <= 600;
 
     private void SetupPrimaryMenu()
     {
@@ -181,14 +184,9 @@ public class MainWindow : Adw.ApplicationWindow
         var width = GetWindowWidth();
 
         if (mode.Current == BrowseMode.List)
-        {
             SetNarrow(width <= 1000);
-            splitView.SetCollapsed(ShouldBeCollapsedInListMode());
-        }
         else
-        {
             SetNarrow(width <= 700);
-        }
     }
 
     private int GetWindowWidth()
