@@ -19,4 +19,7 @@
 
 ## 0.4.0 
 - New app icon!
-- Fixes an issue with sidebar selection state when in collapse mode. 
+- Fixes an issue with sidebar selection state when in collapse mode.
+
+## 0.5.0
+- Fixed an issue with horizontal window resizing.
