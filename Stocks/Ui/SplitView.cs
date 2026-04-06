@@ -32,7 +32,7 @@ public class SplitView : Gtk.Box
         Append(splitView);
     }
 
-    public SplitView(AppModel model): this(Builder.FromFile("SplitView.ui"))
+    public SplitView(AppModel model, Adw.ApplicationWindow window): this(Builder.FromFile("SplitView.ui"))
     {
         this.model = model;
 
@@ -43,14 +43,14 @@ public class SplitView : Gtk.Box
         sidebarContainer.SetChild(sidebar);
 
         sidebarHeader.PackStart(new AddButton(model));
+        SetupResponsiveCollapse(window);
 
         splitView.OnNotify += (_, args) =>
         {
             if (args.Pspec.GetName() != "collapsed")
                 return;
 
-            sidebar.SetLayoutState(splitView.Collapsed);
-            UpdateDetailsHeaderTitle();
+            HandleCollapsedChanged();
         };
 
         foreach (var ticker in model.Tickers)
@@ -60,11 +60,7 @@ public class SplitView : Gtk.Box
         model.OnTickerRemoved += OnTickerRemoved;
         model.OnActiveTickerChanged += OnActiveTickerChanged;
 
-        // Default to details page; in collapsed mode this keeps content visible
-        // instead of forcing the sidebar.
-        splitView.ShowContent = true;
-        sidebar.SetLayoutState(splitView.Collapsed);
-        UpdateDetailsHeaderTitle();
+        HandleCollapsedChanged();
         UpdateErrorBannerState();
     }
 
@@ -77,21 +73,6 @@ public class SplitView : Gtk.Box
         {
             splitView.ShowContent = true;
         }
-    }
-
-    public void SetCollapsed(bool collapsed)
-    {
-        var wasCollapsed = splitView.Collapsed;
-
-        splitView.Collapsed = collapsed;
-
-        // When entering collapsed mode from wide layout, keep details visible.
-        // If already collapsed, don't override user navigation back to sidebar.
-        if (!collapsed || !wasCollapsed)
-            splitView.ShowContent = true;
-
-        sidebar.SetLayoutState(splitView.Collapsed);
-        UpdateDetailsHeaderTitle();
     }
 
     public void SetIsNarrow(bool enable)
@@ -141,6 +122,29 @@ public class SplitView : Gtk.Box
     private void UpdateDetailsHeaderTitle()
     {
         detailsHeader.ShowTitle = isNarrow || splitView.Collapsed;
+    }
+
+    private void SetupResponsiveCollapse(Adw.ApplicationWindow window)
+    {
+        var collapseBreakpoint = new Adw.Breakpoint
+        {
+            Condition = Adw.BreakpointCondition.Parse("max-width: 600px")
+        };
+
+        collapseBreakpoint.AddSetter(
+            splitView,
+            "collapsed",
+            new GObject.Value(true));
+
+        window.AddBreakpoint(collapseBreakpoint);
+    }
+
+    private void HandleCollapsedChanged()
+    {
+        // Keep details visible when the split view enters or leaves collapsed mode.
+        splitView.ShowContent = true;
+        sidebar.SetLayoutState(splitView.Collapsed);
+        UpdateDetailsHeaderTitle();
     }
 
     private void UpdateErrorBannerState()
