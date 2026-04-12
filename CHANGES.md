@@ -23,3 +23,6 @@
 
 ## 0.5.0
 - Fixed an issue with horizontal window resizing.
+
+## 0.6.0
+- Create multiple watchlists and switch between them.

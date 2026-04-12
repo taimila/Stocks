@@ -19,6 +19,7 @@ All data is fetched from _Yahoo Finance_, but this is completely independent pro
 ## Features
 - Search symbols and add them to a watch list
 - Reorder watch list items with drag and drop
+- Create multiple watchlists and switch between them
 - Set optional symbol alias by click the symbol name
 - Set dark/light mode or follow the system setting
 - Hover and select a range on top of the graph to see more details

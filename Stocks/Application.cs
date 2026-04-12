@@ -118,7 +118,7 @@ public class Application
         about.ApplicationName = _("Stocks");
         about.ApplicationIcon = APP_ID;
         about.DeveloperName = "Lauri Taimila";
-        about.Version = "0.5.0";
+        about.Version = "0.6.0";
         about.Developers = ["Lauri Taimila"];
         about.Copyright = "© 2026 Lauri Taimila";
         about.LicenseType = Gtk.License.Lgpl30;
