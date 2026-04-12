@@ -14,6 +14,7 @@ public class TickerGrid : Gtk.FlowBox
     private readonly Dictionary<Gtk.FlowBoxChild, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeCardAnimations = [];
 
     private DragState? dragState;
+    public event Action<Ticker>? OnTickerActivated;
 
     public TickerGrid(AppModel model)
     {
@@ -22,6 +23,7 @@ public class TickerGrid : Gtk.FlowBox
         this.model.OnTickerAdded += AddTicker;
         this.model.OnTickerRemoved += RemoveTicker;
         this.model.OnTickerMoved += (_, _) => UpdateUItoMatchTickerOrderInModel();
+        this.model.OnVisibleTickersReloaded += ReloadTickers;
 
         SelectionMode = Gtk.SelectionMode.None;
         ActivateOnSingleClick = true;
@@ -43,10 +45,20 @@ public class TickerGrid : Gtk.FlowBox
         OnChildActivated += (_, args) =>
         {
             if (args.Child?.Child is Gtk.AspectFrame card && card.Child is TickerGridCard tgc)
-            {
-                this.model.SetActive(tgc.Ticker);
-            }
+                OnTickerActivated?.Invoke(tgc.Ticker);
         };        
+    }
+
+    private void ReloadTickers()
+    {
+        StopAllCardAnimations();
+        dragState = null;
+        cards.Clear();
+
+        while (GetChildAtIndex(0) is Gtk.FlowBoxChild child)
+            Remove(child);
+
+        model.Tickers.ForEach(AddTicker);
     }
 
     private void AddTicker(Ticker ticker)

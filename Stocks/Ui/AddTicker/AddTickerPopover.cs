@@ -93,7 +93,7 @@ class AddTickerView : Gtk.Box
                 g3 = Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal);
 
                 // If there are results show them, otherwise show prompt.
-                if (result != null && result.Count > 0)
+                if (result.Count > 0)
                 {
                     if (emptyState.Parent != null)
                         box.Remove(emptyState);

@@ -26,6 +26,8 @@ public class EmptyView : Gtk.Box
     {
         this.model = model;
         header.PackStart(new AddButton(model));
+        header.ShowTitle = true;
+        header.SetTitleWidget(new WatchlistButton(model.Watchlists));
 
         addSymbolButton.OnClicked += (_, _) =>
         {

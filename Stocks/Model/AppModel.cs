@@ -7,10 +7,11 @@ public class AppModel
 {
     private readonly TickerFetcher fetcher;
     private readonly TickerFactory factory;
-    private readonly SymbolStorage storage;
     private readonly AliasStorage aliasStorage;
     private readonly PeriodicTimer timer;
     private readonly CancellationTokenSource cts = new();
+    private readonly Dictionary<string, Ticker> tickerCache = [];
+    private string visibleWatchlistId;
 
     private TickerRange activeRange = TickerRange.Day;
     public TickerRange ActiveRange { 
@@ -25,36 +26,38 @@ public class AppModel
         } 
     }
 
-    public List<Ticker> Tickers = [];
+    public List<Ticker> Tickers { get; } = [];
     public bool HasTickers => Tickers.Count > 0;
     public Ticker? SelectedTicker { get; private set; } = null;
+    public WatchlistModel Watchlists { get; }
 
     // Events that allow UI to update itself as application state changes
     public event Action<Ticker>? OnTickerAdded;
     public event Action<Ticker>? OnTickerRemoved;
     public event Action<Ticker, int>? OnTickerMoved;
-    public event Action<Ticker?, Ticker>? OnActiveTickerChanged;
+    public event Action<Ticker?, Ticker?>? OnActiveTickerChanged;
     public event Action<TickerRange>? OnActiveTickerRangeChanged;
+    public event Action? OnVisibleTickersReloaded;
 
-    public AppModel(TickerFetcher fetcher, TickerFactory factory, AppSettings appSettings, SymbolStorage storage, AliasStorage aliasStorage)
+    public AppModel(TickerFetcher fetcher, TickerFactory factory, AppSettings appSettings, WatchlistModel watchlists, AliasStorage aliasStorage)
     {
         this.timer = new(TimeSpan.FromSeconds(appSettings.UpdateIntervalInSeconds));
         this.fetcher = fetcher;
         this.factory = factory;
-        this.storage = storage;
+        Watchlists = watchlists;
         this.aliasStorage = aliasStorage;
+        visibleWatchlistId = Watchlists.ActiveWatchlistId;
 
-        Tickers = this.storage
-            .All
-            .Select(factory.Create)
-            .ToList();
+        foreach (var symbol in Watchlists.GetActiveSymbols())
+            Tickers.Add(GetOrCreateTicker(symbol));
 
-        foreach (var ticker in Tickers)
-        {
-            var alias = aliasStorage.GetAlias(ticker.Symbol);
-            if (!string.IsNullOrWhiteSpace(alias))
-                ticker.SetAlias(alias);
-        }
+        SelectedTicker = Tickers.FirstOrDefault();
+
+        Watchlists.OnChanged += HandleWatchlistGroupsChanged;
+        Watchlists.OnActiveChanged += HandleActiveWatchlistChanged;
+        Watchlists.OnSymbolAdded += HandleWatchlistSymbolAdded;
+        Watchlists.OnSymbolRemoved += HandleWatchlistSymbolRemoved;
+        Watchlists.OnSymbolMoved += HandleWatchlistSymbolMoved;
 
         Task.Run(async () => await StartAutoUpdate());
     }
@@ -76,79 +79,169 @@ public class AppModel
 
     public void MoveTicker(Ticker ticker, int index)
     {
-        var oldIndex = Tickers.IndexOf(ticker);
-        var newIndex = Math.Clamp(index, 0, Tickers.Count - 1);
-        
-        if (newIndex == oldIndex)
-            return;
-
-        Tickers.RemoveAt(oldIndex);
-        Tickers.Insert(newIndex, ticker);
-        storage.Move(ticker.Symbol, newIndex);
-        OnTickerMoved?.Invoke(ticker, newIndex);
+        Watchlists.MoveSymbolInActiveWatchlist(ticker.Symbol, index);
     }
 
-    public async Task AddTicker(string symbol)
+    public Task AddTicker(string symbol)
     {
-        // Do not allow duplicate tickers.
-        if (!Tickers.Any(t => t.Symbol == symbol))
-        {
-            var ticker = factory.Create(symbol);
-            Task.Run(async () => await ticker.Refresh(TickerRange.Day));
-            storage.Add(symbol);
-            Tickers.Add(ticker);
-            OnTickerAdded?.Invoke(ticker);
-        }
+        Watchlists.AddSymbolToWatchlist(symbol, Watchlists.ActiveWatchlistId);
+        return Task.CompletedTask;
     }
 
-    public async Task RemoveTicker(string symbol)
+    public Task RemoveTicker(string symbol)
     {
-        if (Tickers.Any(t => t.Symbol == symbol))
-        {
-            var ticker = Tickers.First(t => t.Symbol == symbol);
-            storage.Remove(symbol);
-            aliasStorage.RemoveAlias(symbol);
-            Tickers.RemoveAll(t => t.Symbol == symbol);
-            OnTickerRemoved?.Invoke(ticker);
-        }
+        Watchlists.RemoveSymbolFromWatchlist(symbol, Watchlists.ActiveWatchlistId);
+        return Task.CompletedTask;
     }
 
     public void SetTickerAlias(Ticker ticker, string alias)
     {
-        if (!Tickers.Contains(ticker))
-            return;
-
         aliasStorage.SetAlias(ticker.Symbol, alias);
         ticker.SetAlias(alias);
     }
 
     public void SetActive(Ticker ticker)
     {
-        if (Tickers.Contains(ticker))
-        {
-            var previous = SelectedTicker;
-            SelectedTicker = ticker;
-            OnActiveTickerChanged?.Invoke(previous, ticker);
-        }
+        var previous = SelectedTicker;
+        SelectedTicker = ticker;
+        OnActiveTickerChanged?.Invoke(previous, ticker);
     }
 
     public Ticker? GetTicker(string symbol)
     {
-        return Tickers.FirstOrDefault(t => t.Symbol == symbol);
+        tickerCache.TryGetValue(NormalizeSymbol(symbol), out var ticker);
+        return ticker;
     }
 
     public async Task UpdateAll(bool forceNetworkFetch)
     {
-        var tasks = Tickers
+        var visibleTickers = Tickers.ToList();
+        var tasks = visibleTickers
             .Select(x => x.Refresh(TickerRange.Day, forceNetworkFetch))
             .ToList();
 
-        if (ActiveRange != TickerRange.Day && SelectedTicker is Ticker selectedTicker)
+        if (ActiveRange != TickerRange.Day && SelectedTicker is Ticker selectedTicker && visibleTickers.Contains(selectedTicker))
         {
             tasks.Add(selectedTicker.Refresh(ActiveRange, forceNetworkFetch));
         }
 
         await Task.WhenAll(tasks);
+    }
+
+    private void SwitchVisibleTickers(bool forceRefresh)
+    {
+        visibleWatchlistId = Watchlists.ActiveWatchlistId;
+        var nextSymbols = Watchlists.GetActiveSymbols();
+
+        Tickers.Clear();
+
+        foreach (var symbol in nextSymbols)
+            Tickers.Add(GetOrCreateTicker(symbol));
+
+        SetActiveTicker(Tickers.FirstOrDefault());
+        OnVisibleTickersReloaded?.Invoke();
+
+        if (forceRefresh)
+            Task.Run(async () => await UpdateAll(false));
+    }
+
+    private void HandleWatchlistGroupsChanged()
+    {
+        PruneUnusedTickers();
+    }
+
+    private void HandleActiveWatchlistChanged()
+    {
+        if (visibleWatchlistId == Watchlists.ActiveWatchlistId)
+            return;
+
+        SwitchVisibleTickers(forceRefresh: true);
+    }
+
+    private void HandleWatchlistSymbolAdded(string watchlistId, string symbol)
+    {
+        if (watchlistId != visibleWatchlistId)
+            return;
+
+        var ticker = GetOrCreateTicker(symbol);
+        Tickers.Add(ticker);
+        OnTickerAdded?.Invoke(ticker);
+        Task.Run(async () => await ticker.Refresh(TickerRange.Day));
+    }
+
+    private void HandleWatchlistSymbolRemoved(string watchlistId, string symbol)
+    {
+        if (watchlistId != visibleWatchlistId)
+            return;
+
+        var ticker = tickerCache[NormalizeSymbol(symbol)];
+        var wasSelected = SelectedTicker == ticker;
+        Tickers.Remove(ticker);
+        OnTickerRemoved?.Invoke(ticker);
+
+        if (wasSelected)
+            SetActiveTicker(Tickers.FirstOrDefault());
+    }
+
+    private void HandleWatchlistSymbolMoved(string watchlistId, string symbol, int index)
+    {
+        if (watchlistId != visibleWatchlistId)
+            return;
+
+        var ticker = tickerCache[NormalizeSymbol(symbol)];
+        var oldIndex = Tickers.IndexOf(ticker);
+        Tickers.RemoveAt(oldIndex);
+        var newIndex = Math.Clamp(index, 0, Tickers.Count);
+        Tickers.Insert(newIndex, ticker);
+        OnTickerMoved?.Invoke(ticker, newIndex);
+    }
+
+    private void SetActiveTicker(Ticker? ticker)
+    {
+        var previous = SelectedTicker;
+        SelectedTicker = ticker;
+
+        if (!ReferenceEquals(previous, ticker))
+            OnActiveTickerChanged?.Invoke(previous, ticker);
+    }
+
+    private Ticker GetOrCreateTicker(string symbol)
+    {
+        var normalizedSymbol = NormalizeSymbol(symbol);
+
+        if (tickerCache.TryGetValue(normalizedSymbol, out var ticker))
+            return ticker;
+
+        ticker = factory.Create(normalizedSymbol);
+
+        var alias = aliasStorage.GetAlias(normalizedSymbol);
+        if (!string.IsNullOrWhiteSpace(alias))
+            ticker.SetAlias(alias);
+
+        tickerCache[normalizedSymbol] = ticker;
+        return ticker;
+    }
+
+    private void PruneUnusedTickers()
+    {
+        foreach (var symbol in tickerCache.Keys.ToList())
+            PruneUnusedTicker(symbol);
+    }
+
+    private void PruneUnusedTicker(string symbol)
+    {
+        if (Watchlists.IsSymbolInAnyWatchlist(symbol))
+            return;
+
+        tickerCache.Remove(symbol);
+    }
+
+    private static string NormalizeSymbol(string symbol)
+    {
+        if (string.IsNullOrWhiteSpace(symbol))
+            return "";
+
+        return symbol.Trim().ToUpperInvariant();
     }
 
     private async Task StartAutoUpdate()

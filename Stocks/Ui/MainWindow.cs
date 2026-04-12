@@ -49,12 +49,13 @@ public class MainWindow : Adw.ApplicationWindow
             ReopenPrimaryMenu(previouslyOpenMenu);
         };
 
-        model.OnTickerAdded += _ => UpdateVisibleWidgetOfStack();
-        model.OnTickerRemoved += _ => UpdateVisibleWidgetOfStack();
+        model.OnTickerAdded += _ => UpdateUI();
+        model.OnTickerRemoved += _ => UpdateUI();
+        model.OnVisibleTickersReloaded += UpdateUI;
 
         SetupPrimaryMenu();
         SetupUpdatesOnWindowResize();
-        UpdateVisibleWidgetOfStack();
+        UpdateUI();
         SetMinumumWidth(mode.Current);
     }
 
@@ -64,7 +65,7 @@ public class MainWindow : Adw.ApplicationWindow
         gridView.BrowseModeChangedTo(mode);
 
         this.mode.SetBrowseMode(mode);
-        UpdateVisibleWidgetOfStack();
+        UpdateUI();
         UpdateResponsiveState();
         SetMinumumWidth(mode);
     }
@@ -205,7 +206,7 @@ public class MainWindow : Adw.ApplicationWindow
         gridView.SetIsNarrow(enable);
     }
 
-    private void UpdateVisibleWidgetOfStack()
+    private void UpdateUI()
     {
         if (model.HasTickers)
             stack.VisibleChild = mode.Current == BrowseMode.Grid ? gridView : splitView;

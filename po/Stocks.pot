@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Stocks 0.2.0\n"
+"Project-Id-Version: Stocks 0.5.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-18 14:48+0200\n"
+"POT-Creation-Date: 2026-04-12 09:59+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,7 +59,7 @@ msgstr ""
 msgid "Add symbol to your watchlist."
 msgstr ""
 
-#: data/ui/EmptyView.blp:43 Stocks/Ui/AddButton.cs:17
+#: data/ui/EmptyView.blp:43 Stocks/Ui/AddTicker/AddButton.cs:17
 msgid "Add symbol"
 msgstr ""
 
@@ -69,6 +69,46 @@ msgstr ""
 
 #: data/ui/ShortcutsDialog.blp:15
 msgid "Refresh all"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:26 data/ui/WatchlistManageDialog.blp:13
+msgid "Watchlists"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:29
+msgid "Switch to watchlist 1"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:34
+msgid "Switch to watchlist 2"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:39
+msgid "Switch to watchlist 3"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:44
+msgid "Switch to watchlist 4"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:49
+msgid "Switch to watchlist 5"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:54
+msgid "Switch to watchlist 6"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:59
+msgid "Switch to watchlist 7"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:64
+msgid "Switch to watchlist 8"
+msgstr ""
+
+#: data/ui/ShortcutsDialog.blp:69
+msgid "Switch to watchlist 9"
 msgstr ""
 
 #: data/ui/ThemeSwitcher.blp:29
@@ -200,6 +240,14 @@ msgstr ""
 msgid "Updated just now."
 msgstr ""
 
+#: data/ui/WatchlistManageDialog.blp:9
+msgid "Manage watchlists"
+msgstr ""
+
+#: data/ui/WatchlistManageDialog.blp:17
+msgid "Add Watchlist"
+msgstr ""
+
 #: data/ui/BrowseModeSwitcher.blp:39
 msgid "List view"
 msgstr ""
@@ -208,90 +256,142 @@ msgstr ""
 msgid "Grid view"
 msgstr ""
 
-#: Stocks/Ui/SplitView.cs:121
+#: Stocks/Ui/Sidebar/SplitView.cs:107
 #, csharp-format
 msgid "{0} removed"
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:79 Stocks/Ui/AddTickerPopover.cs:154
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:79
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:154
 msgid "Search symbols"
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:155
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:155
 msgid "Start typing to see search results."
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:161
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:161
 msgid "No results"
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:162
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:162
 msgid "No results found for current search term."
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:182
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:182
 msgid "Add to watchlist"
 msgstr ""
 
-#: Stocks/Ui/AddTickerPopover.cs:182
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:182
 msgid "Already on watchlist"
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:195
+#: Stocks/Ui/Details/TickerDetails.cs:202
 msgid "Chart not available"
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:410
+#: Stocks/Ui/Details/TickerDetails.cs:417
 #, csharp-format
 msgid "Read more on <a href=\"{0}\">Yahoo Finance</a>."
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:438
+#: Stocks/Ui/Details/TickerDetails.cs:445
 msgctxt "market-status"
 msgid "Open"
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:439
+#: Stocks/Ui/Details/TickerDetails.cs:446
 msgid "Closed"
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:440
+#: Stocks/Ui/Details/TickerDetails.cs:447
 msgid "Unknown"
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:458
+#: Stocks/Ui/Details/TickerDetails.cs:465
 msgid "Updated less than minute ago."
 msgstr ""
 
-#: Stocks/Ui/TickerDetails.cs:460
+#: Stocks/Ui/Details/TickerDetails.cs:467
 #, csharp-format
 msgid "Updated {0} minutes ago."
 msgstr ""
 
-#: Stocks/Ui/TickerChartPopover.cs:33 Stocks/Ui/TickerChartPopover.cs:84
+#: Stocks/Ui/Details/TickerChartPopover.cs:33
+#: Stocks/Ui/Details/TickerChartPopover.cs:84
 msgid "Date"
 msgstr ""
 
-#: Stocks/Ui/TickerChartPopover.cs:44
+#: Stocks/Ui/Details/TickerChartPopover.cs:44
 msgid "Price"
 msgstr ""
 
-#: Stocks/Ui/TickerChartPopover.cs:55
+#: Stocks/Ui/Details/TickerChartPopover.cs:55
 msgid "Change"
 msgstr ""
 
-#: Stocks/Ui/TickerChartPopover.cs:84
+#: Stocks/Ui/Details/TickerChartPopover.cs:84
 msgid "Time"
 msgstr ""
 
-#: Stocks/Ui/TickerChartPopover.cs:97
+#: Stocks/Ui/Details/TickerChartPopover.cs:97
 msgid "Range"
 msgstr ""
 
-#: Stocks/Ui/TickerContextMenu.cs:21
+#: Stocks/Ui/TickerContextMenu.cs:17
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:154
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:251
 msgid "Remove"
 msgstr ""
 
-#: Stocks/Ui/TickerContextMenu.cs:25
+#: Stocks/Ui/TickerContextMenu.cs:21
 msgid "Refresh"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistButton.cs:68
+msgid "Manage Watchlists..."
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:118
+msgid "Watchlist name"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:128
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:250
+msgid "Cancel"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:153
+msgid "Rename"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:233
+msgid "Watchlist name is required."
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:236
+msgid "Watchlist name must be unique."
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:247
+msgid "Remove Watchlist"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:248
+#, csharp-format
+msgid "Remove '{0}'?"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:290
+msgid "1 symbol"
+msgstr ""
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:291
+#, csharp-format
+msgid "{0} symbols"
+msgstr ""
+
+#: Stocks/Model/Watchlists/WatchlistMigrator.cs:31
+msgctxt "Name of the default watchlist"
+msgid "Watchlist"
 msgstr ""
