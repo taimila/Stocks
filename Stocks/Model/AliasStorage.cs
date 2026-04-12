@@ -29,7 +29,7 @@ public class AliasStorage
         if (string.IsNullOrEmpty(key))
             return;
 
-        var trimmedAlias = alias?.Trim() ?? "";
+        var trimmedAlias = alias.Trim();
         if (string.IsNullOrWhiteSpace(trimmedAlias))
         {
             RemoveAlias(key);

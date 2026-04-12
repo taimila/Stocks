@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Stocks 0.2.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-18 14:48+0200\n"
-"PO-Revision-Date: 2026-02-16 18:17+0200\n"
+"POT-Creation-Date: 2026-04-11 20:24+0300\n"
+"PO-Revision-Date: 2026-04-11 20:25+0300\n"
 "Last-Translator: Lauri Taimila <lauri.taimila@me.com>\n"
 "Language-Team: Finnish\n"
 "Language: fi\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 49.0\n"
+"X-Generator: Gtranslator 50.0\n"
 
 #: data/ui/MainWindow.blp:13
 msgid "Stocks"
@@ -71,6 +71,46 @@ msgstr "Vaihda lista- ja ruudukkonäkymän välillä"
 #: data/ui/ShortcutsDialog.blp:15
 msgid "Refresh all"
 msgstr "Päivitä kaikki"
+
+#: data/ui/ShortcutsDialog.blp:26 data/ui/WatchlistManageDialog.blp:13
+msgid "Watchlists"
+msgstr "Seurantalistat"
+
+#: data/ui/ShortcutsDialog.blp:29
+msgid "Switch to watchlist 1"
+msgstr "Vaihda seurantalistaan 1"
+
+#: data/ui/ShortcutsDialog.blp:34
+msgid "Switch to watchlist 2"
+msgstr "Vaihda seurantalistaan 2"
+
+#: data/ui/ShortcutsDialog.blp:39
+msgid "Switch to watchlist 3"
+msgstr "Vaihda seurantalistaan 3"
+
+#: data/ui/ShortcutsDialog.blp:44
+msgid "Switch to watchlist 4"
+msgstr "Vaihda seurantalistaan 4"
+
+#: data/ui/ShortcutsDialog.blp:49
+msgid "Switch to watchlist 5"
+msgstr "Vaihda seurantalistaan 5"
+
+#: data/ui/ShortcutsDialog.blp:54
+msgid "Switch to watchlist 6"
+msgstr "Vaihda seurantalistaan 6"
+
+#: data/ui/ShortcutsDialog.blp:59
+msgid "Switch to watchlist 7"
+msgstr "Vaihda seurantalistaan 7"
+
+#: data/ui/ShortcutsDialog.blp:64
+msgid "Switch to watchlist 8"
+msgstr "Vaihda seurantalistaan 8"
+
+#: data/ui/ShortcutsDialog.blp:69
+msgid "Switch to watchlist 9"
+msgstr "Vaihda seurantalistaan 9"
 
 #: data/ui/ThemeSwitcher.blp:29
 msgid "Follow system style"
@@ -201,6 +241,14 @@ msgstr "Markkina"
 msgid "Updated just now."
 msgstr "Päivitetty juuri nyt."
 
+#: data/ui/WatchlistManageDialog.blp:9
+msgid "Manage watchlists"
+msgstr "Hallitse seurantalistoja"
+
+#: data/ui/WatchlistManageDialog.blp:17
+msgid "Add Watchlist"
+msgstr "Luo seurantalista\n"
+
 #: data/ui/BrowseModeSwitcher.blp:39
 msgid "List view"
 msgstr "Lista"
@@ -209,7 +257,7 @@ msgstr "Lista"
 msgid "Grid view"
 msgstr "Ruudukko"
 
-#: Stocks/Ui/SplitView.cs:121
+#: Stocks/Ui/SplitView.cs:107
 #, csharp-format
 msgid "{0} removed"
 msgstr "{0} poistettu"
@@ -238,33 +286,33 @@ msgstr "Lisää seurantalistalle"
 msgid "Already on watchlist"
 msgstr "Seurantalistalla"
 
-#: Stocks/Ui/TickerDetails.cs:195
+#: Stocks/Ui/TickerDetails.cs:202
 msgid "Chart not available"
 msgstr "Kaavio ei ole saatavilla"
 
-#: Stocks/Ui/TickerDetails.cs:410
+#: Stocks/Ui/TickerDetails.cs:417
 #, csharp-format
 msgid "Read more on <a href=\"{0}\">Yahoo Finance</a>."
 msgstr "Lisätietoja <a href=\"{0}\">Yahoo Finance</a> sivuilta."
 
-#: Stocks/Ui/TickerDetails.cs:438
+#: Stocks/Ui/TickerDetails.cs:445
 msgctxt "market-status"
 msgid "Open"
 msgstr "Auki"
 
-#: Stocks/Ui/TickerDetails.cs:439
+#: Stocks/Ui/TickerDetails.cs:446
 msgid "Closed"
 msgstr "Suljettu"
 
-#: Stocks/Ui/TickerDetails.cs:440
+#: Stocks/Ui/TickerDetails.cs:447
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: Stocks/Ui/TickerDetails.cs:458
+#: Stocks/Ui/TickerDetails.cs:465
 msgid "Updated less than minute ago."
 msgstr "Päivitetty alle minuutti sitten."
 
-#: Stocks/Ui/TickerDetails.cs:460
+#: Stocks/Ui/TickerDetails.cs:467
 #, csharp-format
 msgid "Updated {0} minutes ago."
 msgstr "Päivitetty {0} minuuttia sitten."
@@ -290,12 +338,76 @@ msgid "Range"
 msgstr "Väli"
 
 #: Stocks/Ui/TickerContextMenu.cs:21
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:154
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:251
 msgid "Remove"
 msgstr "Poista"
 
 #: Stocks/Ui/TickerContextMenu.cs:25
 msgid "Refresh"
 msgstr "Päivitä"
+
+#: Stocks/Ui/Watchlists/WatchlistButton.cs:68
+msgid "Manage Watchlists..."
+msgstr "Hallitse seurantalistoja..."
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:118
+msgid "Watchlist name"
+msgstr "Seurantalistan nimi"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:128
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:250
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:153
+msgid "Rename"
+msgstr "Nimeä uudelleen"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:233
+msgid "Watchlist name is required."
+msgstr "Seurntalistalle on annettava nimi\t"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:236
+msgid "Watchlist name must be unique."
+msgstr "Annettu nimi on jo käytössä"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:247
+msgid "Remove Watchlist"
+msgstr "Poista seurantalista"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:248
+#, csharp-format
+msgid "Remove '{0}'?"
+msgstr "Poista '{0}'?"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:290
+msgid "1 symbol"
+msgstr "1 symboli"
+
+#: Stocks/Ui/Watchlists/WatchlistManageDialog.cs:291
+#, csharp-format
+msgid "{0} symbols"
+msgstr "{0} symbolia"
+
+#: Stocks/Model/Watchlists/WatchlistMigrator.cs:31
+msgctxt "Name of the default watchlist"
+msgid "Watchlist"
+msgstr "Seurantalista"
+
+#~ msgctxt "Watchlist"
+#~ msgid "Name of the default watchlist"
+#~ msgstr "Seurantalista"
+
+#~ msgid "Add to Watchlist"
+#~ msgstr "Lisää seurantalistalle\n"
+
+#~ msgid "1 ticker"
+#~ msgstr "1 symboli"
+
+#, csharp-format
+#~ msgid "{0} tickers"
+#~ msgstr "{0} symbolia"
 
 #~ msgid "Help"
 #~ msgstr "Ohje"

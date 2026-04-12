@@ -83,6 +83,13 @@ public class TickerDetails : Gtk.Box
             if (previous is Ticker t && updateHandler != null)
                 t.OnUpdated -= updateHandler;
 
+            if (current is null)
+            {
+                activeTicker = null;
+                UpdateUI(null);
+                return;
+            }
+
             updateHandler = CreateUiUpdateHandler(UpdateUI);
             current.OnUpdated += updateHandler;
             await current.Refresh(model.ActiveRange);
@@ -221,7 +228,7 @@ public class TickerDetails : Gtk.Box
         }
     }
     
-    private void UpdateUI(Ticker t)
+    private void UpdateUI(Ticker? t)
     {
         if (model.SelectedTicker is Ticker ticker)
         {
@@ -461,7 +468,7 @@ public class TickerDetails : Gtk.Box
         }
     }
 
-    private Action<Ticker> CreateUiUpdateHandler(Action<Ticker> handler)
+    private Action<Ticker> CreateUiUpdateHandler(Action<Ticker?> handler)
     {
         return ticker =>
         {

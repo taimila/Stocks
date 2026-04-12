@@ -20,6 +20,7 @@ public class SplitView : Gtk.Box
     private readonly AppModel model;
     private readonly Sidebar sidebar;
     private readonly TickerDetails details;
+    private readonly HashSet<Ticker> observedTickers = [];
     private bool isNarrow;
 
     private SplitView(Gtk.Builder builder): base()
@@ -41,8 +42,11 @@ public class SplitView : Gtk.Box
 
         sidebar = new Sidebar(model);
         sidebarContainer.SetChild(sidebar);
+        sidebar.OnTickerActivated += OnSidebarTickerActivated;
 
         sidebarHeader.PackStart(new AddButton(model));
+        sidebarHeader.ShowTitle = true;
+        sidebarHeader.SetTitleWidget(new WatchlistButton(model.Watchlists));
         SetupResponsiveCollapse(window);
 
         splitView.OnNotify += (_, args) =>
@@ -53,11 +57,12 @@ public class SplitView : Gtk.Box
             HandleCollapsedChanged();
         };
 
-        foreach (var ticker in model.Tickers)
-            ticker.OnUpdated += OnTickerUpdated;
+        SyncVisibleTickerSubscriptions();
 
         model.OnTickerAdded += OnTickerAdded;
         model.OnTickerRemoved += OnTickerRemoved;
+        model.OnVisibleTickersReloaded += SyncVisibleTickerSubscriptions;
+        model.OnVisibleTickersReloaded += HandleVisibleTickersReloaded;
         model.OnActiveTickerChanged += OnActiveTickerChanged;
 
         HandleCollapsedChanged();
@@ -87,7 +92,7 @@ public class SplitView : Gtk.Box
 
     private void OnTickerAdded(Ticker ticker)
     {
-        ticker.OnUpdated += OnTickerUpdated;
+        ObserveTicker(ticker);
 
         GLib.Functions.IdleAdd(100, () =>
         {
@@ -98,15 +103,35 @@ public class SplitView : Gtk.Box
 
     private void OnTickerRemoved(Ticker ticker)
     {
-        ticker.OnUpdated -= OnTickerUpdated;
+        UnobserveTicker(ticker);
         ShowToast(string.Format(_("{0} removed"), ticker.Symbol));
         UpdateErrorBannerState();
     }
 
-    private void OnActiveTickerChanged(Ticker? _, Ticker ticker)
+    private void OnActiveTickerChanged(Ticker? _, Ticker? ticker)
+    {
+        if (ticker is null)
+            return;
+
+        detailsContent.Title = ticker.DisplayName;
+
+        if (!splitView.Collapsed || splitView.ShowContent)
+            splitView.ShowContent = true;
+    }
+
+    private void OnSidebarTickerActivated(Ticker ticker)
     {
         detailsContent.Title = ticker.DisplayName;
         splitView.ShowContent = true;
+    }
+
+    private void HandleVisibleTickersReloaded()
+    {
+        if (!splitView.Collapsed || !GetMapped())
+            return;
+
+        // When the active watchlist changes in collapsed list mode, stay on the list.
+        splitView.ShowContent = false;
     }
 
     private void OnTickerUpdated(Ticker _)
@@ -150,6 +175,35 @@ public class SplitView : Gtk.Box
     private void UpdateErrorBannerState()
     {
         errorBanner.Revealed = model.Tickers.Any(x => x.DataFetchFailed);
+    }
+
+    private void SyncVisibleTickerSubscriptions()
+    {
+        var visible = model.Tickers.ToHashSet();
+
+        foreach (var ticker in observedTickers.Except(visible).ToList())
+            UnobserveTicker(ticker);
+
+        foreach (var ticker in visible.Except(observedTickers).ToList())
+            ObserveTicker(ticker);
+
+        UpdateErrorBannerState();
+    }
+
+    private void ObserveTicker(Ticker ticker)
+    {
+        if (!observedTickers.Add(ticker))
+            return;
+
+        ticker.OnUpdated += OnTickerUpdated;
+    }
+
+    private void UnobserveTicker(Ticker ticker)
+    {
+        if (!observedTickers.Remove(ticker))
+            return;
+
+        ticker.OnUpdated -= OnTickerUpdated;
     }
 
     private void ShowToast(string text)

@@ -1,0 +1,23 @@
+// SPDX-FileCopyrightText: 2026 Lauri Taimila
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+using Gtk 4.0;
+using Adw 1;
+
+Adw.PreferencesDialog watchlistManageDialog {
+  follows-content-size: true;
+  title: _("Manage watchlists");
+
+  Adw.PreferencesPage {
+    Adw.PreferencesGroup watchlistsGroup {
+      title: _("Watchlists");
+
+      header-suffix: Gtk.Button addButton {
+        icon-name: "list-add-symbolic";
+        tooltip-text: _("Add Watchlist");
+        valign: center;
+        css-classes: ["flat"];
+      };
+    }
+  }
+}

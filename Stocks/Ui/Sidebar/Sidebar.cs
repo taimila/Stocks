@@ -10,6 +10,8 @@ public class Sidebar: Gtk.ListBox
     private readonly AppModel model;
     private readonly Dictionary<string, SidebarItem> items = [];
 
+    public event Action<Ticker>? OnTickerActivated;
+
     // Container for all on-going animations during drag operation
     private readonly Dictionary<Gtk.ListBoxRow, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeRowAnimations = [];
     
@@ -36,6 +38,7 @@ public class Sidebar: Gtk.ListBox
             if (isCollapsed && args.Row?.Child is SidebarItem item)
             {
                 model.SetActive(item.Ticker);
+                OnTickerActivated?.Invoke(item.Ticker);
             }
         };
 
@@ -56,7 +59,8 @@ public class Sidebar: Gtk.ListBox
         this.model.OnTickerAdded += AddTicker; 
         this.model.OnTickerRemoved += RemoveTicker; 
         this.model.OnTickerMoved += (_, _) => UpdateUItoMatchTickerOrderInModel();
-        this.model.OnActiveTickerChanged += (_, ticker) => SetSelectedRowTo(ticker);
+        this.model.OnActiveTickerChanged += (_, _) => UpdateSelectionState();
+        this.model.OnVisibleTickersReloaded += ReloadTickers;
         
         if (GetRowAtIndex(0) is Gtk.ListBoxRow row)
         {
@@ -96,6 +100,19 @@ public class Sidebar: Gtk.ListBox
         suppressRowSelection = true;
         SelectRow(row);
         suppressRowSelection = false;
+    }
+
+    private void ReloadTickers()
+    {
+        StopAllRowAnimations();
+        dragState = null;
+        items.Clear();
+
+        while (GetRowAtIndex(0) is Gtk.ListBoxRow row)
+            Remove(row);
+
+        model.Tickers.ForEach(Add);
+        UpdateSelectionState();
     }
 
     private void UpdateSelectionState()

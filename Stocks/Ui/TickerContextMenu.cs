@@ -7,23 +7,19 @@ namespace Stocks.UI;
 
 internal static class TickerContextMenu
 {
-    public static void Attach(Gtk.Widget widget, Func<Ticker?> getTicker)
+    public static void Attach(Gtk.Widget widget, Ticker ticker)
     {
         var rightClick = Gtk.GestureClick.New();
         rightClick.SetButton(3);
         rightClick.OnPressed += (_, args) =>
         {
-            var ticker = getTicker();
-            if (ticker is null)
-                return;
-
             var remove = new Gio.MenuItem();
             remove.SetLabel(Stocks.Translations._("Remove"));
             remove.SetActionAndTargetValue("app.remove", GLib.Variant.NewString(ticker.Symbol));
 
-            var update = new Gio.MenuItem();
-            update.SetLabel(Stocks.Translations._("Refresh"));
-            update.SetActionAndTargetValue("app.refreshticker", GLib.Variant.NewString(ticker.Symbol));
+            var refresh = new Gio.MenuItem();
+            refresh.SetLabel(Stocks.Translations._("Refresh"));
+            refresh.SetActionAndTargetValue("app.refreshticker", GLib.Variant.NewString(ticker.Symbol));
 
             var point = new Gdk.Rectangle
             {
@@ -35,7 +31,7 @@ internal static class TickerContextMenu
 
             var menu = Gio.Menu.New();
             menu.AppendItem(remove);
-            menu.AppendItem(update);
+            menu.AppendItem(refresh);
 
             var popover = Gtk.PopoverMenu.NewFromModel(menu);
             popover.HasArrow = false;

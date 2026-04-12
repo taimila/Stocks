@@ -19,6 +19,7 @@ public class GridView : Gtk.Box
 
     private readonly AppModel model;
     private readonly TickerDetails details;
+    private readonly HashSet<Ticker> observedTickers = [];
     private bool isNarrow;
 
     private GridView(Gtk.Builder builder) : base()
@@ -37,19 +38,29 @@ public class GridView : Gtk.Box
         detailsContainer.SetChild(details);
 
         var tickerGrid = new TickerGrid(model);
+        tickerGrid.OnTickerActivated += ticker =>
+        {
+            model.SetActive(ticker);
+            detailsContent.Title = ticker.DisplayName;
+            gridView.PushByTag("details");
+        };
         scrollContainer.SetChild(tickerGrid);
 
         gridHeader.PackStart(new AddButton(model));
+        gridHeader.ShowTitle = true;
+        gridHeader.SetTitleWidget(new WatchlistButton(model.Watchlists));
 
-        foreach (var ticker in model.Tickers)
-            ticker.OnUpdated += OnTickerUpdated;
+        SyncVisibleTickerSubscriptions();
 
         model.OnTickerAdded += OnTickerAdded;
         model.OnTickerRemoved += OnTickerRemoved;
-        model.OnActiveTickerChanged += (Ticker? _, Ticker ticker) =>
+        model.OnVisibleTickersReloaded += SyncVisibleTickerSubscriptions;
+        model.OnActiveTickerChanged += (Ticker? _, Ticker? ticker) =>
         {
+            if (ticker is null)
+                return;
+
             detailsContent.Title = ticker.DisplayName;
-            gridView.PushByTag("details");
         };
     }
 
@@ -74,14 +85,43 @@ public class GridView : Gtk.Box
 
     private void OnTickerAdded(Ticker ticker)
     {
-        ticker.OnUpdated += OnTickerUpdated;
+        ObserveTicker(ticker);
         UpdateErrorBannerState();
     }
 
     private void OnTickerRemoved(Ticker ticker)
     {
-        ticker.OnUpdated -= OnTickerUpdated;
+        UnobserveTicker(ticker);
         UpdateErrorBannerState();
+    }
+
+    private void SyncVisibleTickerSubscriptions()
+    {
+        var visible = model.Tickers.ToHashSet();
+
+        foreach (var ticker in observedTickers.Except(visible).ToList())
+            UnobserveTicker(ticker);
+
+        foreach (var ticker in visible.Except(observedTickers).ToList())
+            ObserveTicker(ticker);
+
+        UpdateErrorBannerState();
+    }
+
+    private void ObserveTicker(Ticker ticker)
+    {
+        if (!observedTickers.Add(ticker))
+            return;
+
+        ticker.OnUpdated += OnTickerUpdated;
+    }
+
+    private void UnobserveTicker(Ticker ticker)
+    {
+        if (!observedTickers.Remove(ticker))
+            return;
+
+        ticker.OnUpdated -= OnTickerUpdated;
     }
 
     private void OnTickerUpdated(Ticker _)

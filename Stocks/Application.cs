@@ -36,6 +36,7 @@ public class Application
     {
         SetupRemoveAction();
         SetupRefreshAction();
+        SetupWatchlistShortcutActions();
 
         CreateAction("Refresh", async (_, _) => { await model.UpdateAll(true); }, ["<Ctrl>R"]);
         CreateAction("ToggleBrowseMode", (_, _) => { mainWindow?.ToggleBrowseMode(); }, ["<Ctrl>M"]);
@@ -69,6 +70,29 @@ public class Application
             }
         };
         app.AddAction(refreshAction);
+    }
+
+    private void SetupWatchlistShortcutActions()
+    {
+        void SwitchToWatchlist(int slot)
+        {
+            var watchlist = model.Watchlists
+                .GetWatchlists()
+                .ElementAtOrDefault(slot - 1);
+
+            if (watchlist is null)
+                return;
+
+            model.Watchlists.SetActiveWatchlist(watchlist.Id);
+        }
+
+        for (var i = 1; i <= 9; i++)
+        {
+            var slot = i;
+            var name = $"SwitchWatchlist{slot}";
+            var shortcut = $"<Ctrl>{slot}";
+            CreateAction(name, (_, _) => { SwitchToWatchlist(slot); }, [shortcut]);
+        }
     }
     
     private void CreateAction(

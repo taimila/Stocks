@@ -6,6 +6,7 @@ data/ui/ShortcutsDialog.blp
 data/ui/SidebarItem.blp
 data/ui/ThemeSwitcher.blp
 data/ui/TickerDetails.blp
+data/ui/WatchlistManageDialog.blp
 data/ui/BrowseModeSwitcher.blp
 Stocks/Ui/SplitView.cs
 Stocks/Ui/MainWindow.cs
@@ -15,4 +16,7 @@ Stocks/Ui/SidebarItem.cs
 Stocks/Ui/TickerDetails.cs
 Stocks/Ui/TickerChartPopover.cs
 Stocks/Ui/TickerContextMenu.cs
+Stocks/Ui/Watchlists/WatchlistButton.cs
+Stocks/Ui/Watchlists/WatchlistManageDialog.cs
 Stocks/Model/TickerRange.cs
+Stocks/Model/Watchlists/WatchlistMigrator.cs
