@@ -247,7 +247,7 @@ msgstr "Hallitse seurantalistoja"
 
 #: data/ui/WatchlistManageDialog.blp:17
 msgid "Add Watchlist"
-msgstr "Luo seurantalista\n"
+msgstr "Luo seurantalista"
 
 #: data/ui/BrowseModeSwitcher.blp:39
 msgid "List view"
