@@ -33,6 +33,9 @@ template $BrowseModeSwitcher : Gtk.Box {
                     styles [ "mode-icon" ]
                     icon-name: "view-list-symbolic";
                     halign: center;
+                    accessibility {
+                      label: _("List view");
+                    }
                 }
 
                 Label {
@@ -61,6 +64,9 @@ template $BrowseModeSwitcher : Gtk.Box {
                     styles [ "mode-icon" ]
                     icon-name: "view-grid-symbolic";
                     halign: center;
+                    accessibility {
+                      label: _("Grid view");
+                    }
                 }
 
                 Label {

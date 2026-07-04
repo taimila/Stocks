@@ -13,18 +13,18 @@ template $SidebarItem : Gtk.Grid {
     row-spacing: 4;
     hexpand: true;
 
-    Label symbol { 
+    Gtk.Label symbol {
         layout { column: 0; row: 0; }
-        css-classes: ["title-4"];
+        styles ["title-4"]
         halign: fill;
         hexpand: true;
         ellipsize: end;
         xalign: 0.0;
     }
 
-    Label name { 
+    Gtk.Label name {
         layout { column: 0; row: 1; }
-        css-classes: ["caption", "subtitle"];
+        styles ["caption", "subtitle"]
         halign: fill;
         hexpand: true;
         ellipsize: end;
@@ -40,17 +40,17 @@ template $SidebarItem : Gtk.Grid {
         halign: center;
     }
 
-    Label value { 
+    Gtk.Label value {
         layout { column: 2; row: 0; }
-        css-classes: ["title-4"];
+        styles ["title-4"]
         halign: end;
-        xalign: 1;
+        xalign: 1.0;
     }
 
-    Label change { 
+    Gtk.Label change {
         layout { column: 2; row: 1; }
-        css-classes: ["caption-heading"];
+        styles ["caption-heading"]
         halign: end;
-        xalign: 1;
-    }  
+        xalign: 1.0;
+    }
 }

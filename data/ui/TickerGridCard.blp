@@ -5,7 +5,7 @@ using Gtk 4.0;
 using Adw 1;
 
 template $TickerGridCard : Gtk.Box {
-    css-classes: [ "card" ];
+    styles [ "card" ]
     orientation: vertical;
     spacing: 8;
    
@@ -23,7 +23,7 @@ template $TickerGridCard : Gtk.Box {
 
         Label displayName {
             layout { column: 0; row: 0; }
-            css-classes: ["heading"];
+            styles ["heading"]
             max-width-chars: 10;
             halign: fill;
             hexpand: true;
@@ -33,7 +33,7 @@ template $TickerGridCard : Gtk.Box {
 
         Label name {
             layout { column: 0; row: 1; column-span: 2; }
-            css-classes: [ "caption", "dim-label" ];
+            styles [ "caption", "dim-label" ]
             max-width-chars: 18;
             halign: fill;
             hexpand: true;
@@ -43,7 +43,7 @@ template $TickerGridCard : Gtk.Box {
 
         Label change {
             layout { column: 1; row: 0; }
-            css-classes: ["caption-heading"];
+            styles ["caption-heading"]
             halign: end;
             valign: start;
             xalign: 1;
@@ -58,7 +58,7 @@ template $TickerGridCard : Gtk.Box {
     }
 
     Label value {
-        css-classes: ["title-4"];
+        styles ["title-4"]
         halign: end;
         xalign: 1;
         margin-start: 8;
