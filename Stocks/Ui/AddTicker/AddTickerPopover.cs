@@ -6,20 +6,36 @@ using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-class AddTickerPopover : Gtk.Popover
+[GObject.Subclass<Gtk.Popover>(qualifiedName: nameof(AddTickerPopover))]
+partial class AddTickerPopover
 {
-    public AddTickerPopover(AppModel model)
-    {        
-        var content = new AddTickerView(model, () => Hide());
+    public static AddTickerPopover NewWithModel(AppModel model)
+    {
+        var popover = NewWithProperties([]);
+        popover.SetModel(model);
+        return popover;
+    }
+
+    private void SetModel(AppModel model)
+    {
+        var content = AddTickerView.NewWithModel(model, () => Hide());
         SetChild(content);
     }
 }
 
-class AddTickerDialog: Adw.Dialog
+[GObject.Subclass<Adw.Dialog>(qualifiedName: nameof(AddTickerDialog))]
+partial class AddTickerDialog
 {
-    public AddTickerDialog(AppModel model)
+    public static AddTickerDialog NewWithModel(AppModel model)
     {
-        var content = new AddTickerView(model, () => Close());
+        var dialog = NewWithProperties([]);
+        dialog.SetModel(model);
+        return dialog;
+    }
+
+    private void SetModel(AppModel model)
+    {
+        var content = AddTickerView.NewWithModel(model, () => Close());
         content.MarginStart = 8;
         content.MarginEnd = 8;
         content.MarginTop = 8;
@@ -28,7 +44,8 @@ class AddTickerDialog: Adw.Dialog
     }
 }
 
-class AddTickerView : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(AddTickerView))]
+partial class AddTickerView
 {
     private List<SearchResultListRow> results = [];
 
@@ -49,7 +66,14 @@ class AddTickerView : Gtk.Box
 
     private readonly Adw.StatusPage emptyState = Adw.StatusPage.New();
 
-    public AddTickerView(AppModel model, Action hideAction)
+    public static AddTickerView NewWithModel(AppModel model, Action hideAction)
+    {
+        var view = NewWithProperties([]);
+        view.SetModel(model, hideAction);
+        return view;
+    }
+
+    private void SetModel(AppModel model, Action hideAction)
     {
         var box = Gtk.Box.New(Gtk.Orientation.Vertical, 10);
 
@@ -113,7 +137,7 @@ class AddTickerView : Gtk.Box
 
                 results.ForEach(x => x.OnAdd -= AddTicker);
                 resultBox.RemoveAll();
-                results = result.Select(x => new SearchResultListRow(g1, g2, g3, model, x)).ToList();
+                results = result.Select(x => SearchResultListRow.NewWithResult(g1, g2, g3, model, x)).ToList();
                 results.ForEach(x => x.OnAdd += AddTicker);
                 results.ToList().ForEach(x => resultBox.Append(x));
                 return false;
@@ -163,11 +187,19 @@ class AddTickerView : Gtk.Box
         emptyState.Description = _("No results found for current search term.");
     }
 
-    private class SearchResultListRow: Gtk.ListBoxRow
+    [GObject.Subclass<Gtk.ListBoxRow>(qualifiedName: nameof(SearchResultListRow))]
+    internal partial class SearchResultListRow
     {
         public event Action<string>? OnAdd;
 
-        public SearchResultListRow(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, AppModel model, SearchResult result)
+        public static SearchResultListRow NewWithResult(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, AppModel model, SearchResult result)
+        {
+            var row = NewWithProperties([]);
+            row.SetResult(g1, g2, g3, model, result);
+            return row;
+        }
+
+        private void SetResult(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, AppModel model, SearchResult result)
         {
             Selectable = false;
 

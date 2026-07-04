@@ -5,11 +5,19 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-internal sealed class WatchlistRadioButtons : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(WatchlistRadioButtons))]
+internal sealed partial class WatchlistRadioButtons
 {
     private const int MaxShortcutHints = 9;
 
-    public WatchlistRadioButtons(WatchlistModel model, Action<string> onSelection)
+    public static WatchlistRadioButtons NewWithModel(WatchlistModel model, Action<string> onSelection)
+    {
+        var buttons = NewWithProperties([]);
+        buttons.SetModel(model, onSelection);
+        return buttons;
+    }
+
+    private void SetModel(WatchlistModel model, Action<string> onSelection)
     {
         SetOrientation(Gtk.Orientation.Vertical);
 

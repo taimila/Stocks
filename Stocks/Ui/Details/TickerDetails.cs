@@ -155,7 +155,7 @@ public partial class TickerDetails
             items[key] = Enum.Parse<TickerRange>(key).GetDisplayName();
         }
 
-        rangeDropdown = new KeyValueDropDown(items);
+        rangeDropdown = KeyValueDropDown.NewWithItems(items);
         rangeDropdown.Hexpand = false;
         rangeDropdown.Halign = Gtk.Align.Start;
         rangeDropdown.OnValueSelected += SetRangeFromName;
@@ -200,21 +200,21 @@ public partial class TickerDetails
             }
         }
      
-        chart = new TickerChart { Vexpand = true, Hexpand = true };
+        chart = TickerChart.New();
+        chart.Vexpand = true;
+        chart.Hexpand = true;
         chart.OnHover += OnChartHover;
 
-        noDataView = new Adw.StatusPage
-        {
-            Title = _("Chart not available"),
-            IconName = "emblem-important-symbolic",
-            WidthRequest = 400,
-            Halign = Gtk.Align.Center,
-            Valign = Gtk.Align.Center,
-            Hexpand = true,
-            Vexpand = true
-        };
+        noDataView = Adw.StatusPage.New();
+        noDataView.Title = _("Chart not available");
+        noDataView.IconName = "emblem-important-symbolic";
+        noDataView.WidthRequest = 400;
+        noDataView.Halign = Gtk.Align.Center;
+        noDataView.Valign = Gtk.Align.Center;
+        noDataView.Hexpand = true;
+        noDataView.Vexpand = true;
 
-        chartOverlay = new Gtk.Overlay();
+        chartOverlay = Gtk.Overlay.New();
         chartOverlay.Hexpand = true;
         chartOverlay.SetChild(chart);
         chartOverlay.AddOverlay(noDataView);

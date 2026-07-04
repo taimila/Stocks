@@ -35,20 +35,18 @@ public partial class SidebarItem
         g2.AddWidget(chartBin);
         g3.AddWidget(value);
 
-        chart = new TickerChart
-        {
-            EnableMouseInteraction = false,
-            ShowDotOnHover = false,
-            ShowPreviousCloseLine = true,
-            ShowGradient = true,
-            ShowXScale = false,
-            ShowYScale = false,
-            LineWidth = 1,
-            CloseMarkerWidth = 1,
-            Padding = 1,
-            MarginTop = 10,
-            MarginBottom = 10
-        };
+        chart = TickerChart.New();
+        chart.EnableMouseInteraction = false;
+        chart.ShowDotOnHover = false;
+        chart.ShowPreviousCloseLine = true;
+        chart.ShowGradient = true;
+        chart.ShowXScale = false;
+        chart.ShowYScale = false;
+        chart.LineWidth = 1;
+        chart.CloseMarkerWidth = 1;
+        chart.Padding = 1;
+        chart.MarginTop = 10;
+        chart.MarginBottom = 10;
         chartBin.SetChild(chart);
 
         Ticker = ticker;

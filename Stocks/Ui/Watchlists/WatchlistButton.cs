@@ -6,14 +6,22 @@ using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-public class WatchlistButton : Gtk.MenuButton
+[GObject.Subclass<Gtk.MenuButton>(qualifiedName: nameof(WatchlistButton))]
+public partial class WatchlistButton
 {
     private const string ActionGroupName = "watchlist-selector";
 
-    private readonly WatchlistModel model;
-    private readonly Gtk.Label activeWatchlistName;
+    private WatchlistModel model = null!;
+    private Gtk.Label activeWatchlistName = null!;
 
-    public WatchlistButton(WatchlistModel model)
+    public static WatchlistButton NewWithModel(WatchlistModel model)
+    {
+        var button = NewWithProperties([]);
+        button.SetModel(model);
+        return button;
+    }
+
+    private void SetModel(WatchlistModel model)
     {
         this.model = model;
 
@@ -73,7 +81,7 @@ public class WatchlistButton : Gtk.MenuButton
 
         if (GetPopoverMenuContentBox(popover) is Gtk.Box contentBox)
         {
-            var radiobuttons = new WatchlistRadioButtons(model, watchlistId =>
+            var radiobuttons = WatchlistRadioButtons.NewWithModel(model, watchlistId =>
             {
                 model.SetActiveWatchlist(watchlistId);
                 Active = false;

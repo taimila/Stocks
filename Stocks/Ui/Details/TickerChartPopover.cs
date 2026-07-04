@@ -6,16 +6,22 @@ using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-public class TickerChartPopover: Gtk.Popover
+[GObject.Subclass<Gtk.Popover>(qualifiedName: nameof(TickerChartPopover))]
+public partial class TickerChartPopover
 {
-    private readonly Gtk.Label dateTitle;
-    private readonly Gtk.Label dateValue;
-    private readonly Gtk.Label priceTitle;
-    private readonly Gtk.Label priceValue;
-    private readonly Gtk.Label changeTitle;
-    private readonly Gtk.Label changeValue;
+    private Gtk.Label dateTitle = null!;
+    private Gtk.Label dateValue = null!;
+    private Gtk.Label priceTitle = null!;
+    private Gtk.Label priceValue = null!;
+    private Gtk.Label changeTitle = null!;
+    private Gtk.Label changeValue = null!;
 
-    public TickerChartPopover()
+    public static new TickerChartPopover New()
+    {
+        return NewWithProperties([]);
+    }
+
+    partial void Initialize()
     {
         Autohide = false;
         HasArrow = true;

@@ -6,14 +6,22 @@ using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-public class AddButton : Gtk.Button
+[GObject.Subclass<Gtk.Button>(qualifiedName: nameof(AddButton))]
+public partial class AddButton
 {
     // If window is narrower than this treshold, add is shown as dialog instead of popover.
     private const int AddDialogThreshold = 370;
     
-    private readonly AppModel model;
+    private AppModel model = null!;
 
-    public AddButton(AppModel model)
+    public static AddButton NewWithModel(AppModel model)
+    {
+        var button = NewWithProperties([]);
+        button.SetModel(model);
+        return button;
+    }
+
+    private void SetModel(AppModel model)
     {
         TooltipText = _("Add symbol");
         IconName = "list-add-symbolic";
@@ -38,7 +46,7 @@ public class AddButton : Gtk.Button
 
     private void ShowAddPopover()
     {
-        var popover = new AddTickerPopover(model);
+        var popover = AddTickerPopover.NewWithModel(model);
         popover.SetParent(this);
         popover.Show();
     }
@@ -48,7 +56,7 @@ public class AddButton : Gtk.Button
         if (Root is not Gtk.Widget parent)
             return;
 
-        var dialog = new AddTickerDialog(model);
+        var dialog = AddTickerDialog.NewWithModel(model);
         dialog.Present(parent);
     }
 }

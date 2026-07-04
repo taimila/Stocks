@@ -41,13 +41,13 @@ public partial class SplitView
         details = TickerDetails.NewWithModel(model);
         detailsContainer.SetChild(details);
 
-        sidebar = new Sidebar(model);
+        sidebar = Sidebar.NewWithModel(model);
         sidebarContainer.SetChild(sidebar);
         sidebar.OnTickerActivated += OnSidebarTickerActivated;
 
-        sidebarHeader.PackStart(new AddButton(model));
+        sidebarHeader.PackStart(AddButton.NewWithModel(model));
         sidebarHeader.ShowTitle = true;
-        sidebarHeader.SetTitleWidget(new WatchlistButton(model.Watchlists));
+        sidebarHeader.SetTitleWidget(WatchlistButton.NewWithModel(model.Watchlists));
         SetupResponsiveCollapse(window);
 
         splitView.OnNotify += (_, args) =>
@@ -152,10 +152,7 @@ public partial class SplitView
 
     private void SetupResponsiveCollapse(Adw.ApplicationWindow window)
     {
-        var collapseBreakpoint = new Adw.Breakpoint
-        {
-            Condition = Adw.BreakpointCondition.Parse("max-width: 600px")
-        };
+        var collapseBreakpoint = Adw.Breakpoint.New(Adw.BreakpointCondition.Parse("max-width: 600px"));
 
         collapseBreakpoint.AddSetter(
             splitView,

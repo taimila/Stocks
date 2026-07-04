@@ -53,7 +53,8 @@ public class ChartPalette {
             : new Color(0,0,0,1);
 }
 
-public class TickerChart: Gtk.DrawingArea
+[GObject.Subclass<Gtk.DrawingArea>(qualifiedName: nameof(TickerChart))]
+public partial class TickerChart
 {
     // Configuration
     public bool EnableMouseInteraction { get; set; } = true;
@@ -119,7 +120,12 @@ public class TickerChart: Gtk.DrawingArea
         OnHover?.Invoke(d1, d2, HoverMode == HoverMode.PopoverOnBottom);
     }
 
-    public TickerChart()
+    public static new TickerChart New()
+    {
+        return NewWithProperties([]);
+    }
+
+    partial void Initialize()
     {
         SetDrawFunc(Draw);
         TrackMouse();
@@ -145,7 +151,7 @@ public class TickerChart: Gtk.DrawingArea
     // Update chart state based on mouse actions (position and click)
     private void TrackMouse()
     {
-        var motion = new Gtk.EventControllerMotion();
+        var motion = Gtk.EventControllerMotion.New();
 
         motion.OnMotion += (o, args) =>
         {
@@ -243,7 +249,7 @@ public class TickerChart: Gtk.DrawingArea
 
     private void SetupPopover()
     {
-        popover = new TickerChartPopover();
+        popover = TickerChartPopover.New();
         popover.SetParent(this);
     }
 

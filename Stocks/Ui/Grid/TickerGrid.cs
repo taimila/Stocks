@@ -5,9 +5,10 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class TickerGrid : Gtk.FlowBox
+[GObject.Subclass<Gtk.FlowBox>(qualifiedName: nameof(TickerGrid))]
+public partial class TickerGrid
 {
-    private readonly AppModel model;
+    private AppModel model = null!;
     private readonly Dictionary<string, Gtk.AspectFrame> cards = [];
 
     // Container for all on-going animations during drag operation
@@ -16,7 +17,14 @@ public class TickerGrid : Gtk.FlowBox
     private DragState? dragState;
     public event Action<Ticker>? OnTickerActivated;
 
-    public TickerGrid(AppModel model)
+    public static TickerGrid NewWithModel(AppModel model)
+    {
+        var grid = NewWithProperties([]);
+        grid.SetModel(model);
+        return grid;
+    }
+
+    private void SetModel(AppModel model)
     {
         this.model = model;
         this.model.Tickers.ForEach(AddTicker);

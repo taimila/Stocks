@@ -13,11 +13,11 @@ internal static class TickerContextMenu
         rightClick.SetButton(3);
         rightClick.OnPressed += (_, args) =>
         {
-            var remove = new Gio.MenuItem();
+            var remove = Gio.MenuItem.New(null, null);
             remove.SetLabel(Stocks.Translations._("Remove"));
             remove.SetActionAndTargetValue("app.remove", GLib.Variant.NewString(ticker.Symbol));
 
-            var refresh = new Gio.MenuItem();
+            var refresh = Gio.MenuItem.New(null, null);
             refresh.SetLabel(Stocks.Translations._("Refresh"));
             refresh.SetActionAndTargetValue("app.refreshticker", GLib.Variant.NewString(ticker.Symbol));
 

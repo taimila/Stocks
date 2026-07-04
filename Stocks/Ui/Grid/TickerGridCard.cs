@@ -32,18 +32,16 @@ public partial class TickerGridCard
         Ticker = ticker;
         TickerContextMenu.Attach(this, Ticker);
 
-        chart = new TickerChart
-        {
-            EnableMouseInteraction = false,
-            ShowDotOnHover = false,
-            ShowPreviousCloseLine = true,
-            ShowGradient = true,
-            ShowXScale = false,
-            ShowYScale = false,
-            LineWidth = 1.5,
-            Hexpand = true,
-            Vexpand = true
-        };
+        chart = TickerChart.New();
+        chart.EnableMouseInteraction = false;
+        chart.ShowDotOnHover = false;
+        chart.ShowPreviousCloseLine = true;
+        chart.ShowGradient = true;
+        chart.ShowXScale = false;
+        chart.ShowYScale = false;
+        chart.LineWidth = 1.5;
+        chart.Hexpand = true;
+        chart.Vexpand = true;
 
         chartBin.SetChild(chart);
 
