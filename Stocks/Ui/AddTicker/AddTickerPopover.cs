@@ -94,7 +94,7 @@ partial class AddTickerView
         scroll.HscrollbarPolicy = Gtk.PolicyType.Never;
         scroll.SetChild(resultBox);
 
-        void AddTicker(string symbol)
+        void AddTicker(Symbol symbol)
         {
             model.AddTicker(symbol);
             SafeHide();
@@ -190,7 +190,7 @@ partial class AddTickerView
     [GObject.Subclass<Gtk.ListBoxRow>(qualifiedName: nameof(SearchResultListRow))]
     internal partial class SearchResultListRow
     {
-        public event Action<string>? OnAdd;
+        public event Action<Symbol>? OnAdd;
 
         public static SearchResultListRow NewWithResult(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, AppModel model, SearchResult result)
         {
@@ -202,19 +202,20 @@ partial class AddTickerView
         private void SetResult(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, AppModel model, SearchResult result)
         {
             Selectable = false;
+            var symbol = new Symbol(result.Symbol);
 
             // Allow adding only for symbols that are not yet on watch list.
-            var canAdd = !model.Tickers.Select(x => x.Symbol).Contains(result.Symbol);
+            var canAdd = !model.Tickers.Select(x => x.Symbol).Contains(symbol);
 
             var add = Gtk.Button.NewFromIconName(canAdd ? "list-add-symbolic": "checkmark-symbolic");
             add.AddCssClass("suggested-action");
             add.AddCssClass("circular");
             add.Sensitive = canAdd;
-            add.OnClicked += (_, _) => OnAdd?.Invoke(result.Symbol);
+            add.OnClicked += (_, _) => OnAdd?.Invoke(symbol);
             add.Valign = Gtk.Align.Center;
             add.TooltipText = canAdd ? _("Add to watchlist") : _("Already on watchlist");
 
-            var sidebarItem = SidebarItem.NewWithTicker(g1, g2, g3, model.GetEmpheralTicker(result.Symbol));
+            var sidebarItem = SidebarItem.NewWithTicker(g1, g2, g3, model.GetEmpheralTicker(symbol));
             sidebarItem.Sensitive = canAdd;
 
             // Hack to fix padding issue of the name label when in popover.

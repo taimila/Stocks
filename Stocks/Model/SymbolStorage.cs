@@ -12,28 +12,32 @@ public class SymbolStorage
         this.settings = settings;
     }
 
-    public List<string> All =>
-        settings.GetStrv("symbols").ToList();
+    public List<Symbol> All =>
+        settings.GetStrv("symbols")
+            .Select(value => Symbol.TryCreate(value, out var symbol) ? symbol : null)
+            .Where(symbol => symbol is not null)
+            .Select(symbol => symbol!)
+            .ToList();
 
-    public void Add(string symbol)
+    public void Add(Symbol symbol)
     {
         var x = All;
         x.Add(symbol);
-        settings.SetStrv("symbols", x.ToArray());
+        settings.SetStrv("symbols", x.Select(symbol => symbol.Value).ToArray());
     }
 
-    public void Move(string symbol, int index)
+    public void Move(Symbol symbol, int index)
     {
         var x = All;
         x.Remove(symbol);
         x.Insert(index, symbol);
-        settings.SetStrv("symbols", x.ToArray());
+        settings.SetStrv("symbols", x.Select(symbol => symbol.Value).ToArray());
     }
 
-    public void Remove(string symbol)
+    public void Remove(Symbol symbol)
     {
         var x = All;
         x.Remove(symbol);
-        settings.SetStrv("symbols", x.ToArray());
+        settings.SetStrv("symbols", x.Select(symbol => symbol.Value).ToArray());
     }
 }

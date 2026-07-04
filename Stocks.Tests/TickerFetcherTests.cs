@@ -8,7 +8,7 @@ namespace Stocks.Tests;
 
 public class TickerFetcherTests
 {
-    private const string Symbol = "SXR8.DE";
+    private const string sxr8 = "SXR8.DE";
     private const string UserAgent = "Mozilla/4.0 (Stocks.Tests)";
 
     [Test]
@@ -18,7 +18,7 @@ public class TickerFetcherTests
         var client = CreateClientWithJson(CreateChartResponseJson(), request => requestUrl = request.RequestUri?.ToString());
         var sut = CreateFetcher(client);
 
-        await sut.Fetch(Symbol, TickerRange.Day);
+        await sut.Fetch(new Symbol(sxr8), TickerRange.Day);
 
         Assert.That(requestUrl, Is.EqualTo("https://query1.finance.yahoo.com/v8/finance/chart/SXR8.DE?range=1d&interval=2m"));
     }
@@ -29,7 +29,7 @@ public class TickerFetcherTests
         var client = CreateClientWithJson(CreateChartResponseJson(symbol: "TSLA"));
         var sut = CreateFetcher(client);
 
-        var result = await sut.Fetch(Symbol, TickerRange.Day);
+        var result = await sut.Fetch(new Symbol(sxr8), TickerRange.Day);
 
         Assert.That(result.Meta.Symbol, Is.EqualTo("TSLA"));
     }
@@ -40,7 +40,7 @@ public class TickerFetcherTests
         var client = CreateClientWithException(new HttpRequestException("boom"));
         var sut = CreateFetcher(client);
 
-        var exception = Assert.ThrowsAsync<TickerFetchFailedException>(async () => await sut.Fetch(Symbol, TickerRange.Day));
+        var exception = Assert.ThrowsAsync<TickerFetchFailedException>(async () => await sut.Fetch(new Symbol(sxr8), TickerRange.Day));
 
         Assert.That(exception!.InnerException, Is.TypeOf<HttpRequestException>());
     }
@@ -51,7 +51,7 @@ public class TickerFetcherTests
         var client = CreateClientWithJson("{\"chart\":{\"result\":null,\"error\":null}}");
         var sut = CreateFetcher(client);
 
-        Assert.ThrowsAsync<TickerFetchFailedException>(async () => await sut.Fetch(Symbol, TickerRange.Day));
+        Assert.ThrowsAsync<TickerFetchFailedException>(async () => await sut.Fetch(new Symbol(sxr8), TickerRange.Day));
     }
 
     [Test]
@@ -154,7 +154,7 @@ public class TickerFetcherTests
         return JsonSerializer.Serialize(response);
     }
 
-    private static string CreateChartResponseJson(string symbol = Symbol)
+    private static string CreateChartResponseJson(string symbol = sxr8)
     {
         var response = new ChartResponse(
             new ChartData(

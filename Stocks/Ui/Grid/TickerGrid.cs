@@ -9,7 +9,7 @@ namespace Stocks.UI;
 public partial class TickerGrid
 {
     private AppModel model = null!;
-    private readonly Dictionary<string, Gtk.AspectFrame> cards = [];
+    private readonly Dictionary<Symbol, Gtk.AspectFrame> cards = [];
 
     // Container for all on-going animations during drag operation
     private readonly Dictionary<Gtk.FlowBoxChild, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeCardAnimations = [];

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Stocks 0.6.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-04 11:40+0300\n"
+"POT-Creation-Date: 2026-07-04 17:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -124,127 +124,127 @@ msgstr ""
 msgid "Dark style"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:22
+#: data/ui/TickerDetails.blp:23
 msgid "No tickers"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:23
+#: data/ui/TickerDetails.blp:24
 msgid "Add tickers to your watchlist."
 msgstr ""
 
-#: data/ui/TickerDetails.blp:133
+#: data/ui/TickerDetails.blp:132
 msgid "Save alias for symbol"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:160 Stocks/Model/TickerRange.cs:48
+#: data/ui/TickerDetails.blp:159 Stocks/Model/TickerRange.cs:48
 msgid "1d"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:161 Stocks/Model/TickerRange.cs:32
+#: data/ui/TickerDetails.blp:160 Stocks/Model/TickerRange.cs:32
 msgid "1 day"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:165 Stocks/Model/TickerRange.cs:49
+#: data/ui/TickerDetails.blp:164 Stocks/Model/TickerRange.cs:49
 msgid "5d"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:166 Stocks/Model/TickerRange.cs:33
+#: data/ui/TickerDetails.blp:165 Stocks/Model/TickerRange.cs:33
 msgid "5 days"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:170 Stocks/Model/TickerRange.cs:50
+#: data/ui/TickerDetails.blp:169 Stocks/Model/TickerRange.cs:50
 msgid "1m"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:171 Stocks/Model/TickerRange.cs:34
+#: data/ui/TickerDetails.blp:170 Stocks/Model/TickerRange.cs:34
 msgid "1 month"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:175 Stocks/Model/TickerRange.cs:51
+#: data/ui/TickerDetails.blp:174 Stocks/Model/TickerRange.cs:51
 msgid "3m"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:176 Stocks/Model/TickerRange.cs:35
+#: data/ui/TickerDetails.blp:175 Stocks/Model/TickerRange.cs:35
 msgid "3 months"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:180 Stocks/Model/TickerRange.cs:52
+#: data/ui/TickerDetails.blp:179 Stocks/Model/TickerRange.cs:52
 msgid "6m"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:181 Stocks/Model/TickerRange.cs:36
+#: data/ui/TickerDetails.blp:180 Stocks/Model/TickerRange.cs:36
 msgid "6 months"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:185 Stocks/Model/TickerRange.cs:58
+#: data/ui/TickerDetails.blp:184 Stocks/Model/TickerRange.cs:58
 msgid "Ytd"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:186 Stocks/Model/TickerRange.cs:42
+#: data/ui/TickerDetails.blp:185 Stocks/Model/TickerRange.cs:42
 msgid "Year to date"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:190 Stocks/Model/TickerRange.cs:53
+#: data/ui/TickerDetails.blp:189 Stocks/Model/TickerRange.cs:53
 msgid "1y"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:191 Stocks/Model/TickerRange.cs:37
+#: data/ui/TickerDetails.blp:190 Stocks/Model/TickerRange.cs:37
 msgid "1 year"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:195 Stocks/Model/TickerRange.cs:54
+#: data/ui/TickerDetails.blp:194 Stocks/Model/TickerRange.cs:54
 msgid "2y"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:196 Stocks/Model/TickerRange.cs:38
+#: data/ui/TickerDetails.blp:195 Stocks/Model/TickerRange.cs:38
 msgid "2 years"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:200 Stocks/Model/TickerRange.cs:55
+#: data/ui/TickerDetails.blp:199 Stocks/Model/TickerRange.cs:55
 msgid "5y"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:201 Stocks/Model/TickerRange.cs:39
+#: data/ui/TickerDetails.blp:200 Stocks/Model/TickerRange.cs:39
 msgid "5 years"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:205 Stocks/Model/TickerRange.cs:56
+#: data/ui/TickerDetails.blp:204 Stocks/Model/TickerRange.cs:56
 msgid "10y"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:206 Stocks/Model/TickerRange.cs:40
+#: data/ui/TickerDetails.blp:205 Stocks/Model/TickerRange.cs:40
 msgid "10 years"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:210 data/ui/TickerDetails.blp:211
+#: data/ui/TickerDetails.blp:209 data/ui/TickerDetails.blp:210
 #: Stocks/Model/TickerRange.cs:41 Stocks/Model/TickerRange.cs:57
 msgid "All"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:229 data/ui/TickerDetails.blp:293
+#: data/ui/TickerDetails.blp:228 data/ui/TickerDetails.blp:292
 msgid "Open"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:236 data/ui/TickerDetails.blp:250
-#: data/ui/TickerDetails.blp:264 data/ui/TickerDetails.blp:278
-#: data/ui/TickerDetails.blp:300 data/ui/TickerDetails.blp:314
-#: data/ui/TickerDetails.blp:328 data/ui/TickerDetails.blp:342
+#: data/ui/TickerDetails.blp:235 data/ui/TickerDetails.blp:249
+#: data/ui/TickerDetails.blp:263 data/ui/TickerDetails.blp:277
+#: data/ui/TickerDetails.blp:299 data/ui/TickerDetails.blp:313
+#: data/ui/TickerDetails.blp:327 data/ui/TickerDetails.blp:341
 msgid "-"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:243 data/ui/TickerDetails.blp:307
+#: data/ui/TickerDetails.blp:242 data/ui/TickerDetails.blp:306
 msgid "High"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:257 data/ui/TickerDetails.blp:321
+#: data/ui/TickerDetails.blp:256 data/ui/TickerDetails.blp:320
 msgid "Low"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:271 data/ui/TickerDetails.blp:335
+#: data/ui/TickerDetails.blp:270 data/ui/TickerDetails.blp:334
 msgid "Market"
 msgstr ""
 
-#: data/ui/TickerDetails.blp:362
+#: data/ui/TickerDetails.blp:361
 msgid "Updated just now."
 msgstr ""
 
@@ -286,11 +286,11 @@ msgstr ""
 msgid "No results found for current search term."
 msgstr ""
 
-#: Stocks/Ui/AddTicker/AddTickerPopover.cs:215
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:216
 msgid "Add to watchlist"
 msgstr ""
 
-#: Stocks/Ui/AddTicker/AddTickerPopover.cs:215
+#: Stocks/Ui/AddTicker/AddTickerPopover.cs:216
 msgid "Already on watchlist"
 msgstr ""
 
@@ -399,7 +399,7 @@ msgstr ""
 msgid "{0} symbols"
 msgstr ""
 
-#: Stocks/Model/Watchlists/WatchlistMigrator.cs:33
+#: Stocks/Model/Watchlists/WatchlistMigrator.cs:35
 msgctxt "Name of the default watchlist"
 msgid "Watchlist"
 msgstr ""

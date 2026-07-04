@@ -63,7 +63,7 @@ public partial class TickerGridCard
             return;
 
         displayName.SetLabel(ticker.DisplayName);
-        displayName.TooltipText = ticker.Symbol;
+        displayName.TooltipText = ticker.Symbol.Value;
 
         name.SetLabel(ticker.Name);
         name.TooltipText = ticker.Name;

@@ -83,7 +83,7 @@ public sealed class WatchlistModelTests
             activeListId: "main",
             new Watchlist { Id = "main", Name = "Main", Symbols = ["AAPL", "MSFT"] });
         string? eventWatchlistId = null;
-        string? eventSymbol = null;
+        Symbol? eventSymbol = null;
         sut.OnSymbolRemoved += (watchlistId, symbol) =>
         {
             eventWatchlistId = watchlistId;
@@ -93,9 +93,9 @@ public sealed class WatchlistModelTests
         var symbol = sut.GetActiveSymbols()[0];
         sut.RemoveSymbolFromWatchlist(symbol, sut.ActiveWatchlistId);
 
-        Assert.That(sut.GetActiveSymbols(), Is.EqualTo(["MSFT"]));
+        Assert.That(sut.GetActiveSymbols().Select(symbol => symbol.Value), Is.EqualTo(["MSFT"]));
         Assert.That(eventWatchlistId, Is.EqualTo(sut.ActiveWatchlistId));
-        Assert.That(eventSymbol, Is.EqualTo("AAPL"));
+        Assert.That(eventSymbol?.Value, Is.EqualTo("AAPL"));
     }
 
     [Test]
@@ -105,7 +105,7 @@ public sealed class WatchlistModelTests
             activeListId: "main",
             new Watchlist { Id = "main", Name = "Main", Symbols = ["AAPL", "MSFT", "GOOG"] });
         string? eventWatchlistId = null;
-        string? eventSymbol = null;
+        Symbol? eventSymbol = null;
         var eventIndex = -1;
         sut.OnSymbolMoved += (watchlistId, symbol, index) =>
         {
@@ -117,9 +117,9 @@ public sealed class WatchlistModelTests
         var symbol = sut.GetActiveSymbols()[0];
         sut.MoveSymbolInActiveWatchlist(symbol, 2);
 
-        Assert.That(sut.GetActiveSymbols(), Is.EqualTo(["MSFT", "GOOG", "AAPL"]));
+        Assert.That(sut.GetActiveSymbols().Select(symbol => symbol.Value), Is.EqualTo(["MSFT", "GOOG", "AAPL"]));
         Assert.That(eventWatchlistId, Is.EqualTo(sut.ActiveWatchlistId));
-        Assert.That(eventSymbol, Is.EqualTo("AAPL"));
+        Assert.That(eventSymbol?.Value, Is.EqualTo("AAPL"));
         Assert.That(eventIndex, Is.EqualTo(2));
     }
 

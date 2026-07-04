@@ -97,9 +97,11 @@ public class WatchlistStorage
                 : list.Name.Trim();
 
             var symbols = (list.Symbols ?? [])
-                .Select(NormalizeSymbol)
-                .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
-                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .Select(symbol => Symbol.TryCreate(symbol, out var parsed) ? parsed : null)
+                .Where(symbol => symbol is not null)
+                .Select(symbol => symbol!)
+                .Distinct()
+                .Select(symbol => symbol.Value)
                 .ToList();
 
             result.Lists.Add(new Watchlist
@@ -143,14 +145,6 @@ public class WatchlistStorage
                 })
                 .ToList()
         };
-    }
-
-    private static string NormalizeSymbol(string symbol)
-    {
-        if (string.IsNullOrWhiteSpace(symbol))
-            return "";
-
-        return symbol.Trim().ToUpperInvariant();
     }
 
     private static string CreateId()
