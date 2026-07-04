@@ -71,7 +71,7 @@ public partial class SidebarItem
             return;
     
         symbol.SetLabel(ticker.DisplayName);
-        symbol.TooltipText = ticker.Symbol; 
+        symbol.TooltipText = ticker.Symbol.Value; 
 
         name.SetLabel(ticker.Name);
         name.TooltipText = ticker.Name;

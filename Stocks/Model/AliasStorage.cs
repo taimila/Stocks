@@ -8,7 +8,7 @@ namespace Stocks.Model;
 public class AliasStorage
 {
     private readonly string filePath;
-    private Dictionary<string, string> aliases = [];
+    private Dictionary<Symbol, string> aliases = [];
 
     public AliasStorage()
     {
@@ -16,46 +16,29 @@ public class AliasStorage
         LoadFromDisk();
     }
 
-    public string? GetAlias(string symbol)
+    public string? GetAlias(Symbol symbol)
     {
-        var key = NormalizeSymbol(symbol);
-        return aliases.TryGetValue(key, out var alias) ? alias : null;
+        return aliases.TryGetValue(symbol, out var alias) ? alias : null;
     }
 
     // Setting alias to empty string removes it!
-    public void SetAlias(string symbol, string alias)
+    public void SetAlias(Symbol symbol, string alias)
     {
-        var key = NormalizeSymbol(symbol);
-        if (string.IsNullOrEmpty(key))
-            return;
-
         var trimmedAlias = alias.Trim();
         if (string.IsNullOrWhiteSpace(trimmedAlias))
         {
-            RemoveAlias(key);
+            RemoveAlias(symbol);
             return;
         }
 
-        aliases[key] = trimmedAlias;
+        aliases[symbol] = trimmedAlias;
         SaveToDisk();
     }
 
-    public void RemoveAlias(string symbol)
+    public void RemoveAlias(Symbol symbol)
     {
-        var key = NormalizeSymbol(symbol);
-        if (string.IsNullOrEmpty(key))
-            return;
-
-        if (aliases.Remove(key))
+        if (aliases.Remove(symbol))
             SaveToDisk();
-    }
-
-    private static string NormalizeSymbol(string symbol)
-    {
-        if (string.IsNullOrWhiteSpace(symbol))
-            return "";
-
-        return symbol.Trim().ToUpperInvariant();
     }
 
     private void LoadFromDisk()
@@ -68,7 +51,16 @@ public class AliasStorage
             var json = File.ReadAllText(filePath);
             var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
             if (data != null)
-                aliases = data;
+            {
+                aliases = data
+                    .Select(pair => Symbol.TryCreate(pair.Key, out var symbol)
+                        ? new KeyValuePair<Symbol, string>?(
+                            new KeyValuePair<Symbol, string>(symbol, pair.Value))
+                        : null)
+                    .Where(pair => pair.HasValue)
+                    .Select(pair => pair!.Value)
+                    .ToDictionary(pair => pair.Key, pair => pair.Value);
+            }
         }
         catch
         {
@@ -84,7 +76,7 @@ public class AliasStorage
             if (!string.IsNullOrWhiteSpace(directory))
                 Directory.CreateDirectory(directory);
 
-            var json = JsonSerializer.Serialize(aliases);
+            var json = JsonSerializer.Serialize(aliases.ToDictionary(pair => pair.Key.Value, pair => pair.Value));
             File.WriteAllText(filePath, json);
         }
         catch

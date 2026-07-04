@@ -332,12 +332,12 @@ public partial class TickerDetails
             name.SetLabel(ticker.Name);
             name2.SetLabel(ticker.Name);
             symbol.SetLabel(ticker.DisplayName);
-            symbol.TooltipText = ticker.Symbol;
+            symbol.TooltipText = ticker.Symbol.Value;
 
             if (!isEditingAlias)
             {
                 aliasEntry.SetText(ticker.UserGivenAlias);
-                aliasEntry.PlaceholderText = ticker.Symbol;
+                aliasEntry.PlaceholderText = ticker.Symbol.Value;
             }
             currentValue.SetLabel(data.MarketPrice.ToStringWithCurrency());
             currentValue2.SetLabel(data.MarketPrice.ToStringWithCurrency());
@@ -363,7 +363,7 @@ public partial class TickerDetails
             return;
 
         aliasEntry.SetText(ticker.UserGivenAlias);
-        aliasEntry.PlaceholderText = ticker.Symbol;
+        aliasEntry.PlaceholderText = ticker.Symbol.Value;
         SetAliasEditMode(true);
         aliasEntry.GrabFocus();
     }
@@ -390,7 +390,7 @@ public partial class TickerDetails
         if (resetEntry && model.SelectedTicker is Ticker ticker)
         {
             aliasEntry.SetText(ticker.UserGivenAlias);
-            aliasEntry.PlaceholderText = ticker.Symbol;
+            aliasEntry.PlaceholderText = ticker.Symbol.Value;
         }
     }
 
@@ -419,7 +419,7 @@ public partial class TickerDetails
     {
         if (model.SelectedTicker is Ticker ticker)
         {
-            var yahooLink = $"https://finance.yahoo.com/quote/{ticker.Symbol.ToUpper()}/";
+            var yahooLink = $"https://finance.yahoo.com/quote/{ticker.Symbol.Value}/";
             var markup = string.Format(_("Read more on <a href=\"{0}\">Yahoo Finance</a>."), yahooLink);
             readMore.SetMarkup(markup);
         }

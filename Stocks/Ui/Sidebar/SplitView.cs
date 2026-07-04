@@ -105,7 +105,7 @@ public partial class SplitView
     private void OnTickerRemoved(Ticker ticker)
     {
         UnobserveTicker(ticker);
-        ShowToast(string.Format(_("{0} removed"), ticker.Symbol));
+        ShowToast(string.Format(_("{0} removed"), ticker.Symbol.Value));
         UpdateErrorBannerState();
     }
 

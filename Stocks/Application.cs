@@ -49,9 +49,10 @@ public class Application
     private void SetupRemoveAction()
     {
         var removeAction = Gio.SimpleAction.New("remove", GLib.VariantType.String);
-        removeAction.OnActivate += async (action, args) => {
-            var symbol = args.Parameter?.GetString(out nuint length);
-            await model.RemoveTicker(symbol!);
+        removeAction.OnActivate += async (action, args) =>
+        {
+            if (Symbol.TryCreate(args.Parameter?.GetString(out nuint length), out var symbol))
+                await model.RemoveTicker(symbol);
         };
         app.AddAction(removeAction);
     }
@@ -59,15 +60,17 @@ public class Application
     private void SetupRefreshAction()
     {
         var refreshAction = Gio.SimpleAction.New("refreshticker", GLib.VariantType.String);
-        refreshAction.OnActivate += async (action, args) => {
-            var symbol = args.Parameter?.GetString(out nuint length);
-
-            if (model.GetTicker(symbol!) is Ticker t)
+        refreshAction.OnActivate += async (action, args) =>
+        {
+            if (Symbol.TryCreate(args.Parameter?.GetString(out nuint length), out var symbol))
             {
-                await t.Refresh(TickerRange.Day, forceNetworkFetch: true);
-                
-                if (model.ActiveRange != TickerRange.Day)
-                    await t.Refresh(model.ActiveRange, forceNetworkFetch: true);
+                if (model.GetTicker(symbol) is Ticker t)
+                {
+                    await t.Refresh(TickerRange.Day, forceNetworkFetch: true);
+
+                    if (model.ActiveRange != TickerRange.Day)
+                        await t.Refresh(model.ActiveRange, forceNetworkFetch: true);
+                }
             }
         };
         app.AddAction(refreshAction);

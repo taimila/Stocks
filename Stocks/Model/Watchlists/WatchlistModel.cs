@@ -13,9 +13,9 @@ public class WatchlistModel
 
     public event Action? OnChanged;
     public event Action? OnActiveChanged;
-    public event Action<string, string>? OnSymbolAdded;
-    public event Action<string, string>? OnSymbolRemoved;
-    public event Action<string, string, int>? OnSymbolMoved;
+    public event Action<string, Symbol>? OnSymbolAdded;
+    public event Action<string, Symbol>? OnSymbolRemoved;
+    public event Action<string, Symbol, int>? OnSymbolMoved;
 
     public WatchlistModel(WatchlistStorage watchlistStorage)
     {
@@ -31,22 +31,37 @@ public class WatchlistModel
             .ToList();
     }
 
-    public IReadOnlyList<string> GetActiveSymbols()
+    public IReadOnlyList<Symbol> GetActiveSymbols()
     {
-        return GetActiveWatchlist().Symbols.ToList();
+        return GetActiveWatchlist().Symbols
+            .Select(symbol => Symbol.TryCreate(symbol, out var parsed) ? parsed : null)
+            .Where(symbol => symbol is not null)
+            .Select(symbol => symbol!)
+            .ToList();
     }
 
-    public bool IsSymbolInWatchlist(string symbol, string watchlistId)
+    public IReadOnlyList<Symbol> GetAllSymbols()
+    {
+        return watchlistState.Lists
+            .SelectMany(group => group.Symbols)
+            .Select(symbol => Symbol.TryCreate(symbol, out var parsed) ? parsed : null)
+            .Where(symbol => symbol is not null)
+            .Select(symbol => symbol!)
+            .Distinct()
+            .ToList();
+    }
+
+    public bool IsSymbolInWatchlist(Symbol symbol, string watchlistId)
     {
         return watchlistState.Lists.Any(group =>
             group.Id == watchlistId &&
-            group.Symbols.Contains(NormalizeSymbol(symbol), StringComparer.OrdinalIgnoreCase));
+            group.Symbols.Contains(symbol.Value));
     }
 
-    public bool IsSymbolInAnyWatchlist(string symbol)
+    public bool IsSymbolInAnyWatchlist(Symbol symbol)
     {
         return watchlistState.Lists.Any(group =>
-            group.Symbols.Contains(NormalizeSymbol(symbol), StringComparer.OrdinalIgnoreCase));
+            group.Symbols.Contains(symbol.Value));
     }
 
     public bool IsWatchlistNameAvailable(string name, string? excludedWatchlistId = null)
@@ -136,53 +151,46 @@ public class WatchlistModel
         OnActiveChanged?.Invoke();
     }
 
-    public void AddSymbolToWatchlist(string symbol, string watchlistId)
+    public void AddSymbolToWatchlist(Symbol symbol, string watchlistId)
     {
-        var normalizedSymbol = NormalizeSymbol(symbol);
         var watchlist = watchlistState.Lists.First(group => group.Id == watchlistId);
 
-        if (string.IsNullOrWhiteSpace(normalizedSymbol))
+        if (watchlist.Symbols.Contains(symbol.Value))
             return;
 
-        if (watchlist.Symbols.Contains(normalizedSymbol, StringComparer.OrdinalIgnoreCase))
-            return;
-
-        watchlist.Symbols.Add(normalizedSymbol);
+        watchlist.Symbols.Add(symbol.Value);
         SaveState();
 
         OnChanged?.Invoke();
-        OnSymbolAdded?.Invoke(watchlistId, normalizedSymbol);
+        OnSymbolAdded?.Invoke(watchlistId, symbol);
     }
 
-    public void RemoveSymbolFromWatchlist(string symbol, string watchlistId)
+    public void RemoveSymbolFromWatchlist(Symbol symbol, string watchlistId)
     {
-        var normalizedSymbol = NormalizeSymbol(symbol);
         var watchlist = watchlistState.Lists.First(group => group.Id == watchlistId);
 
-        if (!watchlist.Symbols.Remove(normalizedSymbol))
+        if (!watchlist.Symbols.Remove(symbol.Value))
             return;
 
         SaveState();
 
-        OnSymbolRemoved?.Invoke(watchlistId, normalizedSymbol);
+        OnSymbolRemoved?.Invoke(watchlistId, symbol);
         OnChanged?.Invoke();
     }
 
-    public void MoveSymbolInActiveWatchlist(string symbol, int index)
+    public void MoveSymbolInActiveWatchlist(Symbol symbol, int index)
     {
-        var normalizedSymbol = NormalizeSymbol(symbol);
         var watchlist = GetActiveWatchlist();
-        var oldIndex = watchlist.Symbols.FindIndex(existing =>
-            string.Equals(existing, normalizedSymbol, StringComparison.OrdinalIgnoreCase));
+        var oldIndex = watchlist.Symbols.FindIndex(existing => existing == symbol.Value);
 
         var newIndex = Math.Clamp(index, 0, watchlist.Symbols.Count - 1);
         if (newIndex == oldIndex)
             return;
 
         watchlist.Symbols.RemoveAt(oldIndex);
-        watchlist.Symbols.Insert(newIndex, normalizedSymbol);
+        watchlist.Symbols.Insert(newIndex, symbol.Value);
         SaveState();
-        OnSymbolMoved?.Invoke(watchlist.Id, normalizedSymbol, newIndex);
+        OnSymbolMoved?.Invoke(watchlist.Id, symbol, newIndex);
     }
 
     private Watchlist GetActiveWatchlist()
@@ -193,14 +201,6 @@ public class WatchlistModel
     private void SaveState()
     {
         watchlistStorage.Save(watchlistState);
-    }
-
-    private static string NormalizeSymbol(string symbol)
-    {
-        if (string.IsNullOrWhiteSpace(symbol))
-            return "";
-
-        return symbol.Trim().ToUpperInvariant();
     }
 
     private static string NormalizeWatchlistName(string name)

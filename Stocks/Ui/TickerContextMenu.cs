@@ -15,11 +15,11 @@ internal static class TickerContextMenu
         {
             var remove = Gio.MenuItem.New(null, null);
             remove.SetLabel(Stocks.Translations._("Remove"));
-            remove.SetActionAndTargetValue("app.remove", GLib.Variant.NewString(ticker.Symbol));
+            remove.SetActionAndTargetValue("app.remove", GLib.Variant.NewString(ticker.Symbol.Value));
 
             var refresh = Gio.MenuItem.New(null, null);
             refresh.SetLabel(Stocks.Translations._("Refresh"));
-            refresh.SetActionAndTargetValue("app.refreshticker", GLib.Variant.NewString(ticker.Symbol));
+            refresh.SetActionAndTargetValue("app.refreshticker", GLib.Variant.NewString(ticker.Symbol.Value));
 
             var point = new Gdk.Rectangle
             {

@@ -5,7 +5,7 @@ namespace Stocks.Model;
 
 public class TickerFactory(TickerFetcher fetcher)
 {
-    public Ticker Create(string symbol)
+    public Ticker Create(Symbol symbol)
     {
         return new Ticker(symbol, fetcher, new Market());
     }

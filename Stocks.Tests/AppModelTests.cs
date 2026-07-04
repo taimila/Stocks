@@ -31,7 +31,7 @@ public sealed class AppModelTests
     public void SetActiveUpdatesSelectedTickerFromVisibleTickers()
     {
         var sut = CreateModel("AAPL", "MSFT");
-        var target = sut.Tickers.Single(ticker => ticker.Symbol == "MSFT");
+        var target = sut.Tickers.Single(ticker => ticker.Symbol == new Symbol("MSFT"));
 
         sut.SetActive(target);
 
@@ -45,11 +45,11 @@ public sealed class AppModelTests
         Ticker? removedTicker = null;
         sut.OnTickerRemoved += ticker => removedTicker = ticker;
 
-        await sut.RemoveTicker("MSFT");
+        await sut.RemoveTicker(new Symbol("MSFT"));
 
-        Assert.That(sut.Tickers.Select(ticker => ticker.Symbol), Is.EqualTo(["AAPL"]));
-        Assert.That(removedTicker?.Symbol, Is.EqualTo("MSFT"));
-        Assert.That(sut.GetTicker("MSFT"), Is.Null);
+        Assert.That(sut.Tickers.Select(ticker => ticker.Symbol.Value), Is.EqualTo(["AAPL"]));
+        Assert.That(removedTicker?.Symbol.Value, Is.EqualTo("MSFT"));
+        Assert.That(sut.GetTicker(new Symbol("MSFT")), Is.Null);
     }
 
     [Test]
@@ -67,8 +67,8 @@ public sealed class AppModelTests
 
         sut.MoveTicker(movedTicker, 2);
 
-        Assert.That(sut.Tickers.Select(ticker => ticker.Symbol), Is.EqualTo(["MSFT", "GOOG", "AAPL"]));
-        Assert.That(sut.GetTicker("AAPL"), Is.SameAs(sut.Tickers[2]));
+        Assert.That(sut.Tickers.Select(ticker => ticker.Symbol.Value), Is.EqualTo(["MSFT", "GOOG", "AAPL"]));
+        Assert.That(sut.GetTicker(new Symbol("AAPL")), Is.SameAs(sut.Tickers[2]));
         Assert.That(eventTicker, Is.SameAs(movedTicker));
         Assert.That(eventIndex, Is.EqualTo(2));
     }
@@ -81,17 +81,73 @@ public sealed class AppModelTests
 
         sut.SetTickerAlias(ticker, "Apple");
 
-        var cachedTicker = sut.GetTicker("AAPL");
+        var cachedTicker = sut.GetTicker(new Symbol("AAPL"));
         var reloadedAliasStorage = new AliasStorage();
 
         Assert.That(cachedTicker, Is.SameAs(ticker));
         Assert.That(cachedTicker?.UserGivenAlias, Is.EqualTo("Apple"));
-        Assert.That(reloadedAliasStorage.GetAlias("AAPL"), Is.EqualTo("Apple"));
+        Assert.That(reloadedAliasStorage.GetAlias(new Symbol("AAPL")), Is.EqualTo("Apple"));
+    }
+
+    [Test]
+    public void ConstructorCachesTickersFromAllWatchlists()
+    {
+        var sut = CreateModel(new WatchlistState
+        {
+            ActiveListId = "main",
+            Lists =
+            [
+                new Watchlist
+                {
+                    Id = "main",
+                    Name = "Main",
+                    Symbols = ["AAPL"]
+                },
+                new Watchlist
+                {
+                    Id = "tech",
+                    Name = "Tech",
+                    Symbols = ["MSFT"]
+                }
+            ]
+        });
+
+        Assert.That(sut.Tickers.Select(ticker => ticker.Symbol.Value), Is.EqualTo(["AAPL"]));
+        Assert.That(sut.GetTicker(new Symbol("MSFT")), Is.Not.Null);
+    }
+
+    [Test]
+    public async Task UpdateAllRefreshesTickersFromAllWatchlists()
+    {
+        var sut = CreateModel(new WatchlistState
+        {
+            ActiveListId = "main",
+            Lists =
+            [
+                new Watchlist
+                {
+                    Id = "main",
+                    Name = "Main",
+                    Symbols = ["AAPL"]
+                },
+                new Watchlist
+                {
+                    Id = "tech",
+                    Name = "Tech",
+                    Symbols = ["MSFT"]
+                }
+            ]
+        });
+
+        await sut.UpdateAll(forceNetworkFetch: false);
+
+        Assert.That(sut.GetTicker(new Symbol("AAPL"))?.TryGetData(TickerRange.Day, out _), Is.True);
+        Assert.That(sut.GetTicker(new Symbol("MSFT"))?.TryGetData(TickerRange.Day, out _), Is.True);
     }
 
     private AppModel CreateModel(params string[] symbols)
     {
-        SeedWatchlists(new WatchlistState
+        return CreateModel(new WatchlistState
         {
             ActiveListId = "main",
             Lists =
@@ -104,7 +160,11 @@ public sealed class AppModelTests
                 }
             ]
         });
+    }
 
+    private AppModel CreateModel(WatchlistState state)
+    {
+        SeedWatchlists(state);
         var fetcher = new TestTickerFetcher();
         var factory = new TickerFactory(fetcher);
         var settings = new TestAppSettings();
@@ -148,16 +208,16 @@ public sealed class AppModelTests
         {
         }
 
-        public override Task<Result> Fetch(string symbol, TickerRange range)
+        public override Task<Result> Fetch(Symbol symbol, TickerRange range)
         {
             return Task.FromResult(CreateResult(symbol));
         }
 
-        private static Result CreateResult(string symbol)
+        private static Result CreateResult(Symbol symbol)
         {
             var meta = new Meta(
                 Currency: "USD",
-                Symbol: symbol,
+                Symbol: symbol.Value,
                 ExchangeName: "NMS",
                 FullExchangeName: "NASDAQ",
                 InstrumentType: "EQUITY",
@@ -172,8 +232,8 @@ public sealed class AppModelTests
                 RegularMarketDayHigh: 101,
                 RegularMarketDayLow: 99,
                 RegularMarketVolume: 1000,
-                LongName: $"{symbol} Inc",
-                ShortName: symbol,
+                LongName: $"{symbol.Value} Inc",
+                ShortName: symbol.Value,
                 PriceHint: 2,
                 Scale: null,
                 HasPrePostMarketData: null,

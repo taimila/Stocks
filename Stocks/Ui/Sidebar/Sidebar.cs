@@ -9,7 +9,7 @@ namespace Stocks.UI;
 public partial class Sidebar
 {
     private AppModel model = null!;
-    private readonly Dictionary<string, SidebarItem> items = [];
+    private readonly Dictionary<Symbol, SidebarItem> items = [];
 
     public event Action<Ticker>? OnTickerActivated;
 

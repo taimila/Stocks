@@ -7,7 +7,8 @@ namespace Stocks.Tests;
 
 public class TickerTests
 {
-    private const string Symbol = "AAPL";
+    private const string SymbolValue = "AAPL";
+    private static readonly Symbol Symbol = new(SymbolValue);
     
     private static Market CreateMarket(MarketStatus status = MarketStatus.Open)
     {
@@ -362,7 +363,7 @@ public class TickerTests
     {
         var meta = new Meta(
             Currency: currency,
-            Symbol: Symbol,
+            Symbol: Symbol.Value,
             ExchangeName: "XNYS",
             FullExchangeName: fullExchangeName,
             InstrumentType: "EQUITY",
@@ -402,14 +403,14 @@ public class TickerTests
 
     private sealed class TestTickerFetcher : TickerFetcher
     {
-        private Func<string, TickerRange, Task<Result>> onFetch = default!;
-        public List<(string Symbol, TickerRange Range)> FetchCalls { get; private set; } = default!;
+        private Func<Symbol, TickerRange, Task<Result>> onFetch = default!;
+        public List<(Symbol Symbol, TickerRange Range)> FetchCalls { get; private set; } = default!;
 
         private TestTickerFetcher() : base(null!, new HttpClient())
         {
         }
 
-        public static TestTickerFetcher Create(Func<string, TickerRange, Task<Result>> onFetch)
+        public static TestTickerFetcher Create(Func<Symbol, TickerRange, Task<Result>> onFetch)
         {
             var fetcher = (TestTickerFetcher)RuntimeHelpers.GetUninitializedObject(typeof(TestTickerFetcher));
             fetcher.onFetch = onFetch;
@@ -417,7 +418,7 @@ public class TickerTests
             return fetcher;
         }
 
-        public override Task<Result> Fetch(string symbol, TickerRange range)
+        public override Task<Result> Fetch(Symbol symbol, TickerRange range)
         {
             FetchCalls.Add((symbol, range));
             return onFetch(symbol, range);

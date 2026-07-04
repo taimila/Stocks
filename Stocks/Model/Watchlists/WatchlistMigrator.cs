@@ -22,9 +22,11 @@ public class WatchlistMigrator
     internal WatchlistState Migrate()
     {
         var migratedSymbols = settings.GetStrv("symbols")
-            .Select(NormalizeSymbol)
-            .Where(symbol => !string.IsNullOrWhiteSpace(symbol))
+            .Select(symbol => Symbol.TryCreate(symbol, out var parsed) ? parsed : null)
+            .Where(symbol => symbol is not null)
+            .Select(symbol => symbol!)
             .Distinct()
+            .Select(symbol => symbol.Value)
             .ToList();
 
         var list = new Watchlist
@@ -44,14 +46,6 @@ public class WatchlistMigrator
     internal void ClearLegacySymbols()
     {
         settings.SetStrv("symbols", []);
-    }
-
-    private static string NormalizeSymbol(string symbol)
-    {
-        if (string.IsNullOrWhiteSpace(symbol))
-            return "";
-
-        return symbol.Trim().ToUpperInvariant();
     }
 
     private static string CreateId()

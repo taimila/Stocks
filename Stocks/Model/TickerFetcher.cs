@@ -16,9 +16,9 @@ public class TickerFetcher
         this.client.DefaultRequestHeaders.Add("user-agent", settings.UserAgent);
     }
 
-    public virtual async Task<Result> Fetch(string symbol, TickerRange range)
+    public virtual async Task<Result> Fetch(Symbol symbol, TickerRange range)
     {
-        var url = baseUrl + symbol + "?" + GetRangeQueryParameterFor(range);
+        var url = baseUrl + symbol.Value + "?" + GetRangeQueryParameterFor(range);
 
         try
         {

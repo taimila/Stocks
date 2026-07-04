@@ -3,12 +3,12 @@
 
 namespace Stocks.Model;
 
-public class Ticker(string symbol, TickerFetcher fetcher, Market market)
+public class Ticker(Symbol symbol, TickerFetcher fetcher, Market market)
 {
     private readonly Dictionary<TickerRange ,TickerData> datas = [];
     private int numberOfDecimals;
 
-    public string Symbol { get; } = symbol;
+    public Symbol Symbol { get; } = symbol;
     public string UserGivenAlias { get; private set; } = "";
     public string Name { get; private set; } = "";
     public string ExchangeName { get; private set; } = "";
@@ -21,7 +21,7 @@ public class Ticker(string symbol, TickerFetcher fetcher, Market market)
         get
         {
             if (string.IsNullOrWhiteSpace(UserGivenAlias))
-                return Symbol;
+                return Symbol.Value;
             else
                 return UserGivenAlias;
         }
