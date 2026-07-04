@@ -103,17 +103,18 @@ public class TickerDataParser
     // is missing. This is the best we can do.
     private static double[] ReplaceNullsWithPrevious(double?[] data)
     {
-        if (data.Length == 0) return [];
+        if (data.Length == 0) 
+            return [];
         
         var result = new double[data.Length];
         double last = 0;
         
         for (int i = 0; i < data.Length; i++)
         {
-            if (data[i].HasValue)
+            if (data[i] is double x)
             {
-                last = data[i].Value;
-                result[i] = data[i].Value;
+                last = x;
+                result[i] = x;
             }
             else
             {
