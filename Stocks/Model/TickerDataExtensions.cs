@@ -109,7 +109,8 @@ public static class TickerDataExtensions
                 TickerRange.ThreeMonths => 1,
                 TickerRange.SixMonths => 2,
                 TickerRange.Year => 3,
-                TickerRange.TwoYears => 4
+                TickerRange.TwoYears => 4,
+                _ => 0 // Removes compiler warning, but will never be executed
             };
 
             while (current <= maxTime)
@@ -127,7 +128,8 @@ public static class TickerDataExtensions
             {
                 TickerRange.FiveYears => 1,
                 TickerRange.TenYears => 2,
-                TickerRange.All => 2
+                TickerRange.All => 2,
+                _ => 0 // Removes compiler warning, but will never be executed
             };
 
             while (current <= maxTime)
