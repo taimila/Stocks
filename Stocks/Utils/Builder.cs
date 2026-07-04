@@ -4,6 +4,7 @@
 
 using System.Reflection;
 using System.Xml;
+using static Stocks.Translations;
 
 // Borrowed from https://github.com/NickvisionApps/Denaro/blob/main/NickvisionMoney.GNOME/Helpers/Builder.cs
 public class Builder

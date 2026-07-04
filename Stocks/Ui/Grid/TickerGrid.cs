@@ -76,7 +76,7 @@ public class TickerGrid : Gtk.FlowBox
         var aspectFrame = Gtk.AspectFrame.New(0.5f, 0.5f, 1.0f, false);
         aspectFrame.WidthRequest = cardSize;
         aspectFrame.HeightRequest = cardSize;
-        aspectFrame.SetChild(new TickerGridCard(ticker));
+        aspectFrame.SetChild(TickerGridCard.NewWithTicker(ticker));
 
         return aspectFrame;
     }

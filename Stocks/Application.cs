@@ -3,6 +3,7 @@
 
 using Stocks.UI;
 using Stocks.Model;
+using static Stocks.Translations;
 
 public class Application
 {
@@ -28,7 +29,7 @@ public class Application
     private void OnActivate(Gio.Application application, EventArgs eventArgs)
     {
         Styles.Load();
-        mainWindow ??= new MainWindow((Adw.Application)application, model, settings);
+        mainWindow ??= MainWindow.NewWithModel((Adw.Application)application, model, settings);
         mainWindow.Present();
     }
 

@@ -2,74 +2,80 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using Stocks.Model;
+using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-public class TickerDetails : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(TickerDetails))]
+[Gtk.Template<Gtk.AssemblyResource>("TickerDetails.ui")]
+public partial class TickerDetails
 {
-    [Gtk.Connect] private readonly Gtk.Box cardContent;
+    [Gtk.Connect] private Gtk.Box cardContent;
 
     // Main containers to switch between details / no-details
-    [Gtk.Connect] private readonly Gtk.Box noDetails;
-    [Gtk.Connect] private readonly Adw.Clamp detailsCard;
-    [Gtk.Connect] private readonly Adw.Clamp detailsFooter;
+    [Gtk.Connect] private Gtk.Box noDetails;
+    [Gtk.Connect] private Adw.Clamp detailsCard;
+    [Gtk.Connect] private Adw.Clamp detailsFooter;
 
     // Header
-    [Gtk.Connect] private readonly Gtk.Grid narrowHeader;
-    [Gtk.Connect] private readonly Gtk.Grid wideHeader;
+    [Gtk.Connect] private Gtk.Grid narrowHeader;
+    [Gtk.Connect] private Gtk.Grid wideHeader;
 
-    [Gtk.Connect] private readonly Gtk.Label name;
-    [Gtk.Connect] private readonly Gtk.Label symbol;
-    [Gtk.Connect] private readonly Gtk.Box symbolDisplayBox;
-    [Gtk.Connect] private readonly Gtk.Box symbolEditBox;
-    [Gtk.Connect] private readonly Gtk.Entry aliasEntry;
-    [Gtk.Connect] private readonly Gtk.Button aliasSaveButton;
-    [Gtk.Connect] private readonly Gtk.Label currentValue;
-    [Gtk.Connect] private readonly Gtk.Label changePercentage;
-    [Gtk.Connect] private readonly Gtk.Label name2;
-    [Gtk.Connect] private readonly Gtk.Label currentValue2;
-    [Gtk.Connect] private readonly Gtk.Label changePercentage2;
+    [Gtk.Connect] private Gtk.Label name;
+    [Gtk.Connect] private Gtk.Label symbol;
+    [Gtk.Connect] private Gtk.Box symbolDisplayBox;
+    [Gtk.Connect] private Gtk.Box symbolEditBox;
+    [Gtk.Connect] private Gtk.Entry aliasEntry;
+    [Gtk.Connect] private Gtk.Button aliasSaveButton;
+    [Gtk.Connect] private Gtk.Label currentValue;
+    [Gtk.Connect] private Gtk.Label changePercentage;
+    [Gtk.Connect] private Gtk.Label name2;
+    [Gtk.Connect] private Gtk.Label currentValue2;
+    [Gtk.Connect] private Gtk.Label changePercentage2;
 
     // Graph
-    [Gtk.Connect] private readonly Adw.ToggleGroup rangeToggles;
-    [Gtk.Connect] private readonly Adw.Bin chartContainer;
-    [Gtk.Connect] private readonly Adw.Bin rangeGroupDropdown;
+    [Gtk.Connect] private Adw.ToggleGroup rangeToggles;
+    [Gtk.Connect] private Adw.Bin chartContainer;
+    [Gtk.Connect] private Adw.Bin rangeGroupDropdown;
 
     // Details
-    [Gtk.Connect] private readonly Gtk.Label open;
-    [Gtk.Connect] private readonly Gtk.Label high;
-    [Gtk.Connect] private readonly Gtk.Label low;
-    [Gtk.Connect] private readonly Gtk.Label marketStatus;
-    [Gtk.Connect] private readonly Gtk.Label open2;
-    [Gtk.Connect] private readonly Gtk.Label high2;
-    [Gtk.Connect] private readonly Gtk.Label low2;
-    [Gtk.Connect] private readonly Gtk.Label marketStatus2;
+    [Gtk.Connect] private Gtk.Label open;
+    [Gtk.Connect] private Gtk.Label high;
+    [Gtk.Connect] private Gtk.Label low;
+    [Gtk.Connect] private Gtk.Label marketStatus;
+    [Gtk.Connect] private Gtk.Label open2;
+    [Gtk.Connect] private Gtk.Label high2;
+    [Gtk.Connect] private Gtk.Label low2;
+    [Gtk.Connect] private Gtk.Label marketStatus2;
 
     // Footer
-    [Gtk.Connect] private readonly Gtk.Grid narrowFooter;
-    [Gtk.Connect] private readonly Gtk.Grid wideFooter;
+    [Gtk.Connect] private Gtk.Grid narrowFooter;
+    [Gtk.Connect] private Gtk.Grid wideFooter;
 
-    [Gtk.Connect] private readonly Gtk.Label updatedLabel;
-    [Gtk.Connect] private readonly Gtk.Label readMore;
+    [Gtk.Connect] private Gtk.Label updatedLabel;
+    [Gtk.Connect] private Gtk.Label readMore;
 
     private bool isNarrow = false;
     private bool isEditingAlias = false;
     private Ticker? activeTicker;
-    private KeyValueDropDown rangeDropdown;
+    private KeyValueDropDown rangeDropdown = null!;
     private readonly PeriodicTimer timer = new(System.TimeSpan.FromSeconds(1));
     
-    private AppModel model;
-    private TickerChart chart;
-    private Gtk.Overlay chartOverlay;
-    private Adw.StatusPage noDataView;
+    private AppModel model = null!;
+    private TickerChart chart = null!;
+    private Gtk.Overlay chartOverlay = null!;
+    private Adw.StatusPage noDataView = null!;
     private Action<Ticker>? updateHandler;
 
-    private TickerDetails(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
+    public static TickerDetails NewWithModel(AppModel model)
     {
-        builder.Connect(this);
+        var details = NewWithProperties([]);
+        details.SetModel(model);
+
+        return details;
     }
 
-    public TickerDetails(AppModel model) : this(Builder.FromFile("TickerDetails.ui"), "tickerDetails")
+    private void SetModel(AppModel model)
     {
         this.model = model;
 

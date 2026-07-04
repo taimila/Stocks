@@ -4,22 +4,25 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class BrowseModeSwitcher : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(BrowseModeSwitcher))]
+[Gtk.Template<Gtk.AssemblyResource>("BrowseModeSwitcher.ui")]
+public partial class BrowseModeSwitcher
 {
-    [Gtk.Connect] private readonly Gtk.ToggleButton listButton;
-    [Gtk.Connect] private readonly Gtk.ToggleButton gridButton;
+    [Gtk.Connect] private Gtk.ToggleButton listButton;
+    [Gtk.Connect] private Gtk.ToggleButton gridButton;
 
-    private readonly AppMode model;
+    private AppMode model = null!;
     private bool syncingUi;
 
-    private BrowseModeSwitcher(Gtk.Builder builder, string name)
-        : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
+    public static BrowseModeSwitcher NewWithModel(AppMode model)
     {
-        builder.Connect(this);
+        var switcher = NewWithProperties([]);
+        switcher.SetModel(model);
+
+        return switcher;
     }
 
-    public BrowseModeSwitcher(AppMode model)
-        : this(Builder.FromFile("BrowseModeSwitcher.ui"), "browseModeSwitcher")
+    private void SetModel(AppMode model)
     {
         this.model = model;
 

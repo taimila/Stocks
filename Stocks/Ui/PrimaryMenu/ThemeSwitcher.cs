@@ -4,21 +4,26 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class ThemeSwitcher : Gtk.Box 
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(ThemeSwitcher))]
+[Gtk.Template<Gtk.AssemblyResource>("ThemeSwitcher.ui")]
+public partial class ThemeSwitcher
 {
-    [Gtk.Connect] private readonly Gtk.CheckButton system;
-    [Gtk.Connect] private readonly Gtk.CheckButton light;
-    [Gtk.Connect] private readonly Gtk.CheckButton dark;
+    [Gtk.Connect] private Gtk.CheckButton system;
+    [Gtk.Connect] private Gtk.CheckButton light;
+    [Gtk.Connect] private Gtk.CheckButton dark;
 
-    private readonly AppTheme model;
+    private AppTheme model = null!;
     private bool syncingUi = false;
 
-    private ThemeSwitcher(Gtk.Builder builder, string name) : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
+    public static ThemeSwitcher NewWithModel(AppTheme model)
     {
-        builder.Connect(this);
+        var switcher = NewWithProperties([]);
+        switcher.SetModel(model);
+
+        return switcher;
     }
 
-    public ThemeSwitcher(AppTheme model) : this(Builder.FromFile("ThemeSwitcher.ui"), "themeSwitcher")
+    private void SetModel(AppTheme model)
     {
         this.model = model;
 

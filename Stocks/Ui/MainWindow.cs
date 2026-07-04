@@ -5,36 +5,39 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class MainWindow : Adw.ApplicationWindow
+[GObject.Subclass<Adw.ApplicationWindow>(qualifiedName: nameof(MainWindow))]
+[Gtk.Template<Gtk.AssemblyResource>("MainWindow.ui")]
+public partial class MainWindow
 {
-    [Gtk.Connect] private readonly Gtk.Stack stack;
+    [Gtk.Connect] private Gtk.Stack stack;
 
-    private readonly AppModel model;
-    private readonly AppTheme theme;
-    private readonly AppMode mode;
-    private readonly SplitView splitView;
-    private readonly GridView gridView;
-    private readonly EmptyView emptyView;
+    private AppModel model = null!;
+    private AppTheme theme = null!;
+    private AppMode mode = null!;
+    private SplitView splitView = null!;
+    private GridView gridView = null!;
+    private EmptyView emptyView = null!;
 
     private bool isNarrow = false;
 
-    private MainWindow(Gtk.Builder builder, string name)
-        : base(new Adw.Internal.ApplicationWindowHandle(builder.GetPointer(name), false))
+    public static MainWindow NewWithModel(Adw.Application application, AppModel model, Gio.Settings settings)
     {
-        builder.Connect(this);
+        var window = NewWithProperties([]);
+        window.SetModel(application, model, settings);
+
+        return window;
     }
 
-    public MainWindow(Adw.Application application, AppModel model, Gio.Settings settings)
-        : this(Builder.FromFile("MainWindow.ui"), "mainWindow")
+    private void SetModel(Adw.Application application, AppModel model, Gio.Settings settings)
     {
         this.model = model;
         Application = application;
 
         theme = new AppTheme(settings);
         mode = new AppMode(settings);
-        splitView = new SplitView(model, this);
-        gridView = new GridView(model);
-        emptyView = new EmptyView(model);
+        splitView = SplitView.NewWithModel(model, this);
+        gridView = GridView.NewWithModel(model);
+        emptyView = EmptyView.NewWithModel(model);
 
         stack.AddNamed(splitView, "split");
         stack.AddNamed(gridView, "grid");
@@ -94,8 +97,8 @@ public class MainWindow : Adw.ApplicationWindow
             controls.Hexpand = true;
             controls.Halign = Gtk.Align.Fill;
 
-            var themeSwitcher = new ThemeSwitcher(theme);
-            var modeSwitcher = new BrowseModeSwitcher(mode);
+            var themeSwitcher = ThemeSwitcher.NewWithModel(theme);
+            var modeSwitcher = BrowseModeSwitcher.NewWithModel(mode);
             var separator = Gtk.Separator.New(Gtk.Orientation.Horizontal);
 
             themeSwitcher.Hexpand = true;

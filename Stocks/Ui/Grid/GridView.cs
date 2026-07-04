@@ -5,36 +5,37 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class GridView : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(GridView))]
+[Gtk.Template<Gtk.AssemblyResource>("GridView.ui")]
+public partial class GridView
 {
-    [Gtk.Connect] private readonly Adw.NavigationView gridView;
-    [Gtk.Connect] private readonly Adw.NavigationPage detailsContent;
-    [Gtk.Connect] private readonly Gtk.ScrolledWindow scrollContainer;
-    [Gtk.Connect] private readonly Adw.Bin detailsContainer;
-    [Gtk.Connect] private readonly Adw.Banner errorBanner;
-    [Gtk.Connect] private readonly Adw.HeaderBar gridHeader;
-    [Gtk.Connect] private readonly Gtk.MenuButton menuButton;
-    [Gtk.Connect] private readonly Gtk.MenuButton detailsMenuButton;
-    [Gtk.Connect] private readonly Adw.HeaderBar detailsHeader;
+    [Gtk.Connect] private Adw.NavigationView gridView;
+    [Gtk.Connect] private Adw.NavigationPage detailsContent;
+    [Gtk.Connect] private Gtk.ScrolledWindow scrollContainer;
+    [Gtk.Connect] private Adw.Bin detailsContainer;
+    [Gtk.Connect] private Adw.Banner errorBanner;
+    [Gtk.Connect] private Adw.HeaderBar gridHeader;
+    [Gtk.Connect] private Gtk.MenuButton menuButton;
+    [Gtk.Connect] private Gtk.MenuButton detailsMenuButton;
+    [Gtk.Connect] private Adw.HeaderBar detailsHeader;
 
-    private readonly AppModel model;
-    private readonly TickerDetails details;
+    private AppModel model = null!;
+    private TickerDetails details = null!;
     private readonly HashSet<Ticker> observedTickers = [];
     private bool isNarrow;
 
-    private GridView(Gtk.Builder builder) : base()
+    public static GridView NewWithModel(AppModel model)
     {
-        builder.Connect(this);
-        Hexpand = true;
-        Vexpand = true;
-        Append(gridView!);
+        var view = NewWithProperties([]);
+        view.SetModel(model);
+        return view;
     }
 
-    public GridView(AppModel model): this(Builder.FromFile("GridView.ui"))
+    private void SetModel(AppModel model)
     {
         this.model = model;
 
-        details = new TickerDetails(model);
+        details = TickerDetails.NewWithModel(model);
         detailsContainer.SetChild(details);
 
         var tickerGrid = new TickerGrid(model);

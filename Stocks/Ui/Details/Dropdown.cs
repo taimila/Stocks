@@ -35,7 +35,7 @@ public class KeyValueDropDown: Gtk.DropDown
         var listStore = Gio.ListStore.New(DropdownItem.GetGType());
         foreach (var item in items)
         {
-            listStore.Append(new DropdownItem(item.Key, item.Value));
+            listStore.Append(DropdownItem.NewWithKeyValue(item.Key, item.Value));
         }
 
         this.SetModel(listStore);
@@ -63,7 +63,7 @@ public class KeyValueDropDown: Gtk.DropDown
             store!.RemoveAll();
             foreach (var item in items)
             {
-                store.Append(new DropdownItem(item.Key, item.Value));
+                store.Append(DropdownItem.NewWithKeyValue(item.Key, item.Value));
             }
 
             // Restore the previous selection if it still exists, otherwise select first item
@@ -173,12 +173,17 @@ public class KeyValueDropDown: Gtk.DropDown
 [GObject.Subclass<GObject.Object>]
 public partial class DropdownItem
 {
-    public DropdownItem(string key, string value) : this()
+    string key;
+    string value;
+
+    public static DropdownItem NewWithKeyValue(string key, string value)
     {
-        Key = key;
-        Value = value;
+        var obj = NewWithProperties([]);
+        obj.key = key;
+        obj.value = value;
+        return obj;
     }
 
-    public string Key { get; }
-    public string Value { get; }
+    public string Key => key;
+    public string Value => value;
 }
