@@ -38,16 +38,14 @@ template $EmptyView : Gtk.Box {
 			valign: center;
 			width-request: 350;
 
-			child: Box {
-				orientation: vertical;
-				spacing: 12;
+			child: Adw.Bin {
 				halign: center;
 
 				Button addSymbolButton {
 					accessibility {
 					  label: _("Add symbol");
 					}
-					css-classes: ["suggested-action", "pill"];
+					styles ["suggested-action", "pill"]
 
 					child: Adw.ButtonContent {
 						icon-name: "list-add-symbolic";

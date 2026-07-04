@@ -38,7 +38,7 @@ public partial class GridView
         details = TickerDetails.NewWithModel(model);
         detailsContainer.SetChild(details);
 
-        var tickerGrid = new TickerGrid(model);
+        var tickerGrid = TickerGrid.NewWithModel(model);
         tickerGrid.OnTickerActivated += ticker =>
         {
             model.SetActive(ticker);
@@ -47,9 +47,9 @@ public partial class GridView
         };
         scrollContainer.SetChild(tickerGrid);
 
-        gridHeader.PackStart(new AddButton(model));
+        gridHeader.PackStart(AddButton.NewWithModel(model));
         gridHeader.ShowTitle = true;
-        gridHeader.SetTitleWidget(new WatchlistButton(model.Watchlists));
+        gridHeader.SetTitleWidget(WatchlistButton.NewWithModel(model.Watchlists));
 
         SyncVisibleTickerSubscriptions();
 

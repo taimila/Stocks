@@ -5,9 +5,10 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class Sidebar: Gtk.ListBox
+[GObject.Subclass<Gtk.ListBox>(qualifiedName: nameof(Sidebar))]
+public partial class Sidebar
 {
-    private readonly AppModel model;
+    private AppModel model = null!;
     private readonly Dictionary<string, SidebarItem> items = [];
 
     public event Action<Ticker>? OnTickerActivated;
@@ -28,7 +29,14 @@ public class Sidebar: Gtk.ListBox
     private readonly Gtk.SizeGroup g2 = Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal);
     private readonly Gtk.SizeGroup g3 = Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal);
 
-    public Sidebar(AppModel model)
+    public static Sidebar NewWithModel(AppModel model)
+    {
+        var sidebar = NewWithProperties([]);
+        sidebar.SetModel(model);
+        return sidebar;
+    }
+
+    private void SetModel(AppModel model)
     {
         AddCssClass("navigation-sidebar");
 

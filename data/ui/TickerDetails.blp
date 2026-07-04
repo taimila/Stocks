@@ -11,7 +11,8 @@ template $TickerDetails : Gtk.Box {
     margin-bottom: 20;
     orientation: vertical;
 
-    Gtk.Box noDetails {
+    //TODO: This is never visible to user. EmptyState.blp is used instead. Clean up.
+    Adw.Bin noDetails {
         visible: false;
         vexpand: true;
         hexpand: true;
@@ -30,8 +31,8 @@ template $TickerDetails : Gtk.Box {
         tightening-threshold: 700; 
         hexpand: true;
 
-        Box {
-            css-classes: ["card"];
+        Adw.Bin {
+            styles ["card"]
             hexpand: true;
         
             Box cardContent {                    
@@ -74,7 +75,6 @@ template $TickerDetails : Gtk.Box {
                 }
 
                 Grid wideHeader {
-                    visible: true;
                     column-homogeneous: true;
                     column-spacing: 10;
                     row-spacing: 0;
@@ -89,18 +89,16 @@ template $TickerDetails : Gtk.Box {
                         layout { column: 0; row: 1; }
                         orientation: horizontal;
                         spacing: 6;
-                        css-classes: ["symbol-row"];
+                        styles ["symbol-row"]
                         halign: fill;
                         hexpand: true;
                         valign: center;
 
                         // UI for showing the symbol or alias if available
-                        Box symbolDisplayBox {
-                            orientation: horizontal;
-                            spacing: 6;
+                        Adw.Bin symbolDisplayBox {
                             halign: start;
                             valign: center;
-                            css-classes: ["symbol-display"];
+                            styles ["symbol-display"]
 
                             Label symbol {
                                 halign: start;
@@ -121,7 +119,7 @@ template $TickerDetails : Gtk.Box {
 
                             Entry aliasEntry {
                                 valign: center;
-                                css-classes: ["symbol-entry"];
+                                styles ["symbol-entry"]
                                 hexpand: true;
                                 halign: fill;
                             }
@@ -130,7 +128,7 @@ template $TickerDetails : Gtk.Box {
                                 margin-top: 6;
                                 icon-name: "object-select-symbolic";
                                 valign: center;
-                                css-classes: ["suggested-action", "circular"];
+                                styles ["suggested-action", "circular"]
                                 tooltip-text: _("Save alias for symbol");
                             }
                         }
@@ -150,7 +148,6 @@ template $TickerDetails : Gtk.Box {
                 }
 
                 Adw.ToggleGroup rangeToggles {
-                    visible: true;
                     margin-top: 20;
                     margin-bottom: 20;
                     styles [ "round" ]
@@ -235,7 +232,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label open {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 0; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -249,7 +246,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label high {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 0; row: 3; }
                         styles [ "secondary-value" ]
                     }
@@ -263,7 +260,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label low {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 1; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -277,14 +274,13 @@ template $TickerDetails : Gtk.Box {
 
                     Label marketStatus {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 1; row: 3; }
                         styles [ "secondary-value" ]
                     }
                 }
 
                 Grid wideFooter {
-                    visible: true;
                     margin-top: 20;
                     column-homogeneous: true;
                     column-spacing: 4;
@@ -300,7 +296,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label open2 {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 0; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -314,7 +310,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label high2 {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 1; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -328,7 +324,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label low2 {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 2; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -342,7 +338,7 @@ template $TickerDetails : Gtk.Box {
 
                     Label marketStatus2 {
                         halign: start;
-                        label: "-";
+                        label: _("-");
                         layout { column: 3; row: 1; }
                         styles [ "secondary-value" ]
                     }
@@ -363,14 +359,14 @@ template $TickerDetails : Gtk.Box {
                 margin-top: 20;
                 margin-bottom: 6;
                 label: _("Updated just now.");
-                css-classes: ["caption"];
+                styles ["caption"]
                 hexpand: true;
                 halign: start;
             }
 
             Gtk.Label readMore {
                 use-markup: true;
-                css-classes: ["caption"];
+                styles ["caption"]
                 hexpand: true;
                 halign: start;
                 opacity: 0.6;

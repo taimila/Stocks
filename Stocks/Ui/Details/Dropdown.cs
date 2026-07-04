@@ -11,14 +11,22 @@ namespace Stocks.UI;
 /// The amount of code this takes is ridigilous... 
 /// maybe there is a better way?
 /// </summary>
-public class KeyValueDropDown: Gtk.DropDown
+[GObject.Subclass<Gtk.DropDown>(qualifiedName: nameof(KeyValueDropDown))]
+public partial class KeyValueDropDown
 {
     public event Action<string> OnValueSelected;
 
-    private IDictionary<string, string> items;
+    private IDictionary<string, string> items = new Dictionary<string, string>();
     private bool suppressSelectionNotifications = false;
 
-    public KeyValueDropDown(IDictionary<string, string> items)
+    public static KeyValueDropDown NewWithItems(IDictionary<string, string> items)
+    {
+        var dropdown = NewWithProperties([]);
+        dropdown.SetItemsModel(items);
+        return dropdown;
+    }
+
+    private void SetItemsModel(IDictionary<string, string> items)
     {
         this.items = items;
 

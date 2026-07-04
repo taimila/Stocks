@@ -13,7 +13,7 @@ public partial class TickerDetails
     [Gtk.Connect] private Gtk.Box cardContent;
 
     // Main containers to switch between details / no-details
-    [Gtk.Connect] private Gtk.Box noDetails;
+    [Gtk.Connect] private Adw.Bin noDetails;
     [Gtk.Connect] private Adw.Clamp detailsCard;
     [Gtk.Connect] private Adw.Clamp detailsFooter;
 
@@ -23,7 +23,7 @@ public partial class TickerDetails
 
     [Gtk.Connect] private Gtk.Label name;
     [Gtk.Connect] private Gtk.Label symbol;
-    [Gtk.Connect] private Gtk.Box symbolDisplayBox;
+    [Gtk.Connect] private Adw.Bin symbolDisplayBox;
     [Gtk.Connect] private Gtk.Box symbolEditBox;
     [Gtk.Connect] private Gtk.Entry aliasEntry;
     [Gtk.Connect] private Gtk.Button aliasSaveButton;
@@ -155,7 +155,7 @@ public partial class TickerDetails
             items[key] = Enum.Parse<TickerRange>(key).GetDisplayName();
         }
 
-        rangeDropdown = new KeyValueDropDown(items);
+        rangeDropdown = KeyValueDropDown.NewWithItems(items);
         rangeDropdown.Hexpand = false;
         rangeDropdown.Halign = Gtk.Align.Start;
         rangeDropdown.OnValueSelected += SetRangeFromName;
@@ -200,21 +200,21 @@ public partial class TickerDetails
             }
         }
      
-        chart = new TickerChart { Vexpand = true, Hexpand = true };
+        chart = TickerChart.New();
+        chart.Vexpand = true;
+        chart.Hexpand = true;
         chart.OnHover += OnChartHover;
 
-        noDataView = new Adw.StatusPage
-        {
-            Title = _("Chart not available"),
-            IconName = "emblem-important-symbolic",
-            WidthRequest = 400,
-            Halign = Gtk.Align.Center,
-            Valign = Gtk.Align.Center,
-            Hexpand = true,
-            Vexpand = true
-        };
+        noDataView = Adw.StatusPage.New();
+        noDataView.Title = _("Chart not available");
+        noDataView.IconName = "emblem-important-symbolic";
+        noDataView.WidthRequest = 400;
+        noDataView.Halign = Gtk.Align.Center;
+        noDataView.Valign = Gtk.Align.Center;
+        noDataView.Hexpand = true;
+        noDataView.Vexpand = true;
 
-        chartOverlay = new Gtk.Overlay();
+        chartOverlay = Gtk.Overlay.New();
         chartOverlay.Hexpand = true;
         chartOverlay.SetChild(chart);
         chartOverlay.AddOverlay(noDataView);

@@ -28,13 +28,13 @@ public partial class EmptyView
             throw new InvalidOperationException("EmptyView dependencies have already been set.");
 
         this.model = model;
-        header.PackStart(new AddButton(model));
+        header.PackStart(AddButton.NewWithModel(model));
         header.ShowTitle = true;
-        header.SetTitleWidget(new WatchlistButton(model.Watchlists));
+        header.SetTitleWidget(WatchlistButton.NewWithModel(model.Watchlists));
 
         addSymbolButton.OnClicked += (_, _) =>
         {
-            var dialog = new AddTickerDialog(model);
+            var dialog = AddTickerDialog.NewWithModel(model);
             dialog.Present(Root as Gtk.Widget);
         };
     }
