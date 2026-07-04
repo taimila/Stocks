@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 global using static Stocks.Constants;
-global using static Stocks.Translations;
 
 namespace Stocks;
 

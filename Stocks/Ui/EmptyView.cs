@@ -5,25 +5,28 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class EmptyView : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(EmptyView))]
+[Gtk.Template<Gtk.AssemblyResource>("EmptyView.ui")]
+public partial class EmptyView
 {
-    [Gtk.Connect] private readonly Adw.ToolbarView emptyView;
-    [Gtk.Connect] private readonly Adw.HeaderBar header;
-    [Gtk.Connect] private readonly Gtk.Button addSymbolButton;
-    [Gtk.Connect] private readonly Gtk.MenuButton menuButton;
+    [Gtk.Connect] private Adw.HeaderBar header;
+    [Gtk.Connect] private Gtk.Button addSymbolButton;
+    [Gtk.Connect] private Gtk.MenuButton menuButton;
 
-    private readonly AppModel model;
+    private AppModel? model;
 
-    private EmptyView(Gtk.Builder builder) : base()
+    public static EmptyView NewWithModel(AppModel model)
     {
-        builder.Connect(this);
-        Hexpand = true;
-        Vexpand = true;
-        Append(emptyView!);
+        var view = NewWithProperties([]);
+        view.SetModel(model);
+        return view;
     }
 
-    public EmptyView(AppModel model): this(Builder.FromFile("EmptyView.ui"))
+    private void SetModel(AppModel model)
     {
+        if (this.model is not null)
+            throw new InvalidOperationException("EmptyView dependencies have already been set.");
+
         this.model = model;
         header.PackStart(new AddButton(model));
         header.ShowTitle = true;

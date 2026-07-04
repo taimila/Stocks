@@ -5,26 +5,29 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class TickerGridCard : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(TickerGridCard))]
+[Gtk.Template<Gtk.AssemblyResource>("TickerGridCard.ui")]
+public partial class TickerGridCard
 {
-    [Gtk.Connect] private readonly Gtk.Label displayName;
-    [Gtk.Connect] private readonly Gtk.Label name;
-    [Gtk.Connect] private readonly Gtk.Label value;
-    [Gtk.Connect] private readonly Gtk.Label change;
-    [Gtk.Connect] private readonly Adw.Bin chartBin;
+    [Gtk.Connect] private Gtk.Label displayName;
+    [Gtk.Connect] private Gtk.Label name;
+    [Gtk.Connect] private Gtk.Label value;
+    [Gtk.Connect] private Gtk.Label change;
+    [Gtk.Connect] private Adw.Bin chartBin;
 
-    private readonly TickerChart chart;
+    private TickerChart chart = null!;
 
-    public Ticker Ticker { get; }
+    public Ticker Ticker { get; private set; } = null!;
 
-    private TickerGridCard(Gtk.Builder builder, string name)
-        : base(new Gtk.Internal.BoxHandle(builder.GetPointer(name), false))
+    public static TickerGridCard NewWithTicker(Ticker ticker)
     {
-        builder.Connect(this);
+        var card = NewWithProperties([]);
+        card.SetTicker(ticker);
+
+        return card;
     }
 
-    public TickerGridCard(Ticker ticker)
-        : this(Builder.FromFile("TickerGridCard.ui"), "ticker-grid-card")
+    private void SetTicker(Ticker ticker)
     {
         Ticker = ticker;
         TickerContextMenu.Attach(this, Ticker);

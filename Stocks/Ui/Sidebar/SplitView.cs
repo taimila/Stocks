@@ -2,42 +2,43 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using Stocks.Model;
+using static Stocks.Translations;
 
 namespace Stocks.UI;
 
-public class SplitView : Gtk.Box
+[GObject.Subclass<Gtk.Box>(qualifiedName: nameof(SplitView))]
+[Gtk.Template<Gtk.AssemblyResource>("SplitView.ui")]
+public partial class SplitView
 {
-    [Gtk.Connect] private readonly Adw.NavigationSplitView splitView;
-    [Gtk.Connect] private readonly Gtk.ScrolledWindow sidebarContainer;
-    [Gtk.Connect] private readonly Adw.Bin detailsContainer;
-    [Gtk.Connect] private readonly Adw.Banner errorBanner;
-    [Gtk.Connect] private readonly Adw.HeaderBar sidebarHeader;
-    [Gtk.Connect] private readonly Adw.ToastOverlay toastOverlay;
-    [Gtk.Connect] private readonly Gtk.MenuButton menuButton;
-    [Gtk.Connect] private readonly Adw.NavigationPage detailsContent;
-    [Gtk.Connect] private readonly Adw.HeaderBar detailsHeader;
+    [Gtk.Connect] private Adw.NavigationSplitView splitView;
+    [Gtk.Connect] private Gtk.ScrolledWindow sidebarContainer;
+    [Gtk.Connect] private Adw.Bin detailsContainer;
+    [Gtk.Connect] private Adw.Banner errorBanner;
+    [Gtk.Connect] private Adw.HeaderBar sidebarHeader;
+    [Gtk.Connect] private Adw.ToastOverlay toastOverlay;
+    [Gtk.Connect] private Gtk.MenuButton menuButton;
+    [Gtk.Connect] private Adw.NavigationPage detailsContent;
+    [Gtk.Connect] private Adw.HeaderBar detailsHeader;
 
-    private readonly AppModel model;
-    private readonly Sidebar sidebar;
-    private readonly TickerDetails details;
+    private AppModel model = null!;
+    private Sidebar sidebar = null!;
+    private TickerDetails details = null!;
     private readonly HashSet<Ticker> observedTickers = [];
     private bool isNarrow;
 
-    private SplitView(Gtk.Builder builder): base()
+    public static SplitView NewWithModel(AppModel model, Adw.ApplicationWindow window)
     {
-        builder.Connect(this);
-        Hexpand = true;
-        Vexpand = true;
-        splitView!.Hexpand = true;
-        splitView.Vexpand = true;
-        Append(splitView);
+        var view = NewWithProperties([]);
+        view.SetModel(model, window);
+
+        return view;
     }
 
-    public SplitView(AppModel model, Adw.ApplicationWindow window): this(Builder.FromFile("SplitView.ui"))
+    private void SetModel(AppModel model, Adw.ApplicationWindow window)
     {
         this.model = model;
 
-        details = new TickerDetails(model);
+        details = TickerDetails.NewWithModel(model);
         detailsContainer.SetChild(details);
 
         sidebar = new Sidebar(model);

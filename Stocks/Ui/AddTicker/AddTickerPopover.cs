@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using Stocks.Model;
+using static Stocks.Translations;
 
 namespace Stocks.UI;
 
@@ -181,7 +182,7 @@ class AddTickerView : Gtk.Box
             add.Valign = Gtk.Align.Center;
             add.TooltipText = canAdd ? _("Add to watchlist") : _("Already on watchlist");
 
-            var sidebarItem = new SidebarItem(g1, g2, g3, model.GetEmpheralTicker(result.Symbol));
+            var sidebarItem = SidebarItem.NewWithTicker(g1, g2, g3, model.GetEmpheralTicker(result.Symbol));
             sidebarItem.Sensitive = canAdd;
 
             // Hack to fix padding issue of the name label when in popover.

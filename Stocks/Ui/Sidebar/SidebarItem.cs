@@ -5,24 +5,29 @@ using Stocks.Model;
 
 namespace Stocks.UI;
 
-public class SidebarItem : Gtk.Grid
+[GObject.Subclass<Gtk.Grid>(qualifiedName: nameof(SidebarItem))]
+[Gtk.Template<Gtk.AssemblyResource>("SidebarItem.ui")]
+public partial class SidebarItem
 {
-    [Gtk.Connect] private readonly Gtk.Label symbol;
-    [Gtk.Connect] private readonly Gtk.Label name;
-    [Gtk.Connect] private readonly Gtk.Label value;
-    [Gtk.Connect] private readonly Gtk.Label change;
-    [Gtk.Connect] private readonly Adw.Bin chartBin;
+    [Gtk.Connect] private Gtk.Label symbol;
+    [Gtk.Connect] private Gtk.Label name;
+    [Gtk.Connect] private Gtk.Label value;
+    [Gtk.Connect] private Gtk.Label change;
+    [Gtk.Connect] private Adw.Bin chartBin;
 
-    private readonly TickerChart chart;
+    private TickerChart chart = null!;
 
-    public Ticker Ticker { get; private set; }
+    public Ticker Ticker { get; private set; } = null!;
   
-    private SidebarItem(Gtk.Builder builder, string name) : base(new Gtk.Internal.GridHandle(builder.GetPointer(name), false))
+    public static SidebarItem NewWithTicker(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, Ticker ticker)
     {
-        builder.Connect(this);
+        var item = NewWithProperties([]);
+        item.SetTicker(g1, g2, g3, ticker);
+
+        return item;
     }
 
-    public SidebarItem(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, Ticker ticker) : this(Builder.FromFile("SidebarItem.ui"), "sidebar-item")
+    private void SetTicker(Gtk.SizeGroup g1, Gtk.SizeGroup g2, Gtk.SizeGroup g3, Ticker ticker)
     {
         // Add widgets to groups so that GTK can align these over all sidebar items.
         g1.AddWidget(symbol);

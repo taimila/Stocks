@@ -211,7 +211,7 @@ public class Sidebar: Gtk.ListBox
 
     private Gtk.Widget CreatePreviewFor(Ticker ticker, int width, int height)
     {
-        var content = new SidebarItem(
+        var content = SidebarItem.NewWithTicker(
             Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal),
             Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal),
             Gtk.SizeGroup.New(Gtk.SizeGroupMode.Horizontal),
@@ -237,7 +237,7 @@ public class Sidebar: Gtk.ListBox
 
     private void Add(Ticker ticker)
     {
-        var item = new SidebarItem(g1, g2, g3, ticker);
+        var item = SidebarItem.NewWithTicker(g1, g2, g3, ticker);
         items[ticker.Symbol] = item;
 
         var row = Gtk.ListBoxRow.New();
