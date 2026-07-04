@@ -39,7 +39,7 @@ public class Ticker(string symbol, TickerFetcher fetcher, Market market)
     // This event is fired after data refresh so that UI knows to update it self.
     public event Action<Ticker>? OnUpdated;
 
-    public bool TryGetData(TickerRange range, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TickerData data) => datas.TryGetValue(range, out data);
+    public bool TryGetData(TickerRange range, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out TickerData? data) => datas.TryGetValue(range, out data);
 
     // User can replace override symbol name in UI with an alias.
     public void SetAlias(string value)
