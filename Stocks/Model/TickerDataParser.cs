@@ -9,8 +9,10 @@ public class TickerDataParser
     {
         var numberOfDecimals = result.Meta.PriceHint ?? 2;
 
-        var open = result.Indicators.Quote.FirstOrDefault()?.Open ?? [];
-        var close = result.Indicators.Quote.FirstOrDefault()?.Close ?? [];
+        var quote = result.Indicators.Quote;
+
+        var open = quote?.FirstOrDefault()?.Open ?? [];
+        var close = quote?.FirstOrDefault()?.Close ?? [];
 
         var closeValues = close.Where(v => v.HasValue).Select(v => v!.Value).ToArray();
         var fallbackPrice = result.Meta.RegularMarketPrice;
