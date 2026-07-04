@@ -7,7 +7,7 @@ public record Marker(DateTime Timestamp, string Label);
 
 public static class TickerRangeMarkerExtension
 {
-    public static (DateTime, TimeSpan, string) GetMarkerRules(this TickerRange range, DateTime start, TimeSpan? span = null)
+    public static (DateTime, TimeSpan, string) GetMarkerRules(this TickerRange range, DateTime start, TimeSpan span)
     {
         TickerRange GetClosestThreshold(TimeSpan timeSpan)
         {
@@ -77,7 +77,7 @@ public static class TickerRangeMarkerExtension
 
             case TickerRange.Ytd:
                 // Recursively use Day, FiveDays, Month, ThreeMonths, SixMonths or Year.
-                return GetClosestThreshold(span.Value).GetMarkerRules(start);
+                return GetClosestThreshold(span).GetMarkerRules(start, span);
 
             default:
                 throw new Exception("Scale mapping missing for TickerRange: " + range);
