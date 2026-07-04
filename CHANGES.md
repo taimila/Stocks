@@ -26,3 +26,8 @@
 
 ## 0.6.0
 - Create multiple watchlists and switch between them.
+
+## 0.7.0
+- Updated Gir.Core to latest 0.8.0
+- Refactored codebase and removed all compiler warnings
+- Improved UX of switching between watchlists by preloading all tickers
