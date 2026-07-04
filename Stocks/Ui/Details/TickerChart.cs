@@ -406,6 +406,9 @@ public partial class TickerChart
     {
         double min = 0;
         double max = 0;
+        
+        if (data == null)
+            return new (0,0);
 
         if (ShowPreviousCloseLine)
         {
@@ -424,6 +427,7 @@ public partial class TickerChart
     // Defines a current user selected range. (Click and hover action)
     DragRange? CreateDragRange(double dpWidth, double limitX) 
     {
+        if (data == null) return null;
         if (!isDragging) return null;
         if (dpWidth <= 0) return null;
 
@@ -476,7 +480,7 @@ public partial class TickerChart
         if (ShowXScale) DrawXScale(ctx); 
 
         /// Define the color to use when drawing non-muted parts of the graph
-        var color = drag?.Color ?? (data!.IsPositive ? palette.positive : palette.negative);
+        var color = drag?.Color ?? (data.IsPositive ? palette.positive : palette.negative);
 
         if (ShowPreviousCloseLine && !isDragging)
         {
