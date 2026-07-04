@@ -11,7 +11,8 @@ template $TickerDetails : Gtk.Box {
     margin-bottom: 20;
     orientation: vertical;
 
-    Gtk.Box noDetails {
+    //TODO: This is never visible to user. EmptyState.blp is used instead. Clean up.
+    Adw.Bin noDetails {
         visible: false;
         vexpand: true;
         hexpand: true;
@@ -30,7 +31,7 @@ template $TickerDetails : Gtk.Box {
         tightening-threshold: 700; 
         hexpand: true;
 
-        Box {
+        Adw.Bin {
             styles ["card"]
             hexpand: true;
         
@@ -94,9 +95,7 @@ template $TickerDetails : Gtk.Box {
                         valign: center;
 
                         // UI for showing the symbol or alias if available
-                        Box symbolDisplayBox {
-                            orientation: horizontal;
-                            spacing: 6;
+                        Adw.Bin symbolDisplayBox {
                             halign: start;
                             valign: center;
                             styles ["symbol-display"]

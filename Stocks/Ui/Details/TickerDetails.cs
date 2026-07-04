@@ -13,7 +13,7 @@ public partial class TickerDetails
     [Gtk.Connect] private Gtk.Box cardContent;
 
     // Main containers to switch between details / no-details
-    [Gtk.Connect] private Gtk.Box noDetails;
+    [Gtk.Connect] private Adw.Bin noDetails;
     [Gtk.Connect] private Adw.Clamp detailsCard;
     [Gtk.Connect] private Adw.Clamp detailsFooter;
 
@@ -23,7 +23,7 @@ public partial class TickerDetails
 
     [Gtk.Connect] private Gtk.Label name;
     [Gtk.Connect] private Gtk.Label symbol;
-    [Gtk.Connect] private Gtk.Box symbolDisplayBox;
+    [Gtk.Connect] private Adw.Bin symbolDisplayBox;
     [Gtk.Connect] private Gtk.Box symbolEditBox;
     [Gtk.Connect] private Gtk.Entry aliasEntry;
     [Gtk.Connect] private Gtk.Button aliasSaveButton;
