@@ -681,16 +681,6 @@ public static class ContextExtensions
         c.SetSourceRgba(color.R, color.G, color.B, color.A);
     }
 
-    public static void DrawPill(this Context ctx, double x, double y, double width, double height)
-    {
-        double radius = height / 2.0;
-        ctx.NewPath();
-        ctx.Arc(x + radius, y + radius, radius, Math.PI / 2, Math.PI * 3 / 2);
-        ctx.LineTo(x + width - radius, y);
-        ctx.Arc(x + width - radius, y + radius, radius, Math.PI * 3 / 2, Math.PI / 2);
-        ctx.ClosePath();
-    }
-
     public static void DrawDebugBorders(this Context ctx, int w, int h)
     {
         ctx.NewPath();
