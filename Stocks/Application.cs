@@ -123,6 +123,7 @@ public class Application
         about.ApplicationIcon = APP_ID;
         about.DeveloperName = "Lauri Taimila";
         about.Version = "0.7.0";
+        about.IssueUrl = "https://github.com/taimila/Stocks/issues";
         about.Developers = ["Lauri Taimila"];
         about.Copyright = "© 2026 Lauri Taimila";
         about.LicenseType = Gtk.License.Lgpl30;
