@@ -10,7 +10,6 @@ public enum HoverMode
 {
     PopoverOnBottom,
     PopoverOnDataPoint,
-    Minimal
 }
 
 public record Color(
@@ -260,9 +259,6 @@ public partial class TickerChart
 
     private void UpdatePopover(DataPoint? dp, double x)
     {
-        if (HoverMode == HoverMode.Minimal)
-            return;
-
         if (!IsHovering || data == null || dp == null ||  data.DataPoints.Length == 0)
         {
             HideHoverPopover();
@@ -288,9 +284,6 @@ public partial class TickerChart
 
     private void UpdateRangePopover()
     {
-        if (HoverMode == HoverMode.Minimal)
-            return;
-
         if (!IsHovering || data == null || data.DataPoints.Length < 2)
         {
             HideHoverPopover();
@@ -658,26 +651,6 @@ public partial class TickerChart
         ctx.LineWidth = LineWidth;
         ctx.LineCap = LineCap.Square;
         ctx.Stroke();
-
-        if (HoverMode == HoverMode.Minimal)
-        {
-            var date = GetTimestamp(dp);
-
-            ctx.SelectFontFace("Adwaita Sans", FontSlant.Normal, FontWeight.Bold);
-            ctx.SetFontSize(12);
-            ctx.TextExtents(date, out TextExtents te);
-
-            var pillPadding = 3;
-            var pillX = Math.Min(Math.Max(10, x - (te.Width / 2)), w - te.Width - 5);
-            ctx.DrawPill(pillX - (2 * pillPadding), h, te.Width +  (4 * pillPadding), te.Height + (2 * pillPadding));
-            ctx.SetColor(color);
-            ctx.Fill();
-
-            ctx.SetColor(new Color(1,1,1,1));
-            ctx.MoveTo(pillX, h + 13);
-            ctx.ShowText(date);
-            ctx.SelectFontFace("Adwaita Sans", FontSlant.Normal, FontWeight.Normal);
-        }
 
         if (ShowDotOnHover)
         {
