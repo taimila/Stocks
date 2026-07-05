@@ -9,6 +9,12 @@ class CompositionRoot
 {
     public Application Application { get; private set; }
 
+    /// <summary>
+    /// Composition root of the app. Creates the object graph of the app
+    /// by incjecting all the dependencies in place.
+    /// 
+    /// https://blog.ploeh.dk/2011/07/28/CompositionRoot/
+    /// </summary>
     public CompositionRoot()
     {
         var settings = Gio.Settings.New(APP_ID);

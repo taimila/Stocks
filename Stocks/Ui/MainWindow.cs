@@ -24,7 +24,6 @@ public partial class MainWindow
     {
         var window = NewWithProperties([]);
         window.SetModel(application, model, settings);
-
         return window;
     }
 

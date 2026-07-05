@@ -13,8 +13,6 @@ public partial class EmptyView
     [Gtk.Connect] private Gtk.Button addSymbolButton;
     [Gtk.Connect] private Gtk.MenuButton menuButton;
 
-    private AppModel? model;
-
     public static EmptyView NewWithModel(AppModel model)
     {
         var view = NewWithProperties([]);
@@ -24,10 +22,6 @@ public partial class EmptyView
 
     private void SetModel(AppModel model)
     {
-        if (this.model is not null)
-            throw new InvalidOperationException("EmptyView dependencies have already been set.");
-
-        this.model = model;
         header.PackStart(AddButton.NewWithModel(model));
         header.ShowTitle = true;
         header.SetTitleWidget(WatchlistButton.NewWithModel(model.Watchlists));

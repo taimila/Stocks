@@ -9,9 +9,4 @@ public static class Constants
     /// The application ID.
     /// </summary>
     public const string APP_ID = "fi.taimila.Stocks";
-
-    /// <summary>
-    /// Location of the GResource definition.
-    /// </summary>
-    public const string RESOURCES_PATH = "/app/share/Stocks/fi.taimila.Stocks.gresource";
 }
