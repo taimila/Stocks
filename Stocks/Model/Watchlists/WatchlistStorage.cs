@@ -47,7 +47,7 @@ public class WatchlistStorage
         try
         {
             var json = File.ReadAllText(filePath);
-            var loaded = JsonSerializer.Deserialize<WatchlistState>(json);
+            var loaded = JsonSerializer.Deserialize(json, StocksJsonContext.Default.WatchlistState);
             if (loaded is null)
                 return false;
 
@@ -68,7 +68,7 @@ public class WatchlistStorage
             if (!string.IsNullOrWhiteSpace(directory))
                 Directory.CreateDirectory(directory);
 
-            var json = JsonSerializer.Serialize(state);
+            var json = JsonSerializer.Serialize(state, StocksJsonContext.Default.WatchlistState);
             File.WriteAllText(filePath, json);
             return true;
         }
