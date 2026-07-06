@@ -8,13 +8,21 @@ public static class ScrolledWindowExtensions
     public static void ScrollToBottom(this Gtk.ScrolledWindow sw)
     {
         var adj = sw.Vadjustment;
+        if (adj is null)
+            return;
 
-        double start = adj!.Value;
-        double end = adj.Upper - adj.PageSize;
+        double start = adj.Value;
+        double end = Math.Max(0, adj.Upper - adj.PageSize);
         double duration = 0.3; // seconds
 
         var clock = sw.GetFrameClock();
-        long startTime = clock!.GetFrameTime();
+        if (clock is null)
+        {
+            adj.Value = end;
+            return;
+        }
+
+        long startTime = clock.GetFrameTime();
 
         sw.AddTickCallback((widget, frameClock) =>
         {
