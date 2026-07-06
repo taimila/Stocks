@@ -29,6 +29,8 @@ public partial class MainWindow
 
     private void SetModel(Adw.Application application, AppModel model, Gio.Settings settings)
     {
+        WidthRequest = 355;
+
         this.model = model;
         Application = application;
 
@@ -58,7 +60,6 @@ public partial class MainWindow
         SetupPrimaryMenu();
         SetupUpdatesOnWindowResize();
         UpdateUI();
-        SetMinumumWidth(mode.Current);
     }
 
     private void SetBrowseMode(BrowseMode mode)
@@ -69,12 +70,6 @@ public partial class MainWindow
         this.mode.SetBrowseMode(mode);
         UpdateUI();
         UpdateResponsiveState();
-        SetMinumumWidth(mode);
-    }
-
-    private void SetMinumumWidth(BrowseMode mode)
-    {
-        WidthRequest = mode == BrowseMode.Grid ? 404 : 355;
     }
 
     // If there are no tickers, there is no visible change in UI, but mode still changes.

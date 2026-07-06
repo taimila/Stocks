@@ -9,7 +9,7 @@ namespace Stocks.UI;
 public partial class TickerGrid
 {
     private AppModel model = null!;
-    private readonly Dictionary<Symbol, Gtk.AspectFrame> cards = [];
+    private readonly Dictionary<Symbol, TickerGridCardFrame> cards = [];
 
     // Container for all on-going animations during drag operation
     private readonly Dictionary<Gtk.FlowBoxChild, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeCardAnimations = [];
@@ -52,8 +52,8 @@ public partial class TickerGrid
 
         OnChildActivated += (_, args) =>
         {
-            if (args.Child?.Child is Gtk.AspectFrame card && card.Child is TickerGridCard tgc)
-                OnTickerActivated?.Invoke(tgc.Ticker);
+            if (args.Child?.Child is TickerGridCardFrame card && card.Ticker is not null)
+                OnTickerActivated?.Invoke(card.Ticker);
         };        
     }
 
@@ -77,16 +77,9 @@ public partial class TickerGrid
         Append(card);
     }
 
-    private Gtk.AspectFrame CreateCard(Ticker ticker)
+    private TickerGridCardFrame CreateCard(Ticker ticker)
     {
-        int cardSize = 180;
-
-        var aspectFrame = Gtk.AspectFrame.New(0.5f, 0.5f, 1.0f, false);
-        aspectFrame.WidthRequest = cardSize;
-        aspectFrame.HeightRequest = cardSize;
-        aspectFrame.SetChild(TickerGridCard.NewWithTicker(ticker));
-
-        return aspectFrame;
+        return TickerGridCardFrame.NewWithTicker(ticker);
     }
 
     private void RemoveTicker(Ticker ticker)
@@ -101,7 +94,7 @@ public partial class TickerGrid
         }
     }
 
-    private void SetupDragAndDrop(Gtk.AspectFrame card)
+    private void SetupDragAndDrop(TickerGridCardFrame card)
     {
         var dragSource = Gtk.DragSource.New();
         dragSource.SetActions(Gdk.DragAction.Move);
@@ -128,8 +121,8 @@ public partial class TickerGrid
                 dragSource.SetIcon(paintable, 0, 0);
             }
 
-            card.SetChild(null);
-            card.AddCssClass("drag-placeholder");
+            card.RemoveContent();
+            card.AddPlaceholderClass();
         };
 
         dragSource.OnDragEnd += (_, _) =>
@@ -138,7 +131,7 @@ public partial class TickerGrid
             CleanupDragState();
         };
         
-        card.AddController(dragSource);
+        card.AddCardController(dragSource);
 
         var dropTarget = Gtk.DropTarget.New(GObject.Type.Object, Gdk.DragAction.Move);
         dropTarget.OnDrop += (_, _) =>
@@ -175,7 +168,7 @@ public partial class TickerGrid
             return Gdk.DragAction.Move;
         };
 
-        card.AddController(dropTarget);
+        card.AddCardController(dropTarget);
     }
 
     private void UpdateUItoMatchTickerOrderInModel()
@@ -184,7 +177,7 @@ public partial class TickerGrid
         {
             var ticker = model.Tickers[i];
 
-            if (GetFloxBoxChildOf(ticker) is not Gtk.FlowBoxChild child)
+            if (GetFlowBoxChildOf(ticker) is not Gtk.FlowBoxChild child)
                 continue;
 
             if (child.GetIndex() == i)
@@ -195,7 +188,7 @@ public partial class TickerGrid
         }
     }
 
-    private Gtk.FlowBoxChild? GetFloxBoxChildOf(Ticker ticker)
+    private Gtk.FlowBoxChild? GetFlowBoxChildOf(Ticker ticker)
     {
         if (!cards.TryGetValue(ticker.Symbol, out var item))
             return null;
@@ -283,10 +276,10 @@ public partial class TickerGrid
             return;
 
         SetCardOffset(dragState.FlowBoxChild, 0, 0);
-        dragState.Card.RemoveCssClass("drag-placeholder");
+        dragState.Card.RemovePlaceholderClass();
 
-        if (dragState.Card.Child == null && dragState.CardContent != null)
-            dragState.Card.SetChild(dragState.CardContent);
+        if (!dragState.Card.HasContent && dragState.CardContent != null)
+            dragState.Card.SetContent(dragState.CardContent);
 
         dragState = null;
     }
@@ -345,12 +338,12 @@ public partial class TickerGrid
     }
 }
 
-class DragState(Gtk.FlowBoxChild fbc, Gtk.AspectFrame card)
+class DragState(Gtk.FlowBoxChild fbc, TickerGridCardFrame card)
 {
     public Gtk.FlowBoxChild FlowBoxChild { get; } = fbc;
-    public Gtk.AspectFrame Card { get; } = card;
-    public Gtk.Widget? CardContent { get; } = card.Child;
-    public Gtk.AspectFrame? DragIconCard { get; set; }
+    public TickerGridCardFrame Card { get; } = card;
+    public Gtk.Widget? CardContent { get; } = card.Content;
+    public TickerGridCardFrame? DragIconCard { get; set; }
     public Ticker? Ticker => (CardContent as TickerGridCard)?.Ticker;
 }
     
