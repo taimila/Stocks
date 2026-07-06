@@ -31,3 +31,8 @@
 - Updated Gir.Core to latest 0.8.0
 - Refactored codebase and removed all compiler warnings
 - Improved UX of switching between watchlists by preloading all tickers
+
+## 0.8.0
+- Fixes a crash when app was opened in Grid View and user added new symbol
+- Fixes Grid View mode in mobile phone size
+- Decreased Flatpak size significantly by enabling .NET trimming

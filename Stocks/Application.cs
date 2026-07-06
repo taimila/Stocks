@@ -122,7 +122,7 @@ public class Application
         about.ApplicationName = _("Stocks");
         about.ApplicationIcon = APP_ID;
         about.DeveloperName = "Lauri Taimila";
-        about.Version = "0.7.0";
+        about.Version = "0.8.0";
         about.IssueUrl = "https://github.com/taimila/Stocks/issues";
         about.Developers = ["Lauri Taimila"];
         about.Copyright = "© 2026 Lauri Taimila";
