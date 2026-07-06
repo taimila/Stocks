@@ -49,7 +49,7 @@ public class AliasStorage
         try
         {
             var json = File.ReadAllText(filePath);
-            var data = JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+            var data = JsonSerializer.Deserialize(json, StocksJsonContext.Default.StringDictionary);
             if (data != null)
             {
                 aliases = data
@@ -76,7 +76,9 @@ public class AliasStorage
             if (!string.IsNullOrWhiteSpace(directory))
                 Directory.CreateDirectory(directory);
 
-            var json = JsonSerializer.Serialize(aliases.ToDictionary(pair => pair.Key.Value, pair => pair.Value));
+            var json = JsonSerializer.Serialize(
+                aliases.ToDictionary(pair => pair.Key.Value, pair => pair.Value),
+                StocksJsonContext.Default.StringDictionary);
             File.WriteAllText(filePath, json);
         }
         catch

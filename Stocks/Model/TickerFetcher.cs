@@ -23,8 +23,7 @@ public class TickerFetcher
         try
         {
             var json = await client.GetStringAsync(url);
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var dto = JsonSerializer.Deserialize<ChartResponse>(json, options);
+            var dto = JsonSerializer.Deserialize(json, StocksJsonContext.Default.ChartResponse);
             return dto!.Chart.Result!.First();
         }
         catch(Exception e)
@@ -42,8 +41,7 @@ public class TickerFetcher
         try
         {
             var json = await client.GetStringAsync(url);
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var dto = JsonSerializer.Deserialize<YahooSearchResults>(json, options);
+            var dto = JsonSerializer.Deserialize(json, StocksJsonContext.Default.YahooSearchResults);
             return dto!.Quotes.ToList();
         }
         catch(Exception e)
@@ -97,7 +95,7 @@ public record ChartResponse(
 
 public record ChartData(
     IReadOnlyList<Result>? Result,
-    object? Error
+    JsonElement? Error
 );
 
 public record Result(
