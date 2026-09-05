@@ -15,6 +15,11 @@ public partial class TickerGridCardFrame
 
     private Gtk.AspectFrame aspectFrame = null!;
 
+    // Prevent too early garbage collection by holding a reference.
+    private Gtk.Internal.CustomRequestModeFuncCallHandler requestModeHandler = null!;
+    private Gtk.Internal.CustomMeasureFuncCallHandler measureHandler = null!;
+    private Gtk.Internal.CustomAllocateFuncCallHandler allocateHandler = null!;
+
     public static TickerGridCardFrame NewWithTicker(Ticker ticker)
     {
         var frame = NewWithProperties([]);
@@ -24,7 +29,16 @@ public partial class TickerGridCardFrame
 
     private void SetupWidget(Ticker ticker)
     {
-        LayoutManager = Gtk.CustomLayout.New(RequestMode, Measure, Allocate);
+        requestModeHandler = new(RequestMode);
+        measureHandler = new(Measure);
+        allocateHandler = new(Allocate);
+
+        var layout = Gtk.Internal.CustomLayout.New(
+            requestModeHandler.NativeCallback,
+            measureHandler.NativeCallback,
+            allocateHandler.NativeCallback);
+
+        LayoutManager = Gtk.CustomLayout.NewFromPointer(layout, ownsHandle: true);
 
         aspectFrame = Gtk.AspectFrame.New(0.5f, 0.5f, 1.0f, false);
         aspectFrame.SetChild(TickerGridCard.NewWithTicker(ticker));
