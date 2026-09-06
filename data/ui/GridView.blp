@@ -11,13 +11,18 @@ template $GridView : Gtk.Box {
 	hexpand: true;
 	vexpand: true;
 
-	Adw.NavigationView gridView {
+	Adw.Bin navigationContainer {
 		hexpand: true;
 		vexpand: true;
+	}
 
-		Adw.NavigationPage {
+	// Navigation pages are detached from this hidden staging container and
+	// assigned to ScalingNavView during GridView initialization.
+	Box pageStore {
+		visible: false;
+
+		Adw.NavigationPage gridContent {
 			title: _("Symbols");
-			tag: "grid";
 
 			child: Adw.ToolbarView {
 				[top]
@@ -42,12 +47,25 @@ template $GridView : Gtk.Box {
 
 		Adw.NavigationPage detailsContent {
 			title: _("Details");
-			tag: "details";
 
 			child: Adw.ToolbarView {
 				[top]
 				Adw.HeaderBar detailsHeader {
 					show-title: false;
+					show-back-button: false;
+
+					[start]
+					// ScalingNavView owns navigation.pop and the custom zoom transition,
+					// so HeaderBar's Adw.NavigationView-managed back button cannot be used.
+					Button {
+						icon-name: "go-previous-symbolic";
+						tooltip-text: _("Back");
+						action-name: "navigation.pop";
+
+						accessibility {
+							label: _("Back");
+						}
+					}
 
 					[end]
 					MenuButton detailsMenuButton {

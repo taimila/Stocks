@@ -18,6 +18,10 @@ public partial class TickerGridCard
     private TickerChart chart = null!;
 
     public Ticker Ticker { get; private set; } = null!;
+    internal Gtk.Widget TransitionThumbnail => chart;
+
+    internal void SuspendChartDrawing() => chart.SuspendDrawing();
+    internal void ResumeChartDrawing() => chart.ResumeDrawing();
 
     public static TickerGridCard NewWithTicker(Ticker ticker)
     {

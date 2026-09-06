@@ -81,6 +81,14 @@ public partial class TickerChart
     // Data the chart is displaying
     private TickerData? data;
 
+    // Variables to manage state during navigation transitions. Chart redraws 
+    // make animation FPS drop a lot. That's why redraws and user interaction can be
+    // suspended from the outside of the chart component.
+    private bool hoverInteractionSuspended = false;
+    private bool drawingSuspended = false;
+    private bool redrawPending = false;
+    private bool CanInteract => EnableMouseInteraction && !hoverInteractionSuspended;
+
     // Cursor state
     private bool isDragging = false;
     private Point dragStarted = new(0,0);
@@ -91,8 +99,8 @@ public partial class TickerChart
         get => hover;
         set
         {
-            hover = value;
-            if (HideCursorOnHover && value)
+            hover = value && CanInteract;
+            if (HideCursorOnHover && hover)
                 HideCursor();
             else
                 ShowCursor();
@@ -135,13 +143,65 @@ public partial class TickerChart
     {
         this.data = data;
         ShowPreviousCloseLine = showPreviousCloseLine;
-        QueueDraw();
+        RequestDraw();
     }
     
     public void Clear()
     {
         data = null;
+        RequestDraw();
+    }
+
+    public void SuspendDrawing()
+    {
+        drawingSuspended = true;
+    }
+
+    public void ResumeDrawing()
+    {
+        if (!drawingSuspended)
+            return;
+
+        drawingSuspended = false;
+
+        if (!redrawPending)
+            return;
+
+        redrawPending = false;
         QueueDraw();
+    }
+
+    // Wrapper for QueueDraw, this should be always called instead of direct call to QueueDraw!
+    // This exists so that drawing can be controlled from outside during transition animations.
+    private void RequestDraw()
+    {
+        if (drawingSuspended)
+        {
+            redrawPending = true;
+            return;
+        }
+
+        QueueDraw();
+    }
+
+    /// <summary>
+    /// Suspends pointer interaction before the chart is navigated away from.
+    /// The suspended state prevents motion events generated while the chart is
+    /// moving from recreating the hover popover during the transition.
+    /// </summary>
+    public void SuspendHoverInteraction()
+    {
+        hoverInteractionSuspended = true;
+        isDragging = false;
+        IsHovering = false;
+        HideHoverPopover();
+        NotifyHover(null, null);
+        RequestDraw();
+    }
+
+    public void ResumeHoverInteraction()
+    {
+        hoverInteractionSuspended = false;
     }
 
     private bool IsInHoverInteractionArea(double x, double y) =>
@@ -154,7 +214,7 @@ public partial class TickerChart
 
         motion.OnMotion += (o, args) =>
         {
-            if (!EnableMouseInteraction) return;
+            if (!CanInteract) return;
 
             cursor = new(args.X, args.Y);
             IsHovering = isDragging || IsInHoverInteractionArea(args.X, args.Y);
@@ -163,7 +223,7 @@ public partial class TickerChart
             {
                 HideHoverPopover();
                 NotifyHover(null, null);
-                QueueDraw();
+                RequestDraw();
                 return;
             }
 
@@ -181,23 +241,23 @@ public partial class TickerChart
                 NotifyHover(data, null);
             }
 
-            QueueDraw();
+            RequestDraw();
         };
         
         motion.OnEnter += (o, args) =>
         {
-            if (!EnableMouseInteraction) return;
+            if (!CanInteract) return;
             IsHovering = IsInHoverInteractionArea(args.X, args.Y);
-            QueueDraw();
+            RequestDraw();
         };
 
         motion.OnLeave += (o, args) =>
         {
-            if (!EnableMouseInteraction) return;
+            if (!CanInteract) return;
             if (isDragging) return;
             IsHovering = false;
             HideHoverPopover();
-            QueueDraw();
+            RequestDraw();
             NotifyHover(null, null);
         };
 
@@ -207,7 +267,7 @@ public partial class TickerChart
         
         click.OnPressed += (_, a) => 
         { 
-            if (!EnableMouseInteraction) return;
+            if (!CanInteract) return;
             isDragging = true;    
             dragStarted = new(a.X, a.Y);
             cursor = new(a.X, a.Y);
@@ -217,11 +277,11 @@ public partial class TickerChart
 
         click.OnReleased += (_, a) => 
         { 
-            if (!EnableMouseInteraction) return;
+            if (!CanInteract) return;
             isDragging = false;
             cursor = new(a.X, a.Y);
             IsHovering = IsInHoverInteractionArea(a.X, a.Y);
-            QueueDraw();
+            RequestDraw();
             NotifyHover(IsHovering ? GetDataPoint((int)cursor.X) : null, null);
             
             if (IsHovering)
@@ -259,7 +319,7 @@ public partial class TickerChart
 
     private void UpdatePopover(DataPoint? dp, double x)
     {
-        if (!IsHovering || data == null || dp == null ||  data.DataPoints.Length == 0)
+        if (!CanInteract || !IsHovering || data == null || dp == null ||  data.DataPoints.Length == 0)
         {
             HideHoverPopover();
             return;
@@ -284,7 +344,7 @@ public partial class TickerChart
 
     private void UpdateRangePopover()
     {
-        if (!IsHovering || data == null || data.DataPoints.Length < 2)
+        if (!CanInteract || !IsHovering || data == null || data.DataPoints.Length < 2)
         {
             HideHoverPopover();
             return;

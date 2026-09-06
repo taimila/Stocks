@@ -47,7 +47,15 @@ public partial class TickerGridCardFrame
 
     public Ticker? Ticker => (aspectFrame.Child as TickerGridCard)?.Ticker;
     public Gtk.Widget? Content => aspectFrame.Child;
+    public Gtk.Widget? TransitionThumbnail =>
+        (aspectFrame.Child as TickerGridCard)?.TransitionThumbnail;
     public bool HasContent => aspectFrame.Child is not null;
+
+    public void SuspendChartDrawing() =>
+        (aspectFrame.Child as TickerGridCard)?.SuspendChartDrawing();
+
+    public void ResumeChartDrawing() =>
+        (aspectFrame.Child as TickerGridCard)?.ResumeChartDrawing();
 
     public void SetContent(Gtk.Widget content)
     {
