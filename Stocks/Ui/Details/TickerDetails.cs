@@ -98,6 +98,7 @@ public partial class TickerDetails
 
             updateHandler = CreateUiUpdateHandler(UpdateUI);
             current.OnUpdated += updateHandler;
+            UpdateUI(current);
             await current.Refresh(model.ActiveRange);
         };
 
@@ -232,6 +233,45 @@ public partial class TickerDetails
         {
             UpdateUI(ticker);
         }
+    }
+
+    public Graphene.Rect? GetChartBounds(Gtk.Widget relativeTo)
+    {
+        if (!chart.ComputeBounds(relativeTo, out var bounds))
+            return null;
+
+        if (float.IsFinite(bounds.GetX()) &&
+            float.IsFinite(bounds.GetY()) &&
+            float.IsFinite(bounds.GetWidth()) &&
+            float.IsFinite(bounds.GetHeight()) &&
+            bounds.GetWidth() > 0 &&
+            bounds.GetHeight() > 0)
+        {
+            return bounds;
+        }
+
+        bounds.Dispose();
+        return null;
+    }
+
+    public void SuspendChartHoverInteraction()
+    {
+        chart.SuspendHoverInteraction();
+    }
+
+    public void ResumeChartHoverInteraction()
+    {
+        chart.ResumeHoverInteraction();
+    }
+
+    public void SuspendChartDrawing()
+    {
+        chart.SuspendDrawing();
+    }
+
+    public void ResumeChartDrawing()
+    {
+        chart.ResumeDrawing();
     }
     
     private void UpdateUI(Ticker? t)
