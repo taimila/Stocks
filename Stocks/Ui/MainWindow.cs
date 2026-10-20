@@ -64,6 +64,10 @@ public partial class MainWindow
 
     private void SetBrowseMode(BrowseMode mode)
     {
+        //Ensure grid mode is not enabled.
+        if (mode == BrowseMode.Grid)
+            return;
+
         splitView.BrowseModeChangedTo(mode);
         gridView.BrowseModeChangedTo(mode);
 
@@ -92,17 +96,17 @@ public partial class MainWindow
             controls.Halign = Gtk.Align.Fill;
 
             var themeSwitcher = ThemeSwitcher.NewWithModel(theme);
-            var modeSwitcher = BrowseModeSwitcher.NewWithModel(mode);
-            var separator = Gtk.Separator.New(Gtk.Orientation.Horizontal);
+            // var modeSwitcher = BrowseModeSwitcher.NewWithModel(mode);
+            // var separator = Gtk.Separator.New(Gtk.Orientation.Horizontal);
 
             themeSwitcher.Hexpand = true;
             themeSwitcher.Halign = Gtk.Align.Fill;
-            modeSwitcher.Hexpand = true;
-            modeSwitcher.Halign = Gtk.Align.Fill;
+            // modeSwitcher.Hexpand = true;
+            // modeSwitcher.Halign = Gtk.Align.Fill;
 
             controls.Append(themeSwitcher);
-            controls.Append(separator);
-            controls.Append(modeSwitcher);
+            // controls.Append(separator);
+            // controls.Append(modeSwitcher);
 
             // Inject custom controls into primary menu as first items.
             ((((target.Popover
