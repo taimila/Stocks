@@ -30,7 +30,9 @@ public sealed class AppMode
 
     private void LoadFromSettings()
     {
-        var mode = (BrowseMode)settings.GetEnum("browse-mode");
+        // var mode = (BrowseMode)settings.GetEnum("browse-mode");
+        var mode = BrowseMode.List; // Disabled grid mode. Alawyas use list view instead
+
         if (mode == Current)
             return;
 
@@ -40,6 +42,10 @@ public sealed class AppMode
 
     public void SetBrowseMode(BrowseMode mode)
     {
+        // Ensure grid mode is not used
+        if (mode == BrowseMode.Grid)
+            return;
+
         if (mode == Current)
             return;
 
