@@ -10,6 +10,9 @@ public partial class TickerGrid
 {
     private AppModel model = null!;
     private readonly Dictionary<Symbol, TickerGridCardFrame> cards = [];
+    private bool chartDrawingSuspended;
+    private Symbol? focusReturnSymbol; // Needed for keyboard navigation to be able to focus right card after returning from details view.
+    private bool restoreFocusOnReturn;
 
     // Container for all on-going animations during drag operation
     private readonly Dictionary<Gtk.FlowBoxChild, (Adw.TimedAnimation Animation, Adw.CallbackAnimationTarget Target)> activeCardAnimations = [];
@@ -22,6 +25,62 @@ public partial class TickerGrid
         var grid = NewWithProperties([]);
         grid.SetModel(model);
         return grid;
+    }
+
+    public Gtk.Widget? GetTransitionThumbnail(Ticker? ticker)
+    {
+        if (ticker is null || !cards.TryGetValue(ticker.Symbol, out var card))
+            return null;
+
+        return card.TransitionThumbnail;
+    }
+
+    public Gtk.Widget? GetTransitionCard(Ticker? ticker)
+    {
+        if (ticker is null || !cards.TryGetValue(ticker.Symbol, out var card))
+            return null;
+
+        return card;
+    }
+
+    public void SuspendChartDrawing()
+    {
+        if (chartDrawingSuspended)
+            return;
+
+        chartDrawingSuspended = true;
+
+        foreach (var card in cards.Values)
+            card.SuspendChartDrawing();
+    }
+
+    public void ResumeChartDrawing()
+    {
+        if (!chartDrawingSuspended)
+            return;
+
+        chartDrawingSuspended = false;
+
+        foreach (var card in cards.Values)
+            card.ResumeChartDrawing();
+    }
+
+    public void RestoreActivatedCardFocus()
+    {
+        var symbol = focusReturnSymbol;
+        var shouldRestore = restoreFocusOnReturn;
+
+        focusReturnSymbol = null;
+        restoreFocusOnReturn = false;
+
+        if (!shouldRestore || symbol is null)
+            return;
+
+        if (!cards.TryGetValue(symbol, out var card))
+            return;
+
+        if (card.Parent is Gtk.FlowBoxChild child)
+            child.GrabFocus();
     }
 
     private void SetModel(AppModel model)
@@ -52,8 +111,14 @@ public partial class TickerGrid
 
         OnChildActivated += (_, args) =>
         {
-            if (args.Child?.Child is TickerGridCardFrame card && card.Ticker is not null)
-                OnTickerActivated?.Invoke(card.Ticker);
+            if (args.Child?.Child is not TickerGridCardFrame card || card.Ticker is not Ticker ticker)
+            {
+                return;
+            }
+
+            focusReturnSymbol = ticker.Symbol;
+            restoreFocusOnReturn = args.Child.HasVisibleFocus(); // Was activated with keyboard?
+            OnTickerActivated?.Invoke(ticker);
         };        
     }
 
@@ -79,7 +144,12 @@ public partial class TickerGrid
 
     private TickerGridCardFrame CreateCard(Ticker ticker)
     {
-        return TickerGridCardFrame.NewWithTicker(ticker);
+        var card = TickerGridCardFrame.NewWithTicker(ticker);
+
+        if (chartDrawingSuspended)
+            card.SuspendChartDrawing();
+
+        return card;
     }
 
     private void RemoveTicker(Ticker ticker)

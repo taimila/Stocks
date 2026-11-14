@@ -9,7 +9,9 @@ namespace Stocks.UI;
 [Gtk.Template<Gtk.AssemblyResource>("GridView.ui")]
 public partial class GridView
 {
-    [Gtk.Connect] private Adw.NavigationView gridView;
+    [Gtk.Connect] private Adw.Bin navigationContainer;
+    [Gtk.Connect] private Gtk.Box pageStore;
+    [Gtk.Connect] private Adw.NavigationPage gridContent;
     [Gtk.Connect] private Adw.NavigationPage detailsContent;
     [Gtk.Connect] private Gtk.ScrolledWindow scrollContainer;
     [Gtk.Connect] private Adw.Bin detailsContainer;
@@ -21,6 +23,8 @@ public partial class GridView
 
     private AppModel model = null!;
     private TickerDetails details = null!;
+    private TickerGrid tickerGrid = null!;
+    private ScalingNavView gridView = null!;
     private readonly HashSet<Ticker> observedTickers = [];
     private bool isNarrow;
 
@@ -35,15 +39,33 @@ public partial class GridView
     {
         this.model = model;
 
+        gridContent.Unparent();
+        detailsContent.Unparent();
+        pageStore.Unparent();
+
+        gridView = ScalingNavView.NewWithProperties([]);
+        gridView.Hexpand = true;
+        gridView.Vexpand = true;
+        gridView.Main = gridContent;
+        gridView.Subpage = detailsContent;
+        navigationContainer.SetChild(gridView);
+
         details = TickerDetails.NewWithModel(model);
         detailsContainer.SetChild(details);
 
-        var tickerGrid = TickerGrid.NewWithModel(model);
+        tickerGrid = TickerGrid.NewWithModel(model);
+        gridView.GetThumbnail = () => tickerGrid.GetTransitionThumbnail(model.SelectedTicker);
+        gridView.GetReturnThumbnail = () => tickerGrid.GetTransitionCard(model.SelectedTicker);
+        gridView.GetSubpageBounds = () => details.GetChartBounds(gridView);
+        gridView.OnOpening += details.SuspendChartHoverInteraction;
+        gridView.OnClosing += details.SuspendChartHoverInteraction;
+        gridView.OnTransitionStarted += SuspendChartDrawing;
+        gridView.OnTransitionFinished += FinishTransition;
         tickerGrid.OnTickerActivated += ticker =>
         {
             model.SetActive(ticker);
             detailsContent.Title = ticker.DisplayName;
-            gridView.PushByTag("details");
+            gridView.ShowSubpage = true;
         };
         scrollContainer.SetChild(tickerGrid);
 
@@ -65,13 +87,33 @@ public partial class GridView
         };
     }
 
+    private void SuspendChartDrawing()
+    {
+        tickerGrid.SuspendChartDrawing();
+        details.SuspendChartDrawing();
+    }
+
+    private void FinishTransition()
+    {
+        tickerGrid.ResumeChartDrawing();
+        details.ResumeChartDrawing();
+
+        if (gridView.ShowSubpage)
+        {
+            details.ResumeChartHoverInteraction();
+            return;
+        }
+
+        tickerGrid.RestoreActivatedCardFocus();
+    }
+
     public Gtk.MenuButton MenuButton => menuButton;
     public Gtk.MenuButton DetailsMenuButton => detailsMenuButton;
 
     public void BrowseModeChangedTo(BrowseMode mode)
     {
-        if (mode == BrowseMode.Grid && gridView.GetVisiblePageTag() != "grid")
-            gridView.PopToTag("grid");
+        if (mode == BrowseMode.Grid)
+            gridView.ShowMainImmediately();
     }
 
     public void SetIsNarrow(bool enable)
