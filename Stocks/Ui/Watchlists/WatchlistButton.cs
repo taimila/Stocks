@@ -42,11 +42,20 @@ public partial class WatchlistButton
 
         InsertActionGroup(ActionGroupName, CreateActionGroup());
 
+        SetupScrollSupportForButton();
+
         UpdateLabel();
         UpdatePopover();
 
         model.OnChanged += HandleWatchlistsChanged;
         model.OnActiveChanged += HandleWatchlistsChanged;
+    }
+
+    private void SetupScrollSupportForButton()
+    {
+        var scroll = Gtk.EventControllerScroll.New(Gtk.EventControllerScrollFlags.Vertical | Gtk.EventControllerScrollFlags.Discrete);
+        scroll.OnScroll += (_, args) => SwitchWatchlist((int)args.Dy);
+        AddController(scroll);
     }
 
     private void HandleWatchlistsChanged()
@@ -58,6 +67,30 @@ public partial class WatchlistButton
     private void UpdateLabel()
     {
         activeWatchlistName.SetLabel(model.ActiveWatchlistName);
+    }
+
+    private bool SwitchWatchlist(int direction)
+    {
+        // Nothing to do, just exit
+        if (direction == 0)
+            return false;
+
+        var watchlists = model.GetWatchlists();
+
+        // No watchlists to scroll through
+        if (watchlists.Count <= 1)
+            return true;
+
+        // Find next watchlist based on scroll direction. Loop over last<->first
+        var ordered = direction > 0 ? watchlists : watchlists.Reverse();
+        var next = ordered
+            .SkipWhile(item => item.Id != model.ActiveWatchlistId)
+            .Skip(1)
+            .FirstOrDefault() ?? ordered.First();
+
+        model.SetActiveWatchlist(next.Id);
+
+        return true;
     }
 
     private Gio.SimpleActionGroup CreateActionGroup()
