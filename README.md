@@ -8,7 +8,6 @@
 </div>
 
 ![Screenshot of Stocks Gnome app.](docs/stocks.png)
-![Screenshot of Stocks Gnome app.](docs/stocks2.png)
 
 https://github.com/user-attachments/assets/a23a92c4-5009-4c3e-b86b-e28f3febe04d
 
