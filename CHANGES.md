@@ -36,3 +36,8 @@
 - Fixes a crash when app was opened in Grid View and user added new symbol
 - Fixes Grid View mode in mobile phone size
 - Decreased Flatpak size significantly by enabling .NET trimming
+
+## 0.9.0
+- Updated Gir.Core to latest 0.8.1
+- Removed Grid view to simplyfy app and make it ready for wider distribution
+- Added scroll wheel support to quickly glance through watchlists
